@@ -29,7 +29,7 @@ INSERT_SQL = text(
 SEARCH_SQL = text(
     "SELECT page, chapter, section, chunk_index, text, "
     "1 - (embedding <=> CAST(:query AS vector)) AS score "
-    "FROM chunks WHERE embedding_model = :model "
+    "FROM chunks WHERE embedding_model = :model AND section <> ALL(:excluded) "
     "ORDER BY embedding <=> CAST(:query AS vector) LIMIT :k"
 )
 
@@ -79,10 +79,19 @@ async def count_chunks(engine: AsyncEngine, model: str) -> int:
 
 
 async def search(
-    engine: AsyncEngine, query_vector: list[float], model: str, k: int
+    engine: AsyncEngine,
+    query_vector: list[float],
+    model: str,
+    k: int,
+    excluded: tuple[str, ...] = (),
 ) -> list[dict]:
     """Return the k chunks closest to the query (cosine), best first."""
-    params = {"query": to_pgvector(query_vector), "model": model, "k": k}
+    params = {
+        "query": to_pgvector(query_vector),
+        "model": model,
+        "k": k,
+        "excluded": list(excluded),  # sections to skip (empty = keep all)
+    }
     async with engine.connect() as conn:
         result = await conn.execute(SEARCH_SQL, params)
         return [dict(row) for row in result.mappings()]

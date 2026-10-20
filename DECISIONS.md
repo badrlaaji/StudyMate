@@ -113,3 +113,21 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S3-6 Test de base de données optionnel
 - `tests/test_rag.py` contient un test sur une vraie base, lancé seulement si `TEST_DATABASE_URL` est défini : les tests par défaut n'utilisent pas le réseau. La CI (étape 10) le lancera avec le conteneur pgvector.
+
+## Étape 4 — Évaluation de la recherche
+
+### S4-1 Questions écrites sans le LLM de l'application
+- Options : générer les questions avec Gemini ; les écrire en lisant les pages.
+- Choix : écrites en lisant les pages, reformulées (pas de copie du livre), pages attendues vérifiées par recherche de mots-clés dans le texte. À relire par Badr (`"validated": false`).
+- Pourquoi : Gemini générera les paires du fine-tuning (étape 5) ; des questions de test dans le même style gonfleraient le gain mesuré.
+
+### S4-2 Mesures
+- hit@4 (une bonne page dans les 4 premiers morceaux) et MRR@10 (1/rang de la 1re bonne page, 0 au-delà de 10). Une question peut avoir plusieurs pages attendues.
+
+### S4-3 Réglages comparés sur dev, puis test lancé une fois
+- `all-pages` = `no-end-matter` (identiques sur dev) → on garde toutes les pages : pas de filtre.
+- `no-query-prefix` : EN MRR 1,000 → 0,950, FR 0,775 → 0,833. Écart = 1 question sur 10 : dans le bruit. On garde le préfixe (fiche du modèle, CLAUDE.md, cohérence avec le fine-tuning).
+- Limite reconnue : dev (questions directes) est trop facile (EN 1,000) pour départager ; test (paraphrases) est plus dur.
+
+### S4-4 Pas de seuil de score pour les questions hors cours
+- Mesuré : top-1 des pièges 0,746-0,862 ; top-1 des vraies questions 0,799-0,905. Les plages se chevauchent → le refus se fera par l'agent (citations vérifiées), pas par un seuil.

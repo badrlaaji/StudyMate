@@ -22,6 +22,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : remplissage de Neon à lancer depuis Windows (`uv run python -m rag.ingest`) : l'environnement Linux n'atteint pas Neon. Base locale pgvector remplie.
 - **Chiffres** : 284 morceaux (249 tokens en moyenne, max 300, 1 à 5 par page) ; vectorisation 21 s sur CPU (Linux 4 cœurs) ; recherches manuelles : bonne page dans le top 4 pour 3/3, en 1re position pour 1/3 (EN random forest) — FR rétropropagation : 1re bonne page au rang 3 ; paraphrase surapprentissage : rang 4 ; 58 tests passés (dont 1 avec base).
 
+## Étape 4 — Évaluation de la recherche (2026-10-20)
+- **Fait** : 35 questions bilingues (10 dev, 20 test, 5 pièges) ; `eval_retrieval` (hit@4, MRR@10, sans LLM) ; 3 réglages sur dev ; test lancé une fois ; tableau dans le README ; trou du catalogue repéré (pages 279-280 : exactitude, précision, rappel sans notion).
+- **Bloqué** : relecture des questions par Badr (`"validated": false`).
+- **Chiffres** : dev EN hit@4 1,000 / MRR 1,000, FR 0,900 / 0,775 (identique sans fin de chapitre ; sans préfixe : EN MRR 0,950, FR 0,833) ; **test EN hit@4 0,850 / MRR 0,703 ; FR 0,750 / 0,604** (écart +0,099) ; top-1 pièges 0,746-0,862 vs questions 0,814-0,900 (test) ; 67 tests passés.
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |

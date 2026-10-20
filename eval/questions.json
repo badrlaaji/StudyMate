@@ -1,0 +1,247 @@
+{
+  "source": "Principles of Data Science (OpenStax, 2025), chapters 6-7, https://openstax.org/details/books/principles-data-science",
+  "license": "CC BY-NC-SA 4.0",
+  "validated": false,
+  "note": "Written without the application's LLM, from reading the pages, and paraphrased (not copied). pages = PDF pages where the answer is explained. notion = id in course/notions.json, or null if no notion covers it. dev = settings; test = frozen, run once per compared model; traps = out of chapters 6-7.",
+  "dev": [
+    {
+      "id": "dev01",
+      "notion": "overfitting_and_underfitting",
+      "pages": [281, 282],
+      "en": "What does it mean for a model to overfit?",
+      "fr": "Que signifie le surapprentissage d'un modèle ?"
+    },
+    {
+      "id": "dev02",
+      "notion": null,
+      "pages": [333],
+      "en": "What are the three Vs that characterize big data?",
+      "fr": "Quels sont les trois V qui caractérisent le big data ?"
+    },
+    {
+      "id": "dev03",
+      "notion": "perceptrons_and_training",
+      "pages": [347, 348],
+      "en": "How does the perceptron learning rule update the weights after a mistake?",
+      "fr": "Comment la règle d'apprentissage du perceptron met-elle à jour les poids après une erreur ?"
+    },
+    {
+      "id": "dev04",
+      "notion": "static_backpropagation_and_gradient_descent",
+      "pages": [355],
+      "en": "What is the main idea of gradient descent when training a neural network?",
+      "fr": "Quelle est l'idée principale de la descente de gradient pour entraîner un réseau de neurones ?"
+    },
+    {
+      "id": "dev05",
+      "notion": "introduction_to_deep_learning",
+      "pages": [352, 353, 365],
+      "en": "Besides mean squared error, which loss functions are used to train neural networks?",
+      "fr": "En plus de l'erreur quadratique moyenne, quelles fonctions de perte utilise-t-on pour entraîner un réseau de neurones ?"
+    },
+    {
+      "id": "dev06",
+      "notion": "evolution_and_applications_of_nlp",
+      "pages": [371],
+      "en": "What is special about the transformer architecture and its self-attention?",
+      "fr": "Qu'a de particulier l'architecture Transformer et son mécanisme d'auto-attention ?"
+    },
+    {
+      "id": "dev07",
+      "notion": "ethical_considerations_and_limitations_of_nlp",
+      "pages": [378],
+      "en": "What are hallucinations of large language models?",
+      "fr": "Que sont les hallucinations des grands modèles de langage ?"
+    },
+    {
+      "id": "dev08",
+      "notion": "decision_tree_construction",
+      "pages": [318],
+      "en": "What does entropy measure?",
+      "fr": "Que mesure l'entropie ?"
+    },
+    {
+      "id": "dev09",
+      "notion": null,
+      "pages": [279, 280],
+      "en": "How is the accuracy of a classification model computed?",
+      "fr": "Comment calcule-t-on l'exactitude (accuracy) d'un modèle de classification ?"
+    },
+    {
+      "id": "dev10",
+      "notion": "introduction_to_deep_learning",
+      "pages": [363, 364],
+      "en": "Why do deep neural networks use several hidden layers?",
+      "fr": "Pourquoi les réseaux de neurones profonds utilisent-ils plusieurs couches cachées ?"
+    }
+  ],
+  "test": [
+    {
+      "id": "test01",
+      "notion": "supervised_unsupervised_learning",
+      "pages": [277, 278],
+      "en": "What is the main difference between learning from labeled data and learning from unlabeled data?",
+      "fr": "Quelle est la principale différence entre apprendre à partir de données étiquetées et de données non étiquetées ?"
+    },
+    {
+      "id": "test02",
+      "notion": null,
+      "pages": [279],
+      "en": "Why do we keep part of the data aside for testing instead of training on all of it, and how big is that part usually?",
+      "fr": "Pourquoi garde-t-on une partie des données pour le test au lieu de tout utiliser pour l'entraînement, et quelle part représente-t-elle en général ?"
+    },
+    {
+      "id": "test03",
+      "notion": null,
+      "pages": [279, 280],
+      "en": "How is precision different from recall when evaluating a classifier?",
+      "fr": "Quelle différence y a-t-il entre la précision et le rappel pour évaluer un classifieur ?"
+    },
+    {
+      "id": "test04",
+      "notion": "overfitting_and_underfitting",
+      "pages": [281, 282],
+      "en": "What happens when a model is too simple to capture the trend in the data?",
+      "fr": "Que se passe-t-il quand un modèle est trop simple pour capturer la tendance des données ?"
+    },
+    {
+      "id": "test05",
+      "notion": "logistic_regression",
+      "pages": [285],
+      "en": "Which S-shaped function does logistic regression use, and what range of values does it output?",
+      "fr": "Quelle fonction en forme de S la régression logistique utilise-t-elle, et entre quelles valeurs sont ses sorties ?"
+    },
+    {
+      "id": "test06",
+      "notion": "logistic_regression",
+      "pages": [286],
+      "en": "What do log-odds represent in a logistic regression model?",
+      "fr": "Que représente le logarithme de la cote (log-odds) dans un modèle de régression logistique ?"
+    },
+    {
+      "id": "test07",
+      "notion": "k_means_clustering",
+      "pages": [290],
+      "en": "What are the steps of the k-means algorithm for finding the cluster centers?",
+      "fr": "Quelles sont les étapes de l'algorithme k-means pour trouver les centres des groupes ?"
+    },
+    {
+      "id": "test08",
+      "notion": "k_means_clustering",
+      "pages": [290, 295, 296],
+      "en": "How can I check whether the number of clusters I picked is a good choice?",
+      "fr": "Comment vérifier que le nombre de groupes que j'ai choisi est un bon choix ?"
+    },
+    {
+      "id": "test09",
+      "notion": "dbscan_clustering",
+      "pages": [297, 298],
+      "en": "In density-based clustering, what makes a data point a core point?",
+      "fr": "Dans le clustering par densité, qu'est-ce qui fait d'un point un point central (core point) ?"
+    },
+    {
+      "id": "test10",
+      "notion": "dbscan_clustering",
+      "pages": [297],
+      "en": "Why would k-means fail on data shaped like two rings, one inside the other?",
+      "fr": "Pourquoi k-means échouerait-il sur des données en forme de deux anneaux, l'un dans l'autre ?"
+    },
+    {
+      "id": "test11",
+      "notion": "confusion_matrix",
+      "pages": [301, 302],
+      "en": "In a confusion matrix, what do large numbers outside the main diagonal tell you?",
+      "fr": "Dans une matrice de confusion, que signifient de grands nombres en dehors de la diagonale principale ?"
+    },
+    {
+      "id": "test12",
+      "notion": "bootstrapping_linear_regression",
+      "pages": [304, 306, 307],
+      "en": "How can resampling with replacement show how much the slope of a regression line varies?",
+      "fr": "Comment le rééchantillonnage avec remise montre-t-il à quel point la pente d'une droite de régression varie ?"
+    },
+    {
+      "id": "test13",
+      "notion": "multiple_linear_regression",
+      "pages": [309],
+      "en": "What conditions should the data meet before fitting a multiple linear regression?",
+      "fr": "Quelles conditions les données doivent-elles remplir avant d'ajuster une régression linéaire multiple ?"
+    },
+    {
+      "id": "test14",
+      "notion": "decision_tree_construction",
+      "pages": [319, 320],
+      "en": "How does a decision tree decide which feature to split on at each node?",
+      "fr": "Comment un arbre de décision choisit-il la caractéristique selon laquelle diviser les données à chaque nœud ?"
+    },
+    {
+      "id": "test15",
+      "notion": "pruning_and_overfitting",
+      "pages": [323, 324],
+      "en": "How can we stop a decision tree from overfitting the training data?",
+      "fr": "Comment empêcher un arbre de décision de surapprendre les données d'entraînement ?"
+    },
+    {
+      "id": "test16",
+      "notion": "random_forest",
+      "pages": [327],
+      "en": "How does a random forest combine many decision trees to make a prediction?",
+      "fr": "Comment une forêt aléatoire combine-t-elle de nombreux arbres de décision pour faire une prédiction ?"
+    },
+    {
+      "id": "test17",
+      "notion": "naive_bayes_classifiers",
+      "pages": [332],
+      "en": "What simplifying assumption about the features does naive Bayes make?",
+      "fr": "Quelle hypothèse simplificatrice sur les caractéristiques le classifieur bayésien naïf fait-il ?"
+    },
+    {
+      "id": "test18",
+      "notion": "neural_network_structure_and_components",
+      "pages": [344, 345, 346],
+      "en": "What is the job of an activation function inside an artificial neuron?",
+      "fr": "Quel est le rôle d'une fonction d'activation dans un neurone artificiel ?"
+    },
+    {
+      "id": "test19",
+      "notion": "recurrent_neural_networks",
+      "pages": [359],
+      "en": "Why are recurrent neural networks hard to train when gradients shrink toward zero?",
+      "fr": "Pourquoi les réseaux de neurones récurrents sont-ils difficiles à entraîner quand les gradients tendent vers zéro ?"
+    },
+    {
+      "id": "test20",
+      "notion": "convolutional_neural_networks",
+      "pages": [367, 368],
+      "en": "What is a feature map in a convolutional neural network?",
+      "fr": "Qu'est-ce qu'une carte de caractéristiques (feature map) dans un réseau de neurones convolutif ?"
+    }
+  ],
+  "traps": [
+    {
+      "id": "trap01",
+      "en": "What is a p-value in hypothesis testing?",
+      "fr": "Qu'est-ce qu'une valeur p dans un test d'hypothèse ?"
+    },
+    {
+      "id": "trap02",
+      "en": "How do I compute a moving average to forecast a time series?",
+      "fr": "Comment calculer une moyenne mobile pour prévoir une série temporelle ?"
+    },
+    {
+      "id": "trap03",
+      "en": "How do I make a pivot table in Excel?",
+      "fr": "Comment créer un tableau croisé dynamique dans Excel ?"
+    },
+    {
+      "id": "trap04",
+      "en": "What is the recipe for Moroccan couscous?",
+      "fr": "Quelle est la recette du couscous marocain ?"
+    },
+    {
+      "id": "trap05",
+      "en": "Who won the 2022 FIFA World Cup?",
+      "fr": "Qui a gagné la Coupe du monde de football 2022 ?"
+    }
+  ]
+}
