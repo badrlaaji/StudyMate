@@ -152,3 +152,31 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 - Lecture : gain en hit@4 (ce que l'agent utilise : top 4), pas de gain démontré en MRR. 20 questions : indicatif.
 - Choix : l'application utilisera le modèle fine-tuné une fois publié sur le Hub (`EMBEDDING_MODEL` = id du Hub) ; e5 de base par défaut d'ici là.
 - Observation : les scores du modèle fine-tuné s'étalent (pièges 0,25-0,40, questions 0,37-0,78), sans séparer parfaitement (4/40 questions sous 0,41) → S4-4 inchangé.
+
+## Étape 6 — Agent LangGraph
+
+### S6-1 Le nouvel essai est une arête du graphe
+- `generate` → `after_generate` (fonction pure) → `answered` | `generate` (1 nouvel essai) | `not_found`. État Pydantic (pas de classe hors schémas) ; dépendances (base, Spring, LLM) injectées dans `build_graph` → tests avec des faux.
+
+### S6-2 Le routeur réécrit aussi la requête en anglais (`search_query`)
+- Constat : en français, la recherche ramenait moins souvent la bonne page (top 4 : 16/20 avec le modèle fine-tuné).
+- Choix : un champ de plus dans la sortie structurée du routeur (même appel, 0 appel en plus) ; les règles de secours gardent le message tel quel.
+- Mesuré : top 4 en français 19/20 dans l'agent (anglais 19/20).
+
+### S6-3 Champ `found` dans la réponse
+- Constat (essai réel) : réponse « Le texte ne mentionne pas pourquoi… » avec une page citée → acceptée par la vérification. Choix : `found: bool` obligatoire ; `found = false` → `not_found`.
+
+### S6-4 Nouvel essai aussi après une erreur 5xx
+- Constat : 503 « high demand » de Gemini pendant l'éval. Choix : même politique que le 429 (`ModelAPIError` de langchain-core) : attendre, 1 nouvel essai, message clair.
+
+### S6-5 Appels LLM synchrones dans des threads
+- `invoke_structured` est synchrone (cache disque) ; dans les nœuds async, `asyncio.to_thread` évite de bloquer la boucle d'événements (et FastAPI).
+
+### S6-6 Contrat Spring figé maintenant, mode dégradé
+- `GET /api/notions/weak`, `GET /api/mastery`, `POST /api/scores`. Spring absent → quiz sur des notions au hasard (`status: degraded`), plan vide, score non enregistré (journalisé).
+
+### S6-7 Arrondi « au demi supérieur » (précision de D2)
+- `round()` de Python arrondit au pair (2,5 → 2). Choix : `round_half_up` (2,5 → 3) pour la note Feynman et les notes de quiz.
+
+### S6-8 « Correcte » sans juge LLM
+- Correcte = statut `ok` + citation vérifiée sur une page attendue. La qualité du texte sera mesurée par RAGAS (étape 7).

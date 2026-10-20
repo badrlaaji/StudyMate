@@ -3,7 +3,7 @@
 from types import SimpleNamespace
 
 import pytest
-from langchain_core.exceptions import ModelRateLimitError
+from langchain_core.exceptions import ModelAPIError, ModelRateLimitError
 from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel
 
@@ -98,7 +98,20 @@ def test_invoke_structured_waits_then_retries_once_after_429(tmp_path):
 def test_invoke_structured_two_429_give_a_clear_error(tmp_path):
     error = ModelRateLimitError("429")
     llm, _ = fake_llm([error, error])
-    with pytest.raises(RuntimeError, match="quota"):
+    with pytest.raises(RuntimeError, match="twice"):
         invoke_structured(
             Answer, "q", llm=llm, cache_dir=tmp_path, sleep=lambda s: None
         )
+
+
+def test_invoke_structured_retries_once_after_503_overload(tmp_path):
+    llm, calls = fake_llm(
+        [ModelAPIError("503 UNAVAILABLE high demand"), Answer(text="ok")]
+    )
+    waits = []
+    result = invoke_structured(
+        Answer, "q", llm=llm, cache_dir=tmp_path, sleep=waits.append
+    )
+    assert result == Answer(text="ok")
+    assert waits == [DEFAULT_WAIT_S]
+    assert len(calls) == 2

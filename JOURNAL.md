@@ -32,6 +32,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : publication sur le Hub → il faut `HF_TOKEN` (écriture).
 - **Chiffres** : 57 appels Gemini en 7 min 44 (0 erreur 429) ; 560 paires gardées ; 70 pas (2 époques, lot 16) en 414 s sur CPU Linux 4 cœurs ; modèle 466 Mo ; test base → fine-tuné : EN hit@4 0,850 → 0,950, MRR 0,703 → 0,722 ; FR hit@4 0,750 → 0,800, MRR 0,604 → 0,611 ; 73 tests passés.
 
+## Étape 6 — Agent LangGraph (2026-10-20)
+- **Fait** : graphe routeur → answer (recherche, génération, vérification des citations, 1 nouvel essai, not_found) | quiz | plan ; réécriture de la requête en anglais par le routeur ; champ `found` ; nouvel essai après 5xx ; client Spring + mode dégradé ; éval des réponses ; tests sans réseau.
+- **Bloqué** : rien (Spring arrive à l'étape 9 ; mode dégradé en attendant).
+- **Chiffres** : test (modèle fine-tuné) EN correct 19/20, refus 5/5 ; FR correct 19/20, refus 5/5 ; bonne page dans le top 4 : 19/20 dans les deux langues (FR sans réécriture : 16/20) ; latence médiane 8,3 s EN (pendant des 503 Gemini) / 2,8 s FR ; 1 repli du routeur sur les règles (503) ; ~110 appels Gemini ; 101 tests passés.
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |

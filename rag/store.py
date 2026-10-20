@@ -95,3 +95,17 @@ async def search(
     async with engine.connect() as conn:
         result = await conn.execute(SEARCH_SQL, params)
         return [dict(row) for row in result.mappings()]
+
+
+async def chunks_for_pages(
+    engine: AsyncEngine, pages: list[int], model: str
+) -> list[dict]:
+    """Return the chunks of the given pages, in page order (texts for the quiz)."""
+    query = text(
+        "SELECT page, chunk_index, text FROM chunks "
+        "WHERE embedding_model = :model AND page = ANY(:pages) "
+        "ORDER BY page, chunk_index"
+    )
+    async with engine.connect() as conn:
+        result = await conn.execute(query, {"model": model, "pages": pages})
+        return [dict(row) for row in result.mappings()]

@@ -1,6 +1,6 @@
 # StudyMate
 
-> **Work in progress.** Steps 0-5 done: book → 284 indexed chunks, 21 notions, retrieval evaluation, fine-tuned embeddings.
+> **Work in progress.** Steps 0-6 done: indexed book, 21 notions, retrieval evaluation, fine-tuned embeddings, LangGraph agent with verified citations.
 
 A study assistant for one textbook. It answers questions with **cited and verified pages**,
 routes each request (answer, quiz, revision plan), checks your understanding with a
@@ -52,6 +52,21 @@ evaluation: `multilingual-e5-small` embeddings + exact cosine search in pgvector
   2 epochs on CPU (7 min). hit@4 improves (+2 English, +1 French questions out of 20), MRR
   barely moves; per question, ranks go both ways. Indicative only on 20 questions.
 - Reproduce: `uv run python -m eval.eval_retrieval test` (reports in `eval/results/`).
+
+**Answers** (step 6) — the LangGraph agent on the same 20 test questions (+ 5 out-of-course
+traps), fine-tuned embeddings. *Correct* = the answer passed the citation check (cited pages
+are among the retrieved ones) **and** cites an expected page. No LLM judge.
+
+| Language | Correct | Expected page in top 4 | Traps refused |
+| --- | --- | --- | --- |
+| English | 19/20 | 19/20 | 5/5 |
+| French | 19/20 | 19/20 | 5/5 |
+
+- The router also rewrites the question as an English search query (same LLM call): French
+  questions reach the right page in the top 4 for 19/20 instead of 16/20.
+- The one miss (both languages) cites a verified but wrong page: the citation check proves the
+  page was retrieved, not that it is the best one.
+- Reproduce: `uv run python -m eval.eval_answers`.
 
 ## Stack
 

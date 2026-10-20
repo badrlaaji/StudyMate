@@ -53,6 +53,9 @@ def test_question_notions_and_pages_exist():
 def test_saved_reports_are_valid_json():
     from eval.eval_retrieval import RESULTS_DIR
 
-    for path in RESULTS_DIR.glob("*.json"):
+    for path in RESULTS_DIR.glob("retrieval_*.json"):
         report = json.loads(path.read_text(encoding="utf-8"))
         assert {"en", "fr", "split", "setting"} <= report.keys()
+    for path in RESULTS_DIR.glob("answers_*.json"):
+        report = json.loads(path.read_text(encoding="utf-8"))
+        assert {"correct", "refused"} <= report["en"]["summary"].keys()

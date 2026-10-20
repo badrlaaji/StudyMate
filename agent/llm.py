@@ -5,7 +5,7 @@ import time
 from collections.abc import Callable
 from pathlib import Path
 
-from langchain_core.exceptions import ModelRateLimitError
+from langchain_core.exceptions import ModelAPIError, ModelRateLimitError
 from langchain_core.language_models import BaseChatModel
 from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel
@@ -18,13 +18,15 @@ THINKING_LEVEL = "minimal"
 # 1 = a single request, no SDK retry: 429 handling is done below.
 MAX_RETRIES = 1
 TIMEOUT_S = 60.0
-# 429 without a suggested delay: wait this long before the single retry.
+# 429 (quota) or 5xx (overloaded) without a suggested delay: wait, then 1 retry.
 DEFAULT_WAIT_S = 60.0
+RETRYABLE = (ModelRateLimitError, ModelAPIError)
 # REST errors say "'retryDelay': '37s'", gRPC ones "retry_delay { seconds: 37".
 RETRY_DELAY = re.compile(r"retry_?delay\D{0,20}?(\d+(?:\.\d+)?)", re.IGNORECASE)
 QUOTA_MESSAGE = (
-    "LLM quota reached (429) twice in a row. Wait a minute, or until the daily "
-    "quota resets (midnight Pacific time), then run again: cached answers are kept."
+    "LLM unavailable twice in a row (429 quota or 5xx overload). Wait a minute, or "
+    "until the daily quota resets (midnight Pacific time), then run again: cached "
+    "answers are kept."
 )
 
 
@@ -51,10 +53,11 @@ def invoke_structured[T: BaseModel](
     schema: type[T],
     prompt: str,
     llm: BaseChatModel | None = None,
-    cache_dir: Path = CACHE_DIR,
+    cache_dir: Path | None = None,
     sleep: Callable[[float], None] = time.sleep,
 ) -> T:
-    """Ask the LLM for a `schema` object: disk cache first, one retry after a 429."""
+    """Ask the LLM for a `schema` object: disk cache, then one retry after 429/5xx."""
+    cache_dir = cache_dir or CACHE_DIR
     key = cache_key(get_env("LLM_MODEL"), prompt)
     cached = cache_get(key, cache_dir)
     if cached is not None:
@@ -62,11 +65,11 @@ def invoke_structured[T: BaseModel](
     runnable = (llm or get_llm()).with_structured_output(schema)
     try:
         result = runnable.invoke(prompt)
-    except ModelRateLimitError as error:
+    except RETRYABLE as error:
         sleep(retry_delay(error))
         try:
             result = runnable.invoke(prompt)
-        except ModelRateLimitError as second_error:
+        except RETRYABLE as second_error:
             raise RuntimeError(QUOTA_MESSAGE) from second_error
     cache_put(key, result.model_dump(), cache_dir)
     return result
