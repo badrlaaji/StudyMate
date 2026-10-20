@@ -1,0 +1,44 @@
+{
+  "app": { "name": "StudyMate", "tagline": "Study desk for Principles of Data Science" },
+  "nav": { "map": "Map", "study": "Study", "feynman": "Feynman", "quiz": "Quiz" },
+  "lang": { "switch": "Français", "label": "Switch the interface to French" },
+  "study": {
+    "title": "Ask the book",
+    "placeholder": "Ask a question about chapters 6-7 (press / to focus)",
+    "ask": "Ask",
+    "empty": "Ask anything about machine learning, deep learning or AI. Answers cite the book's pages.",
+    "steps": { "search": "Searching the book…", "write": "Writing the answer…", "verify": "Checking the citations…" },
+    "verified": "✓ citations verified",
+    "route": "route",
+    "notFound": "Not found in the book",
+    "degraded": "Limited mode: the mastery service is not available",
+    "openPage": "Open page",
+    "newTab": "open in a new tab",
+    "pdfTitle": "Book",
+    "close": "Close",
+    "you": "You",
+    "assistant": "StudyMate",
+    "error": "The service is not available. Try again in a minute."
+  },
+  "feynman": {
+    "title": "Feynman mode",
+    "intro": "Pick a notion and explain it in your own words, as if to a friend. The judge checks each key idea; the score is computed by code.",
+    "notion": "Notion",
+    "placeholder": "Your explanation (at least 20 characters)…",
+    "submit": "Check my explanation",
+    "checking": "Checking your explanation…",
+    "covered": "Key ideas you explained",
+    "missing": "Key ideas to add",
+    "errors": "Mistakes",
+    "noErrors": "No mistake found.",
+    "score": "Score",
+    "followUp": "Follow-up question",
+    "pages": "Pages to re-read",
+    "notRecorded": "Score not recorded: the mastery service is not available."
+  },
+  "pdf": { "loading": "Loading the PDF…", "error": "The PDF could not be shown here.", "page": "page" },
+  "footer": {
+    "attribution": "Content: Principles of Data Science, OpenStax, CC BY-NC-SA 4.0.",
+    "book": "Read the book on openstax.org"
+  }
+}

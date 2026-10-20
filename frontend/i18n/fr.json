@@ -1,0 +1,44 @@
+{
+  "app": { "name": "StudyMate", "tagline": "Bureau d'étude pour Principles of Data Science" },
+  "nav": { "map": "Carte", "study": "Étude", "feynman": "Feynman", "quiz": "Quiz" },
+  "lang": { "switch": "English", "label": "Passer l'interface en anglais" },
+  "study": {
+    "title": "Interroger le livre",
+    "placeholder": "Pose une question sur les chapitres 6-7 (touche / pour écrire)",
+    "ask": "Demander",
+    "empty": "Pose une question sur le machine learning, le deep learning ou l'IA. Les réponses citent les pages du livre.",
+    "steps": { "search": "Recherche dans le livre…", "write": "Rédaction de la réponse…", "verify": "Vérification des citations…" },
+    "verified": "✓ citations vérifiées",
+    "route": "route",
+    "notFound": "Absent du livre",
+    "degraded": "Mode limité : le service de maîtrise n'est pas disponible",
+    "openPage": "Ouvrir la page",
+    "newTab": "ouvrir dans un nouvel onglet",
+    "pdfTitle": "Livre",
+    "close": "Fermer",
+    "you": "Toi",
+    "assistant": "StudyMate",
+    "error": "Le service n'est pas disponible. Réessaie dans une minute."
+  },
+  "feynman": {
+    "title": "Mode Feynman",
+    "intro": "Choisis une notion et explique-la avec tes mots, comme à un ami. Le juge vérifie chaque idée clé ; la note est calculée par le code.",
+    "notion": "Notion",
+    "placeholder": "Ton explication (au moins 20 caractères)…",
+    "submit": "Vérifier mon explication",
+    "checking": "Vérification de ton explication…",
+    "covered": "Idées clés expliquées",
+    "missing": "Idées clés à ajouter",
+    "errors": "Erreurs",
+    "noErrors": "Aucune erreur trouvée.",
+    "score": "Note",
+    "followUp": "Question de relance",
+    "pages": "Pages à relire",
+    "notRecorded": "Note non enregistrée : le service de maîtrise n'est pas disponible."
+  },
+  "pdf": { "loading": "Chargement du PDF…", "error": "Le PDF ne peut pas être affiché ici.", "page": "page" },
+  "footer": {
+    "attribution": "Contenu : Principles of Data Science, OpenStax, CC BY-NC-SA 4.0.",
+    "book": "Lire le livre sur openstax.org"
+  }
+}

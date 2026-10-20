@@ -42,6 +42,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : accord Feynman ±1 → il faut les 20 notes humaines à l'aveugle (Badr).
 - **Chiffres** : RAGAS (20 questions test EN, juge = gemini-3.5-flash-lite) fidélité 0,934, pertinence 0,931 ; 15/20 réponses à fidélité 1,0 ; plus basse 0,67 (test10, la réponse fausse de l'étape 6) ; ~60 appels Gemini ; 122 tests (121 passés, 1 ignoré sans base de test).
 
+## Étape 8 — Study Desk (2026-10-20)
+- **Fait** : Next.js 16 (App Router) : `/study` (chat + PDF, page citée ouverte et passage surligné), `/feynman`, bouton FR/EN, proxy `/api/*`, style papier et encre, raccourci `/`, `aria-live` ; vérifié dans Chromium (0 erreur JS) ; captures dans le README.
+- **Bloqué** : vidéo v1 (à tourner par Badr). Carte et quiz : étape 9.
+- **Chiffres** : `next build` OK (6 routes) ; PDF 37,3 Mo relayé par le proxy ; surlignage : 4 éléments marqués (seuil 4) → 2 (seuil 15) ; Feynman réel : 2 idées sur 3 → 3/5 ; 80 paquets npm.
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |

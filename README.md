@@ -1,6 +1,8 @@
 # StudyMate
 
-> **Work in progress.** Steps 0-7 done: indexed book, 21 notions, retrieval evaluation, fine-tuned embeddings, LangGraph agent with verified citations, FastAPI service.
+> **Work in progress.** Steps 0-8 done: indexed book, 21 notions, retrieval evaluation, fine-tuned embeddings, LangGraph agent with verified citations, FastAPI service, "Study Desk" web interface. Demo video coming.
+
+![Study desk: a cited answer, the PDF page opened and the cited passage highlighted](docs/img/study-desk.png)
 
 A study assistant for one textbook. It answers questions with **cited and verified pages**,
 routes each request (answer, quiz, revision plan), checks your understanding with a
@@ -93,6 +95,16 @@ uv pip install -r requirements.txt -r requirements-dev.txt
 Copy-Item .env.example .env   # then fill in the keys
 uv run python -m scripts.check_env all
 ```
+
+### Run the app (three terminals)
+
+```powershell
+uv run uvicorn api.main:app --port 8000                 # API (needs .env)
+cd frontend; npm ci; npm run build; npm run start         # web app on http://localhost:3000
+# Spring Boot mastery service: step 9 (the app runs in degraded mode without it)
+```
+
+![Feynman mode: key ideas covered or missing, score computed by code, follow-up question](docs/img/feynman.png)
 
 ## Attribution
 

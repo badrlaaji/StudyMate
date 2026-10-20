@@ -198,3 +198,21 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S7-4 Image Docker de l'API
 - `python:3.13-slim`, torch depuis l'index CPU puis le lock, modèle d'embeddings intégré à l'image (`ARG EMBEDDING_MODEL`), utilisateur non root, `.dockerignore` (ni données, ni modèles, ni secrets).
+
+## Étape 8 — Interface « Study Desk »
+
+### S8-1 Un seul proxy `/api/[...path]` avec liste blanche
+- Le navigateur n'appelle que Next.js ; la route relaie vers `API_URL` (côté serveur seulement) les 9 chemins autorisés, 404 pour le reste (vérifié : `/api/secret` → 404).
+
+### S8-2 Langue : cookie + 2 dictionnaires
+- `i18n/en.json`, `fr.json` ; le bouton écrit le cookie `lang` puis `router.refresh()` : les pages serveur relisent le cookie. Pas de bibliothèque d'i18n.
+
+### S8-3 PDF : chargé à la demande, passage surligné
+- `next/dynamic` sans rendu serveur ; worker configuré dans le même module que `<Document>` (doc react-pdf 10). Plan B : lien `book.pdf#page=N`.
+- Surlignage : un élément de texte de la page est marqué s'il fait partie de l'extrait cité. Mesuré : avec un seuil de 4 caractères, des mots isolés (« random forest ») étaient surlignés ailleurs ; seuil 15 → seules les 2 lignes de l'extrait.
+
+### S8-4 Étapes d'attente affichées au minuteur
+- Pas de streaming (les citations sont vérifiées avant affichage) : « recherche → rédaction → vérification » suivent le temps écoulé, pas l'état réel de l'agent. Approximation assumée.
+
+### S8-5 TypeScript 5.9.3
+- TypeScript 7.0 (réécriture native) existe ; sa compatibilité avec Next 16 n'a pas été vérifiée → 5.9.3. Versions exactes dans `package.json` + `package-lock.json`.
