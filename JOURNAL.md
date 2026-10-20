@@ -27,6 +27,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : relecture des questions par Badr (`"validated": false`).
 - **Chiffres** : dev EN hit@4 1,000 / MRR 1,000, FR 0,900 / 0,775 (identique sans fin de chapitre ; sans préfixe : EN MRR 0,950, FR 0,833) ; **test EN hit@4 0,850 / MRR 0,703 ; FR 0,750 / 0,604** (écart +0,099) ; top-1 pièges 0,746-0,862 vs questions 0,814-0,900 (test) ; 67 tests passés.
 
+## Étape 5 — Fine-tuning (2026-10-20)
+- **Fait** : 568 paires EN/FR par Gemini ; décontamination (8 retirées) ; entraînement MNRL sur CPU ; réindexation sous un 2e `embedding_model` ; test base vs fine-tuné ; fiche du modèle et script de publication.
+- **Bloqué** : publication sur le Hub → il faut `HF_TOKEN` (écriture).
+- **Chiffres** : 57 appels Gemini en 7 min 44 (0 erreur 429) ; 560 paires gardées ; 70 pas (2 époques, lot 16) en 414 s sur CPU Linux 4 cœurs ; modèle 466 Mo ; test base → fine-tuné : EN hit@4 0,850 → 0,950, MRR 0,703 → 0,722 ; FR hit@4 0,750 → 0,800, MRR 0,604 → 0,611 ; 73 tests passés.
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |

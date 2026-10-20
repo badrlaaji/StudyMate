@@ -131,3 +131,24 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S4-4 Pas de seuil de score pour les questions hors cours
 - Mesuré : top-1 des pièges 0,746-0,862 ; top-1 des vraies questions 0,799-0,905. Les plages se chevauchent → le refus se fera par l'agent (citations vérifiées), pas par un seuil.
+
+## Étape 5 — Fine-tuning des embeddings
+
+### S5-1 `old_fit` plutôt que le Trainer
+- Constat : `SentenceTransformerTrainer` lève `ImportError: … requires accelerate>=1.1.0` ; accelerate n'est pas dans la stack.
+- Options : ajouter accelerate (dépendance hors liste) ; `old_fit` (boucle PyTorch documentée dans sentence-transformers 6.1.0).
+- Choix : `old_fit` + `NoDuplicatesDataLoader` + `MultipleNegativesRankingLoss` (F1). Aucune dépendance ajoutée.
+
+### S5-2 Paires synthétiques EN + FR
+- 5 morceaux par appel (F1) → 57 appels, 1 question EN + 1 FR par morceau = 568 paires. Contrôles : 0 formulation « ce passage », aucune suite de 8 mots copiée du livre.
+- `NoDuplicatesDataLoader` : la question EN et la question FR d'un même passage ne sont jamais dans le même lot (sinon fausses négatives).
+
+### S5-3 Décontamination
+- Mesuré : 5 questions de test sur 40 avaient une question générée à ≥ 0,95 de similarité (même idée, même formulation naturelle).
+- Choix : retirer toute paire à ≥ 0,95 d'une question dev ou test → 8 paires retirées, 560 gardées.
+
+### S5-4 Résultat et choix du modèle de l'application
+- Test : hit@4 EN 0,850 → 0,950, FR 0,750 → 0,800 ; MRR@10 EN 0,703 → 0,722, FR 0,604 → 0,611. Par question : 6 gagnent / 5 perdent (EN), 5 / 5 (FR). Dev : EN MRR 1,000 → 0,920, FR 0,775 → 0,860.
+- Lecture : gain en hit@4 (ce que l'agent utilise : top 4), pas de gain démontré en MRR. 20 questions : indicatif.
+- Choix : l'application utilisera le modèle fine-tuné une fois publié sur le Hub (`EMBEDDING_MODEL` = id du Hub) ; e5 de base par défaut d'ici là.
+- Observation : les scores du modèle fine-tuné s'étalent (pièges 0,25-0,40, questions 0,37-0,78), sans séparer parfaitement (4/40 questions sous 0,41) → S4-4 inchangé.
