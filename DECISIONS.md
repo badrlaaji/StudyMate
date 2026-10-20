@@ -180,3 +180,21 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S6-8 « Correcte » sans juge LLM
 - Correcte = statut `ok` + citation vérifiée sur une page attendue. La qualité du texte sera mesurée par RAGAS (étape 7).
+
+## Étape 7 — API, RAGAS, juge Feynman
+
+### S7-1 FastAPI : dépendances dans `app.state`, ouvertes au démarrage
+- `lifespan` ouvre le pool SQL, le client Spring, charge le catalogue, compile le graphe et précharge le modèle d'embeddings. Les tests remplissent `app.state` avec des faux (pas de lifespan) → 1 test par endpoint, sans réseau.
+- LLM indisponible deux fois de suite → `RuntimeError` → réponse 503 claire (gestionnaire d'exception), pas une erreur 500.
+
+### S7-2 RAGAS 0.4.3 avec la stack figée
+- Constat 1 : `import ragas` échoue (`langchain_community.chat_models.vertexai` n'existe plus dans langchain-community 0.4.2) ; revenir à langchain-community 0.3 est impossible (exige langchain-core < 1).
+- Choix 1 : module de remplacement vide avant l'import (ragas ne s'en sert que dans une liste `isinstance` pour d'anciens modèles LangChain, chemin non utilisé). Aucune version changée.
+- Constat 2 : l'adaptateur Google de ragas exige un client synchrone, alors que ses métriques sont asynchrones. Choix 2 : point d'entrée compatible OpenAI de Gemini (`v1beta/openai/`) avec le client `openai` déjà installé.
+- `strictness=1` pour la pertinence (3 par défaut) : 3 appels par question au lieu de 5 (quota). Cache disque de ragas pour les relances.
+
+### S7-3 Juge Feynman : protocole à l'aveugle
+- 20 explications de qualité variée (EN/FR), écrites sans le LLM de l'application. Le script refuse de tourner tant que les 20 notes humaines ne sont pas saisies : la personne qui note ne voit jamais la note du code avant.
+
+### S7-4 Image Docker de l'API
+- `python:3.13-slim`, torch depuis l'index CPU puis le lock, modèle d'embeddings intégré à l'image (`ARG EMBEDDING_MODEL`), utilisateur non root, `.dockerignore` (ni données, ni modèles, ni secrets).

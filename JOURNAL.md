@@ -37,6 +37,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : rien (Spring arrive à l'étape 9 ; mode dégradé en attendant).
 - **Chiffres** : test (modèle fine-tuné) EN correct 19/20, refus 5/5 ; FR correct 19/20, refus 5/5 ; bonne page dans le top 4 : 19/20 dans les deux langues (FR sans réécriture : 16/20) ; latence médiane 8,3 s EN (pendant des 503 Gemini) / 2,8 s FR ; 1 repli du routeur sur les règles (503) ; ~110 appels Gemini ; 101 tests passés.
 
+## Étape 7 — API, RAGAS, Feynman (2026-10-20)
+- **Fait** : FastAPI complète (health, chat, notions, feynman, quiz, quiz/result, mastery, plan, book.pdf) ; juge Feynman + note calculée par le code ; RAGAS ; jeu Feynman à l'aveugle (20 explications) ; Dockerfile de l'API ; parcours réel vérifié dans Chromium (question → réponse vérifiée → page 327 ouverte et passage surligné).
+- **Bloqué** : accord Feynman ±1 → il faut les 20 notes humaines à l'aveugle (Badr).
+- **Chiffres** : RAGAS (20 questions test EN, juge = gemini-3.5-flash-lite) fidélité 0,934, pertinence 0,931 ; 15/20 réponses à fidélité 1,0 ; plus basse 0,67 (test10, la réponse fausse de l'étape 6) ; ~60 appels Gemini ; 122 tests (121 passés, 1 ignoré sans base de test).
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |

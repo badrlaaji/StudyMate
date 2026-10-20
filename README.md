@@ -1,6 +1,6 @@
 # StudyMate
 
-> **Work in progress.** Steps 0-6 done: indexed book, 21 notions, retrieval evaluation, fine-tuned embeddings, LangGraph agent with verified citations.
+> **Work in progress.** Steps 0-7 done: indexed book, 21 notions, retrieval evaluation, fine-tuned embeddings, LangGraph agent with verified citations, FastAPI service.
 
 A study assistant for one textbook. It answers questions with **cited and verified pages**,
 routes each request (answer, quiz, revision plan), checks your understanding with a
@@ -67,6 +67,11 @@ are among the retrieved ones) **and** cites an expected page. No LLM judge.
 - The one miss (both languages) cites a verified but wrong page: the citation check proves the
   page was retrieved, not that it is the best one.
 - Reproduce: `uv run python -m eval.eval_answers`.
+
+**Answer quality** (step 7, RAGAS 0.4.3, 20 English test questions, all answered):
+faithfulness **0.934** (15/20 answers fully supported by the retrieved passages), answer
+relevancy **0.931**. Limit: the judge is the same model as the generator (the only free model
+used), so the scores may be optimistic. Reproduce: `uv run python -m eval.eval_ragas`.
 
 ## Stack
 

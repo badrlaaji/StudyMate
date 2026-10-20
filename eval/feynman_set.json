@@ -1,0 +1,146 @@
+{
+  "license": "CC BY-NC-SA 4.0",
+  "note": "20 student-style explanations of varying quality, written without the application's LLM. human_score (0-5) is filled by a human who has NOT seen the code's score, with the same rubric: share of key ideas correctly explained, minus 1 per factual error (at most 2).",
+  "items": [
+    {
+      "id": "fey01",
+      "notion_id": "overfitting_and_underfitting",
+      "lang": "en",
+      "explanation": "Overfitting is when the model learns the training data too well, even the noise, so it has high variance and does badly on new data. Underfitting is the opposite: the model is too simple or too rigid and misses the main pattern. You cannot reduce bias and variance at the same time: lowering one usually raises the other, that is the bias-variance trade-off.",
+      "human_score": null
+    },
+    {
+      "id": "fey02",
+      "notion_id": "overfitting_and_underfitting",
+      "lang": "fr",
+      "explanation": "Le surapprentissage, c'est quand le modèle a trop peu de données et ne voit pas la tendance. Il faut donc toujours utiliser le modèle le plus complexe possible, comme un polynôme de degré élevé, pour avoir zéro erreur.",
+      "human_score": null
+    },
+    {
+      "id": "fey03",
+      "notion_id": "logistic_regression",
+      "lang": "en",
+      "explanation": "Logistic regression is for yes/no outcomes. It passes a linear combination of the inputs through a sigmoid, an S-shaped curve, so the output is between 0 and 1 and can be read as a probability.",
+      "human_score": null
+    },
+    {
+      "id": "fey04",
+      "notion_id": "logistic_regression",
+      "lang": "fr",
+      "explanation": "La régression logistique prédit une probabilité entre 0 et 1 grâce à la fonction sigmoïde. Le logit est la fonction inverse de la sigmoïde : il transforme la probabilité en log-odds, ce qui rend le modèle linéaire. On choisit les paramètres par maximum de vraisemblance, c'est-à-dire ceux qui rendent les données observées les plus probables.",
+      "human_score": null
+    },
+    {
+      "id": "fey05",
+      "notion_id": "k_means_clustering",
+      "lang": "en",
+      "explanation": "K-means is a supervised algorithm: you give it labeled points and it learns k classes. It works by drawing a decision tree that separates the groups.",
+      "human_score": null
+    },
+    {
+      "id": "fey06",
+      "notion_id": "k_means_clustering",
+      "lang": "fr",
+      "explanation": "K-means regroupe des points non étiquetés en k groupes choisis à l'avance. On place k centres, on affecte chaque point au centre le plus proche, puis on déplace chaque centre à la moyenne de ses points, et on recommence jusqu'à ce que plus rien ne bouge.",
+      "human_score": null
+    },
+    {
+      "id": "fey07",
+      "notion_id": "confusion_matrix",
+      "lang": "en",
+      "explanation": "A confusion matrix is a table of predicted classes against actual classes. The diagonal holds the correct predictions and the other cells show which classes get mixed up. For two classes it gives true positives, true negatives, false positives and false negatives. If you tune the model to cut false positives, you usually get more false negatives.",
+      "human_score": null
+    },
+    {
+      "id": "fey08",
+      "notion_id": "confusion_matrix",
+      "lang": "fr",
+      "explanation": "Une matrice de confusion sert à mesurer le temps d'entraînement d'un modèle. Plus les nombres sont grands sur la diagonale, plus le modèle a été lent.",
+      "human_score": null
+    },
+    {
+      "id": "fey09",
+      "notion_id": "decision_tree_construction",
+      "lang": "en",
+      "explanation": "A decision tree asks a series of simple questions about the features, from the root down to the leaves, which makes it easy to understand. To choose each question, we compute the entropy, a measure of uncertainty, and we pick the split with the largest information gain, which means the children are purer than the parent.",
+      "human_score": null
+    },
+    {
+      "id": "fey10",
+      "notion_id": "decision_tree_construction",
+      "lang": "fr",
+      "explanation": "Un arbre de décision pose des questions successives sur les données, comme un organigramme. On le construit en choisissant à chaque nœud la séparation qui augmente le plus l'entropie.",
+      "human_score": null
+    },
+    {
+      "id": "fey11",
+      "notion_id": "random_forest",
+      "lang": "en",
+      "explanation": "A random forest builds many decision trees, each on a bootstrap sample of the data, and each tree only looks at a random subset of the features so the trees are different. To classify a new point, the trees vote and the majority wins.",
+      "human_score": null
+    },
+    {
+      "id": "fey12",
+      "notion_id": "random_forest",
+      "lang": "fr",
+      "explanation": "Une forêt aléatoire, c'est plusieurs arbres. C'est plus précis qu'un seul arbre.",
+      "human_score": null
+    },
+    {
+      "id": "fey13",
+      "notion_id": "naive_bayes_classifiers",
+      "lang": "en",
+      "explanation": "Naive Bayes uses Bayes' theorem with prior probabilities learned from the training data to find the most likely class. It is called naive because it assumes the features are independent, which is rarely true, but it still works well. The Gaussian version handles continuous features that follow a normal distribution, and in practice you can just compare the numerators of Bayes' formula instead of computing exact probabilities.",
+      "human_score": null
+    },
+    {
+      "id": "fey14",
+      "notion_id": "naive_bayes_classifiers",
+      "lang": "fr",
+      "explanation": "Le classifieur bayésien naïf suppose que toutes les caractéristiques dépendent fortement les unes des autres, c'est pour ça qu'il est naïf. Il utilise le théorème de Bayes.",
+      "human_score": null
+    },
+    {
+      "id": "fey15",
+      "notion_id": "neural_network_structure_and_components",
+      "lang": "en",
+      "explanation": "A neural network has an input layer, one or more hidden layers and an output layer of neurons. Each connection has a weight that multiplies the signal, and each neuron has a bias that makes it more or less likely to fire.",
+      "human_score": null
+    },
+    {
+      "id": "fey16",
+      "notion_id": "neural_network_structure_and_components",
+      "lang": "fr",
+      "explanation": "Un réseau de neurones est composé de couches : entrée, couches cachées et sortie. Chaque connexion a un poids, chaque neurone un biais. Après la somme pondérée plus le biais, on applique une fonction d'activation non linéaire, comme ReLU ou sigmoïde, qui donne la sortie du neurone.",
+      "human_score": null
+    },
+    {
+      "id": "fey17",
+      "notion_id": "recurrent_neural_networks",
+      "lang": "en",
+      "explanation": "RNNs have feedback loops: the output of a neuron is fed back as an input at the next step, which gives the network a kind of memory for sequences like time series. Training is hard because the repeated weights can make gradients shrink to zero or blow up.",
+      "human_score": null
+    },
+    {
+      "id": "fey18",
+      "notion_id": "recurrent_neural_networks",
+      "lang": "fr",
+      "explanation": "Les réseaux récurrents sont surtout utilisés pour les images, car ils regardent chaque pixel en même temps. Ils n'ont pas de mémoire.",
+      "human_score": null
+    },
+    {
+      "id": "fey19",
+      "notion_id": "convolutional_neural_networks",
+      "lang": "en",
+      "explanation": "CNNs are made for grid data like images. Convolutional layers slide filters over the image to detect patterns and produce feature maps. Pooling layers then shrink these maps while keeping the important information. Early layers find edges and textures, deeper layers find parts of objects.",
+      "human_score": null
+    },
+    {
+      "id": "fey20",
+      "notion_id": "convolutional_neural_networks",
+      "lang": "fr",
+      "explanation": "Un CNN applique des filtres sur une image pour repérer des motifs, ce qui produit des cartes de caractéristiques. Les couches de pooling agrandissent l'image pour voir plus de détails.",
+      "human_score": null
+    }
+  ]
+}

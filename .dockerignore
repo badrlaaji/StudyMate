@@ -1,0 +1,11 @@
+# Hidden files and folders (.env, .git, .venv, .cache...) never go in an image.
+.*
+data
+models
+docs
+eval
+tests
+**/__pycache__
+frontend/node_modules
+frontend/.next
+core/target
