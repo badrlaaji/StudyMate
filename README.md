@@ -1,6 +1,6 @@
 # StudyMate
 
-> **Work in progress.** Steps 0-2 done (environment, book → clean pages, catalogue of 21 notions). No results yet.
+> **Work in progress.** Steps 0-3 done (environment, book → clean pages, 21 notions, 284 chunks indexed in pgvector). First measurements come with step 4.
 
 A study assistant for one textbook. It answers questions with **cited and verified pages**,
 routes each request (answer, quiz, revision plan), checks your understanding with a

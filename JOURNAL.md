@@ -17,6 +17,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : validation du catalogue par Badr (D1) — `"validated": false` en attendant.
 - **Chiffres** : 21 notions issues des 10 sections numérotées, 2 à 8 pages par notion, 3 à 5 idées clés ; 20 appels Gemini (2 générations × 10), 1 min 30 par génération (pause 6 s incluse), 0 erreur 429 ; 45 tests passés.
 
+## Étape 3 — Indexation (2026-10-20)
+- **Fait** : découpage en tokens e5 (D9), vecteurs « passage: », table `chunks` (pgvector) remplie, recherche top-k cosinus ; 3 recherches vérifiées à la main (EN, FR, paraphrase) ; tests des préfixes verts ; 1 bug trouvé par les tests (INSERT vide).
+- **Bloqué** : remplissage de Neon à lancer depuis Windows (`uv run python -m rag.ingest`) : l'environnement Linux n'atteint pas Neon. Base locale pgvector remplie.
+- **Chiffres** : 284 morceaux (249 tokens en moyenne, max 300, 1 à 5 par page) ; vectorisation 21 s sur CPU (Linux 4 cœurs) ; recherches manuelles : bonne page dans le top 4 pour 3/3, en 1re position pour 1/3 (EN random forest) — FR rétropropagation : 1re bonne page au rang 3 ; paraphrase surapprentissage : rang 4 ; 58 tests passés (dont 1 avec base).
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |

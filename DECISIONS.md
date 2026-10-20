@@ -89,3 +89,27 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S2-5 Validation humaine (D1) non bloquante
 - `notions.json` est commité avec `"validated": false`. Le script de brouillon refuse d'écraser un catalogue validé.
+
+## Étape 3 — Indexation
+
+### S3-1 SQL direct plutôt que langchain-postgres
+- Options : `PGVectorStore` de langchain-postgres ; SQL écrit à la main (SQLAlchemy async + asyncpg).
+- Choix : SQL direct (`rag/store.py`, 4 requêtes lisibles).
+- Pourquoi : langchain-postgres attend un objet `Embeddings` (une classe à écrire, contraire aux règles de code) et impose son schéma de table. langchain-postgres reste installé (stack figée) mais n'est pas utilisé.
+
+### S3-2 Recherche exacte, sans index
+- Options : index HNSW (approché) ; parcours complet (exact).
+- Choix : pas d'index. 284 morceaux : le parcours complet prend quelques millisecondes et le résultat est exact. Un index HNSW se justifierait à partir de dizaines de milliers de lignes.
+
+### S3-3 Colonne `embedding_model`
+- Une seule table `chunks`, une colonne qui dit quel modèle a produit le vecteur : e5 de base et e5 fine-tuné (étape 5) cohabitent et se comparent sans changer le schéma.
+
+### S3-4 Morceaux = tranches exactes de la page, longueur garantie
+- Le texte d'un morceau est coupé dans la page grâce aux positions de caractères du tokenizer (pas de texte reconstitué).
+- Mesuré : 12 morceaux sur 284 faisaient 301 tokens une fois retokenisés avec le préfixe → boucle qui retire un token en fin de morceau jusqu'à ≤ 300. Résultat : max 300.
+
+### S3-5 Vecteurs passés en texte avec `CAST(... AS vector)`
+- Évite un paquet Python supplémentaire (hors liste) pour enregistrer le type `vector` dans asyncpg.
+
+### S3-6 Test de base de données optionnel
+- `tests/test_rag.py` contient un test sur une vraie base, lancé seulement si `TEST_DATABASE_URL` est défini : les tests par défaut n'utilisent pas le réseau. La CI (étape 10) le lancera avec le conteneur pgvector.

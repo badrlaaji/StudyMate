@@ -27,10 +27,10 @@ def load_env(path: Path = ENV_FILE) -> None:
         os.environ.setdefault(key, value)
 
 
-def get_env(name: str) -> str:
-    """Return a required environment variable or fail with a clear message."""
+def get_env(name: str, default: str | None = None) -> str:
+    """Return an environment variable, its default, or fail with a clear message."""
     load_env()
-    value = os.environ.get(name, "")
+    value = os.environ.get(name, "") or default
     if not value:
         raise RuntimeError(f"Missing {name}: copy .env.example to .env and fill it.")
     return value

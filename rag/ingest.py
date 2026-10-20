@@ -1,16 +1,21 @@
-"""Book PDF -> clean pages of chapters 6 and 7 -> data/interim/pages.jsonl.
+"""Book PDF -> clean pages (pages.jsonl) -> chunks -> e5 vectors -> chunks table.
 
 Usage: uv run python -m rag.ingest
 """
 
+import asyncio
 import json
 import re
+import time
 from collections import Counter
 from pathlib import Path
 
 from pypdf import PdfReader
 
 from config import ROOT
+from rag.chunking import chunk_pages
+from rag.embeddings import embed_passages, model_name
+from rag.store import count_chunks, create_schema, get_engine, replace_chunks
 
 BOOK_PATH = ROOT / "data" / "raw" / "book.pdf"
 PAGES_PATH = ROOT / "data" / "interim" / "pages.jsonl"
@@ -126,8 +131,8 @@ def read_jsonl(path: Path = PAGES_PATH) -> list[dict]:
         return [json.loads(line) for line in file if line.strip()]
 
 
-def main() -> None:
-    """Build pages.jsonl for the selected chapters and print counts."""
+def build_pages() -> list[dict]:
+    """Build pages.jsonl for the selected chapters, print counts, return the pages."""
     reader = PdfReader(BOOK_PATH)
     top, subs = read_outline(reader)
     records = []
@@ -143,6 +148,28 @@ def main() -> None:
     write_jsonl(records, PAGES_PATH)
     total = sum(len(r["text"]) for r in records)
     print(f"total: {len(records)} pages, {total} chars -> {PAGES_PATH}")
+    return records
+
+
+async def index_pages(records: list[dict]) -> None:
+    """Chunk, embed ("passage: ") and store the pages, then print the counts."""
+    start = time.perf_counter()
+    chunks = chunk_pages(records)
+    vectors = embed_passages([chunk["text"] for chunk in chunks])
+    print(f"{len(chunks)} chunks embedded in {time.perf_counter() - start:.0f} s")
+    engine = get_engine()
+    try:
+        await create_schema(engine)
+        await replace_chunks(engine, model_name(), chunks, vectors)
+        stored = await count_chunks(engine, model_name())
+        print(f"{stored} chunks stored for {model_name()}")
+    finally:
+        await engine.dispose()
+
+
+def main() -> None:
+    """Run the whole offline pipeline."""
+    asyncio.run(index_pages(build_pages()))
 
 
 if __name__ == "__main__":
