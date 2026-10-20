@@ -6,9 +6,10 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S0-1 Paramètre SSL d'asyncpg pour Neon
 - Contexte : Neon donne `?sslmode=require&channel_binding=require` (format libpq, prévu pour psycopg).
-- Options : garder la chaîne telle quelle ; ou `?ssl=require` dans l'URL SQLAlchemy.
-- Choix : `postgresql+asyncpg://…?ssl=require`, sans `channel_binding`. En asyncpg direct : `asyncpg.connect(dsn, ssl="require")`.
-- Pourquoi (lu dans le code installé) : SQLAlchemy 2.1.5 passe chaque paramètre de l'URL à `asyncpg.connect()`, qui n'a pas d'argument `sslmode` ; asyncpg 0.32.0 envoie tout paramètre inconnu (`channel_binding`) au serveur comme réglage de session.
+- Mesuré : avec SQLAlchemy 2.1.5, `sslmode` dans l'URL → `TypeError: connect() got an unexpected keyword argument 'sslmode'`. En asyncpg direct, la chaîne complète se connecte à Neon.
+- Mesuré : `ssl='disable'` → Neon refuse (`connection is insecure`) : TLS obligatoire, donc `ssl="require"` chiffre bien.
+- Lu dans asyncpg 0.32.0 : le channel binding est désactivé volontairement (`protocol/scram.pyx`) ; `channel_binding=require` est ignoré, pas appliqué.
+- Choix : `postgresql+asyncpg://…?ssl=require`, sans `channel_binding` (il ne protège rien avec asyncpg). En asyncpg direct : `asyncpg.connect(dsn, ssl="require")`.
 
 ### S0-2 Nom de la variable de la clé Gemini
 - Choix : `GOOGLE_API_KEY`. Vérifié dans le code de langchain-google-genai 4.4.2 : `GOOGLE_API_KEY` est lue en premier, `GEMINI_API_KEY` en secours.
@@ -37,6 +38,11 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 - Contexte : un environnement Linux de développement sans DNS ni sortie TCP directe ne peut pas joindre Neon.
 - Choix : conteneur `pgvector/pgvector:0.8.2-pg17` (même image que la CI) pour coder et tester. Neon reste la base de développement (W2) ; vérification depuis Windows avec `check_env db`.
 
-### S0-8 Configuration des outils sans `pyproject.toml`
+### S0-8 Versions Postgres : Neon ≠ CI
+- Mesuré : Neon = PostgreSQL 18.6 + pgvector 0.8.6 ; image CI/compose figée = PostgreSQL 17 + pgvector 0.8.2.
+- Options : changer l'image CI ; garder l'image figée.
+- Choix : garder `pgvector/pgvector:0.8.2-pg17`. On n'utilise que le type `vector`, la distance cosinus `<=>` et l'index HNSW, présents dans les deux versions.
+
+### S0-9 Configuration des outils sans `pyproject.toml`
 - Choix : `pytest.ini` (`pythonpath = .`) et `ruff.toml`.
 - Pourquoi : un `pyproject.toml` à la racine change le comportement de `uv run` (mode projet) ; on reste sur `requirements.txt` comme prévu (inférence).
