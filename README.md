@@ -1,6 +1,6 @@
 # StudyMate
 
-> **Work in progress.** Step 0 (repository and environment) is underway. No results yet.
+> **Work in progress.** Steps 0-1 done (environment, book → clean pages). No results yet.
 
 A study assistant for one textbook. It answers questions with **cited and verified pages**,
 routes each request (answer, quiz, revision plan), checks your understanding with a

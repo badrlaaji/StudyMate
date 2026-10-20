@@ -46,3 +46,24 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 ### S0-9 Configuration des outils sans `pyproject.toml`
 - Choix : `pytest.ini` (`pythonpath = .`) et `ruff.toml`.
 - Pourquoi : un `pyproject.toml` à la racine change le comportement de `uv run` (mode projet) ; on reste sur `requirements.txt` comme prévu (inférence).
+
+## Étape 1 — Livre → pages
+
+### S1-1 Bornes des chapitres lues dans les signets du PDF
+- Options : pages écrites en dur ; recherche de « Chapter 6 » dans le texte ; signets (outline) du PDF.
+- Choix : signets via pypdf → chapitre 6 = pages PDF 275-340, chapitre 7 = 341-386 (fin = début du chapitre suivant − 1).
+- Pourquoi : source structurée, exacte, et le titre de section de chaque page vient au passage.
+
+### S1-2 D8 précisé : comment compter les lignes répétées
+- Constat (mesuré) : sur les 112 pages, aucune ligne ne dépasse 50 % (« Access for free at openstax.org » = 50 % pile, pied de chapitre = 27 %), car les en-têtes alternent pages paires / impaires.
+- Choix : la règle des 50 % est appliquée par chapitre et par parité, chiffres remplacés par `#` (le numéro de page change). Plus une règle de forme pour le pied des pages impaires (titre de section + numéro), qui change à chaque section.
+- Résultat : 0 pied de page restant dans `pages.jsonl`.
+
+### S1-3 Garder toutes les pages du chapitre, avec leur section
+- Options : couper après « Key Terms » ; tout garder.
+- Choix : tout garder (exercices et références compris) avec le champ `section`. Filtrer ou non ces pages = un réglage à comparer à l'étape 4.
+
+### S1-4 Formules absentes du texte (limite connue)
+- Constat : les formules sont dessinées (aucune police mathématique sur la page ; `pdftotext` donne le même résultat). Indicateur : 39 pages sur 111 avec au moins 3 traces de formule perdue.
+- Options écartées pour la v1 : OCR (lent, hors liste), version HTML d'OpenStax avec MathML (pas de numéros de page PDF, contraire à D8).
+- Atténuation : le panneau PDF affiche la vraie page citée.
