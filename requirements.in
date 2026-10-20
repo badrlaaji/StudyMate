@@ -1,0 +1,14 @@
+# Runtime dependencies (top level). Locked with uv into requirements.txt.
+fastapi
+uvicorn
+pydantic
+langgraph
+langchain-core
+langchain-google-genai>=4.4
+langchain-postgres
+asyncpg
+sqlalchemy
+sentence-transformers
+torch
+pypdf
+httpx

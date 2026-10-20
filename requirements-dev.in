@@ -1,0 +1,6 @@
+# Dev dependencies (top level). Locked with uv into requirements-dev.txt.
+pytest
+ruff
+ragas>=0.4.3
+datasets>=5
+huggingface_hub

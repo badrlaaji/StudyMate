@@ -1,0 +1,14 @@
+# LF everywhere, whatever the OS.
+* text=auto eol=lf
+
+# Windows batch files need CRLF (the Maven wrapper mvnw.cmd).
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Binary files: no line-ending conversion.
+*.pdf binary
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff2 binary
+*.jar binary

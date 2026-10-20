@@ -1,0 +1,5 @@
+target-version = "py313"
+extend-exclude = ["frontend", "core"]
+
+[lint]
+select = ["E", "F", "I", "B"]

@@ -1,0 +1,31 @@
+# Secrets
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Data, models, caches (never in Git)
+data/
+models/
+.cache/
+*.pdf
+
+# Node / Next.js
+node_modules/
+.next/
+frontend/out/
+*.tsbuildinfo
+next-env.d.ts
+
+# Java / Maven
+core/target/
+
+# Editors and OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
