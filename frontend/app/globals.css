@@ -135,3 +135,18 @@ main { padding: 1.5rem; max-width: 1400px; margin: 0 auto; }
 .sr-only {
   position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
 }
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.tile { border-left-width: 8px; }
+.tile-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+.options { list-style: none; padding: 0; display: grid; gap: 0.5rem; }
+.options button { width: 100%; text-align: left; }
+.options button:disabled { opacity: 1; cursor: default; }

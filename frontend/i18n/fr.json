@@ -1,13 +1,28 @@
 {
-  "app": { "name": "StudyMate", "tagline": "Bureau d'étude pour Principles of Data Science" },
-  "nav": { "map": "Carte", "study": "Étude", "feynman": "Feynman", "quiz": "Quiz" },
-  "lang": { "switch": "English", "label": "Passer l'interface en anglais" },
+  "app": {
+    "name": "StudyMate",
+    "tagline": "Bureau d'étude pour Principles of Data Science"
+  },
+  "nav": {
+    "map": "Carte",
+    "study": "Étude",
+    "feynman": "Feynman",
+    "quiz": "Quiz"
+  },
+  "lang": {
+    "switch": "English",
+    "label": "Passer l'interface en anglais"
+  },
   "study": {
     "title": "Interroger le livre",
     "placeholder": "Pose une question sur les chapitres 6-7 (touche / pour écrire)",
     "ask": "Demander",
     "empty": "Pose une question sur le machine learning, le deep learning ou l'IA. Les réponses citent les pages du livre.",
-    "steps": { "search": "Recherche dans le livre…", "write": "Rédaction de la réponse…", "verify": "Vérification des citations…" },
+    "steps": {
+      "search": "Recherche dans le livre…",
+      "write": "Rédaction de la réponse…",
+      "verify": "Vérification des citations…"
+    },
     "verified": "✓ citations vérifiées",
     "route": "route",
     "notFound": "Absent du livre",
@@ -36,9 +51,55 @@
     "pages": "Pages à relire",
     "notRecorded": "Note non enregistrée : le service de maîtrise n'est pas disponible."
   },
-  "pdf": { "loading": "Chargement du PDF…", "error": "Le PDF ne peut pas être affiché ici.", "page": "page" },
+  "pdf": {
+    "loading": "Chargement du PDF…",
+    "error": "Le PDF ne peut pas être affiché ici.",
+    "page": "page"
+  },
   "footer": {
     "attribution": "Contenu : Principles of Data Science, OpenStax, CC BY-NC-SA 4.0.",
     "book": "Lire le livre sur openstax.org"
+  },
+  "map": {
+    "title": "Carte de maîtrise",
+    "intro": "Une tuile par notion des chapitres 6-7. Couleur = moyenne de tes 3 dernières notes.",
+    "levels": {
+      "WEAK": "Faible",
+      "LEARNING": "En cours",
+      "MASTERED": "Maîtrisée",
+      "NONE": "Pas commencée"
+    },
+    "explain": "Expliquer",
+    "quiz": "Quiz",
+    "read": "Relire",
+    "average": "moyenne",
+    "chart": "Note moyenne par notion travaillée (0-5)",
+    "plan": "Plan de révision",
+    "planEmpty": "Aucune notion faible pour l'instant : entraîne-toi avec le mode Feynman ou un quiz.",
+    "pages": "pages",
+    "degraded": "Le service de maîtrise n'est pas disponible : couleurs et plan masqués."
+  },
+  "quiz": {
+    "title": "Quiz",
+    "intro": "Des questions sur tes notions les plus faibles. Réponds avec les touches 1 à 4.",
+    "start": "Lancer un quiz",
+    "loading": "Préparation des questions…",
+    "question": "Question",
+    "of": "sur",
+    "correct": "Bonne réponse !",
+    "wrong": "Pas tout à fait.",
+    "answer": "Réponse",
+    "source": "Source",
+    "next": "Question suivante",
+    "finish": "Voir mes résultats",
+    "scores": "Notes enregistrées",
+    "notRecorded": "Notes non enregistrées : le service de maîtrise n'est pas disponible.",
+    "again": "Nouveau quiz",
+    "empty": "Aucune question n'a pu être générée. Réessaie.",
+    "degraded": "Le service de maîtrise n'est pas disponible : notions choisies au hasard."
+  },
+  "chat": {
+    "goQuiz": "Ouvrir le quiz",
+    "plan": "Ton plan de révision"
   }
 }

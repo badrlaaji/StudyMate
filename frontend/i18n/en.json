@@ -1,13 +1,28 @@
 {
-  "app": { "name": "StudyMate", "tagline": "Study desk for Principles of Data Science" },
-  "nav": { "map": "Map", "study": "Study", "feynman": "Feynman", "quiz": "Quiz" },
-  "lang": { "switch": "Français", "label": "Switch the interface to French" },
+  "app": {
+    "name": "StudyMate",
+    "tagline": "Study desk for Principles of Data Science"
+  },
+  "nav": {
+    "map": "Map",
+    "study": "Study",
+    "feynman": "Feynman",
+    "quiz": "Quiz"
+  },
+  "lang": {
+    "switch": "Français",
+    "label": "Switch the interface to French"
+  },
   "study": {
     "title": "Ask the book",
     "placeholder": "Ask a question about chapters 6-7 (press / to focus)",
     "ask": "Ask",
     "empty": "Ask anything about machine learning, deep learning or AI. Answers cite the book's pages.",
-    "steps": { "search": "Searching the book…", "write": "Writing the answer…", "verify": "Checking the citations…" },
+    "steps": {
+      "search": "Searching the book…",
+      "write": "Writing the answer…",
+      "verify": "Checking the citations…"
+    },
     "verified": "✓ citations verified",
     "route": "route",
     "notFound": "Not found in the book",
@@ -36,9 +51,55 @@
     "pages": "Pages to re-read",
     "notRecorded": "Score not recorded: the mastery service is not available."
   },
-  "pdf": { "loading": "Loading the PDF…", "error": "The PDF could not be shown here.", "page": "page" },
+  "pdf": {
+    "loading": "Loading the PDF…",
+    "error": "The PDF could not be shown here.",
+    "page": "page"
+  },
   "footer": {
     "attribution": "Content: Principles of Data Science, OpenStax, CC BY-NC-SA 4.0.",
     "book": "Read the book on openstax.org"
+  },
+  "map": {
+    "title": "Mastery map",
+    "intro": "One tile per notion of chapters 6-7. Colour = average of your last 3 scores.",
+    "levels": {
+      "WEAK": "Weak",
+      "LEARNING": "Learning",
+      "MASTERED": "Mastered",
+      "NONE": "Not started"
+    },
+    "explain": "Explain",
+    "quiz": "Quiz",
+    "read": "Re-read",
+    "average": "average",
+    "chart": "Average score per practised notion (0-5)",
+    "plan": "Revision plan",
+    "planEmpty": "No weak notion yet: practise with Feynman mode or a quiz.",
+    "pages": "pages",
+    "degraded": "The mastery service is not available: colours and plan are hidden."
+  },
+  "quiz": {
+    "title": "Quiz",
+    "intro": "Questions on your weakest notions. Answer with the keys 1 to 4.",
+    "start": "Start a quiz",
+    "loading": "Preparing the questions…",
+    "question": "Question",
+    "of": "of",
+    "correct": "Correct!",
+    "wrong": "Not quite.",
+    "answer": "Answer",
+    "source": "Source",
+    "next": "Next question",
+    "finish": "See my results",
+    "scores": "Scores recorded",
+    "notRecorded": "Scores not recorded: the mastery service is not available.",
+    "again": "New quiz",
+    "empty": "No question could be generated. Try again.",
+    "degraded": "The mastery service is not available: random notions were chosen."
+  },
+  "chat": {
+    "goQuiz": "Open the quiz",
+    "plan": "Your revision plan"
   }
 }

@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import type { Notion } from "@/lib/api";
-import type { Dict, Lang } from "@/lib/i18n";
+import { colon, type Dict, type Lang } from "@/lib/i18n";
 
 type Result = {
   covered: string[];
@@ -91,7 +91,7 @@ export default function FeynmanForm({
           <section className="card" style={{ marginTop: "1rem" }}>
             <h2>
               {t.feynman.score}
-              {lang === "fr" ? " : " : ": "}
+              {colon(lang)}
               {result.score} / 5
             </h2>
             {!result.recorded && <p className="muted">{t.feynman.notRecorded}</p>}

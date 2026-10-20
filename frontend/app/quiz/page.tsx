@@ -1,7 +1,13 @@
+import QuizRunner from "@/components/QuizRunner";
 import { getLang } from "@/lib/lang";
 
-// The quiz page arrives with the Spring service (step 9).
 export default async function QuizPage() {
-  const { t } = await getLang();
-  return <h1>{t.nav.quiz}</h1>;
+  const { lang, t } = await getLang();
+  return (
+    <section>
+      <h1>{t.quiz.title}</h1>
+      <p className="muted">{t.quiz.intro}</p>
+      <QuizRunner lang={lang} t={t} />
+    </section>
+  );
 }

@@ -216,3 +216,24 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S8-5 TypeScript 5.9.3
 - TypeScript 7.0 (réécriture native) existe ; sa compatibilité avec Next 16 n'a pas été vérifiée → 5.9.3. Versions exactes dans `package.json` + `package-lock.json`.
+
+## Étape 9 — Spring Boot et maîtrise
+
+### S9-1 Projet Spring Initializr, Boot 4.1.1
+- Java 21, Maven (wrapper `mvnw`/`mvnw.cmd`), web, data-jpa, validation, pilote PostgreSQL. Boot 4 : starters de test par module (`webmvc-test`, `data-jpa-test`), Jackson 3 (`tools.jackson`).
+
+### S9-2 Règles de maîtrise dans des fonctions pures
+- `summarize` (moyenne des 3 dernières notes, arrondie à 2 décimales) et `level` (WEAK < 3 ≤ LEARNING < 4 ≤ MASTERED) sont statiques et testées sans Spring ni base.
+
+### S9-3 Tests sans base de données
+- Pas de H2 ni de Testcontainers (hors liste) : tests unitaires des règles + `@WebMvcTest` avec le service simulé (1 test par endpoint). Le test `contextLoads` généré (qui exige une base) est retiré.
+- Limite vécue : ces tests n'ont pas vu un démarrage impossible (deux constructeurs dans `MasteryService`, Spring ne savait pas lequel choisir). Corrigé (un seul constructeur) ; la CI (étape 10) démarrera le service avec une vraie base.
+
+### S9-4 Validation des paramètres par Spring MVC
+- `@Validated` sur la classe faisait passer `limit=0` par la validation AOP → `ConstraintViolationException` → 500. Sans lui, Spring MVC valide les paramètres annotés lui-même → 400 (mesuré par le test).
+
+### S9-5 Schéma `app` créé par Hibernate
+- `ddl-auto=update` + `default_schema=app` + `create_namespaces=true` : une seule table, pas d'outil de migration (Flyway hors liste). Les morceaux restent dans `public`.
+
+### S9-6 Interface : couleurs non seules, pas d'animation
+- Quiz : ✓/✗ écrits en plus de la couleur ; options répondues sans opacité réduite (contraste). Graphique Recharts sans animation (mesuré : une capture prise pendant l'animation montrait des barres fausses).

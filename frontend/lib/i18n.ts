@@ -11,3 +11,8 @@ export const LANG_COOKIE = "lang";
 export function toLang(value: string | undefined): Lang {
   return value === "fr" ? "fr" : "en";
 }
+
+// French typography puts a space before ":".
+export function colon(lang: Lang): string {
+  return lang === "fr" ? " : " : ": ";
+}

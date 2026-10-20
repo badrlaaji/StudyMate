@@ -1,6 +1,6 @@
 # StudyMate
 
-> **Work in progress.** Steps 0-8 done: indexed book, 21 notions, retrieval evaluation, fine-tuned embeddings, LangGraph agent with verified citations, FastAPI service, "Study Desk" web interface. Demo video coming.
+> **Work in progress.** Steps 0-9 done: indexed book, 21 notions, retrieval evaluation, fine-tuned embeddings, LangGraph agent with verified citations, FastAPI service, "Study Desk" web interface, Spring Boot mastery service. Demo video coming.
 
 ![Study desk: a cited answer, the PDF page opened and the cited passage highlighted](docs/img/study-desk.png)
 
@@ -96,13 +96,17 @@ Copy-Item .env.example .env   # then fill in the keys
 uv run python -m scripts.check_env all
 ```
 
-### Run the app (three terminals)
+### Run the app
 
 ```powershell
-uv run uvicorn api.main:app --port 8000                 # API (needs .env)
-cd frontend; npm ci; npm run build; npm run start         # web app on http://localhost:3000
-# Spring Boot mastery service: step 9 (the app runs in degraded mode without it)
+.\scripts\dev.ps1     # opens 3 windows: API :8000, Spring Boot :8080, web :3000
 ```
+
+Or by hand: `uv run uvicorn api.main:app --port 8000`, `cd core; .\mvnw.cmd spring-boot:run`,
+`cd frontend; npm ci; npm run dev`. Without Spring, the app runs in degraded mode (answers
+still work; scores are not recorded).
+
+![Mastery map: one tile per notion coloured by the average of the last 3 scores, revision plan](docs/img/mastery-map.png)
 
 ![Feynman mode: key ideas covered or missing, score computed by code, follow-up question](docs/img/feynman.png)
 

@@ -9,11 +9,13 @@ import type { Dict, Lang } from "@/lib/i18n";
 const PdfViewer = dynamic(() => import("@/components/PdfViewer"), { ssr: false });
 
 type Citation = { page: number; excerpt: string };
+type PlanRow = { notion_id: string; name: string; score: number; pages: number[] };
 type Reply = {
   route: string;
   answer: string | null;
   citations: Citation[];
   status: string;
+  plan?: PlanRow[] | null;
 };
 type Message = { role: "user" | "assistant"; text: string; reply?: Reply };
 
@@ -82,6 +84,19 @@ export default function StudyDesk({ lang, t }: { lang: Lang; t: Dict }) {
               <strong>{message.role === "user" ? t.study.you : t.study.assistant}</strong>
               {message.reply && <Badges reply={message.reply} t={t} />}
               <p>{message.text}</p>
+              {message.reply?.route === "quiz" && <a href="/quiz">{t.chat.goQuiz}</a>}
+              {message.reply?.route === "plan" && (
+                <>
+                  <p>{t.chat.plan}</p>
+                  <ol>
+                    {(message.reply.plan ?? []).map((row) => (
+                      <li key={row.notion_id}>
+                        {row.name} ({row.score.toFixed(1)} / 5), p.{row.pages[0]}
+                      </li>
+                    ))}
+                  </ol>
+                </>
+              )}
               {message.reply?.citations.map((citation) => (
                 <button
                   key={citation.page}

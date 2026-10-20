@@ -47,6 +47,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : vidéo v1 (à tourner par Badr). Carte et quiz : étape 9.
 - **Chiffres** : `next build` OK (6 routes) ; PDF 37,3 Mo relayé par le proxy ; surlignage : 4 éléments marqués (seuil 4) → 2 (seuil 15) ; Feynman réel : 2 idées sur 3 → 3/5 ; 80 paquets npm.
 
+## Étape 9 — Spring Boot et maîtrise (2026-10-20)
+- **Fait** : service Spring Boot 4.1.1 (POST /api/scores, GET /api/notions/weak, GET /api/mastery, schéma `app`) ; carte de maîtrise (tuiles colorées, plan de révision, graphique) ; page quiz (touches 1-4, correction immédiate, page source) ; boucle de bout en bout vérifiée dans Chromium ; `scripts/dev.ps1`.
+- **Bloqué** : rien. `dev.ps1` écrit pour Windows, non exécuté ici (environnement Linux).
+- **Chiffres** : 11 tests Spring (5 règles + 6 endpoints) ; démarrage 3,4 s ; boucle : Feynman CNN 2/5 enregistré → plan [k-means 1,5 ; CNN 2,0] → quiz sur k-means, CNN + 1 notion au hasard → k-means (5+2+1)/3 = 2,67, CNN (0+2)/2 = 1,0 ; 2 bugs trouvés en vrai (constructeur double, 500 au lieu de 400) ; 0 erreur JS.
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |
