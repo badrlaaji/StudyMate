@@ -57,6 +57,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : tag `v1.0` (validations humaines, notes Feynman, vidéo) ; quota AI Studio à relever ; `dev.ps1` non testé sous Windows.
 - **Chiffres** : `/chat` médiane 2,73 s, p90 3,17 s (min 2,33, max 5,55 ; 20 appels, dev 19/20 corrects) ; Lighthouse 13.5 : 98-100 en performance, 100 ailleurs (4 mesures) ; images api 2,97 Go, core 557 Mo, web 336 Mo ; indexation en conteneur 284 morceaux en 23 s ; 123 tests Python (122 passés, 1 ignoré), 11 tests Spring ; 1re CI verte : python 54 s (123 tests, base comprise), java 22 s, web 33 s, compose 1 min 58 s.
 
+## Étape 11 — Plusieurs cours, nouvelle interface (2026-10-20)
+- **Fait** : registre `course/courses.json` + `course.add` ; `course_id` dans `chunks` et dans les notes Spring (migrations testées) ; 2e cours Introductory Statistics 2e (ch. 12) ajouté et interrogé ; interface refaite (critique, système de design, polices locales OFL, barre latérale + sélecteur de cours, Bibliothèque, mobile, sombre) ; audit d'accessibilité ; règle « réécrire seulement pour traduire » ; `docs/FUNCTIONAL-REQUIREMENTS.md`.
+- **Bloqué** : éval complète des réponses à relancer (quota gratuit épuisé : un appel a pris 2 min 30 s) ; catalogue statistics à relire (sections de TP faibles) ; pas de jeu d'éval pour ce cours ; notes Feynman humaines toujours en attente.
+- **Chiffres** : statistics : 61 pages, 108 712 caractères, 135 morceaux (embeddings 66 s), 11 notions, 2 min 58 s ; migration : 568 morceaux rattachés, 7 notes locales rattachées par SQL ; réponses (prompts multi-cours) EN 18/20, FR 19/20, pièges 5/5 et 5/5 ; test02 corrigé (page 279 citée) ; axe-core 0 violation (24 combinaisons + 5 états, après 4 défauts corrigés) ; Lighthouse mobile 94-100 en performance, 100 en accessibilité, bonnes pratiques, SEO (carte mobile 87 → 94 avec le graphique chargé à part) ; tests : 144 Python (143 + 1 base), 13 Spring.
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |

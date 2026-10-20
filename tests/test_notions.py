@@ -3,6 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
+from course.courses import notions_path
 from course.draft_notions import (
     NotionDraft,
     build_prompt,
@@ -11,7 +12,6 @@ from course.draft_notions import (
     to_notion,
 )
 from course.notions import (
-    NOTIONS_PATH,
     Catalog,
     KeyIdea,
     Notion,
@@ -48,8 +48,8 @@ def test_notion_rejects_bad_id_and_too_few_ideas():
         Notion(**{**make_notion().model_dump(), "key_ideas": [IDEA.model_dump()] * 2})
 
 
-@pytest.mark.parametrize("count", [14, 26])
-def test_catalog_needs_15_to_25_notions(count):
+@pytest.mark.parametrize("count", [2, 41])
+def test_catalog_needs_3_to_40_notions(count):
     with pytest.raises(ValidationError):
         make_catalog(count)
 
@@ -66,10 +66,10 @@ def test_unknown_pages_lists_pages_missing_from_the_book():
     assert unknown_pages(catalog, {317}) == {"notion_0": [999]}
 
 
-def test_committed_catalog_is_valid_and_cites_chapter_6_7_pages():
-    catalog = load_catalog(NOTIONS_PATH)
+def test_reference_catalog_is_valid_and_cites_chapter_6_7_pages():
+    catalog = load_catalog(notions_path("data-science"))
     pages = {page for notion in catalog.notions for page in notion.pages}
-    assert 15 <= len(catalog.notions) <= 25
+    assert 15 <= len(catalog.notions) <= 25  # D1 for the reference course
     assert all(275 <= page <= 386 for page in pages)
 
 
@@ -85,6 +85,13 @@ def test_group_sections_keeps_only_numbered_sections():
     groups = group_sections(PAGES)
     assert list(groups) == ["6.1 What Is ML?"]
     assert [p["page"] for p in groups["6.1 What Is ML?"]] == [276, 277]
+
+
+def test_group_sections_without_numbered_sections_uses_blocks_of_10_pages():
+    pages = [{"page": 10 + i, "section": "", "text": "t"} for i in range(23)]
+    groups = group_sections(pages)
+    assert list(groups) == ["Pages 10-19", "Pages 20-29", "Pages 30-32"]
+    assert len(groups["Pages 30-32"]) == 3
 
 
 @pytest.mark.parametrize(

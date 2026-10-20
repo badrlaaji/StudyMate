@@ -3,6 +3,7 @@ package io.github.badrlaaji.studymate.core;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,21 +31,23 @@ public class ScoreController {
     @ResponseStatus(HttpStatus.CREATED)
     public NotionMastery addScore(@Valid @RequestBody ScoreRequest request) {
         service.record(request);
-        return service.mastery().stream()
+        return service.mastery(request.courseId()).stream()
                 .filter(m -> m.notionId().equals(request.notionId()))
                 .findFirst()
                 .orElseThrow();
     }
 
-    /** Weak notions (average of the last 3 scores below 3), weakest first. */
+    /** Weak notions of a course (average of the last 3 scores below 3), weakest first. */
     @GetMapping("/notions/weak")
-    public List<NotionMastery> weak(@RequestParam(defaultValue = "5") @Min(1) @Max(25) int limit) {
-        return service.weak(limit);
+    public List<NotionMastery> weak(
+            @RequestParam @Pattern(regexp = ScoreRequest.COURSE_ID) String course,
+            @RequestParam(defaultValue = "5") @Min(1) @Max(25) int limit) {
+        return service.weak(course, limit);
     }
 
-    /** Mastery of every scored notion. */
+    /** Mastery of every scored notion of a course. */
     @GetMapping("/mastery")
-    public List<NotionMastery> mastery() {
-        return service.mastery();
+    public List<NotionMastery> mastery(@RequestParam @Pattern(regexp = ScoreRequest.COURSE_ID) String course) {
+        return service.mastery(course);
     }
 }

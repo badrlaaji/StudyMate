@@ -1,0 +1,29 @@
+{
+  "default": "data-science",
+  "courses": [
+    {
+      "id": "data-science",
+      "title": "Principles of Data Science",
+      "scope_en": "Chapters 6-7: machine learning, deep learning and AI",
+      "scope_fr": "Chapitres 6-7 : machine learning, deep learning et IA",
+      "book_lang": "en",
+      "pdf_url": "https://assets.openstax.org/oscms-prodcms/media/documents/Principles-of-Data-Science-WEB.pdf",
+      "book_url": "https://openstax.org/details/books/principles-data-science",
+      "attribution": "Shaun V. Ault, Soohyun Nam Liao and Larry Musolino (senior contributing authors), OpenStax, Rice University, 2025",
+      "license": "CC BY-NC-SA 4.0",
+      "chapters": [6, 7]
+    },
+    {
+      "id": "statistics",
+      "title": "Introductory Statistics 2e",
+      "scope_en": "Chapter 12: linear regression and correlation",
+      "scope_fr": "Chapitre 12 : régression linéaire et corrélation",
+      "book_lang": "en",
+      "pdf_url": "https://assets.openstax.org/oscms-prodcms/media/documents/introductory-statistics-2e_-_WEB.pdf",
+      "book_url": "https://openstax.org/details/books/introductory-statistics-2e",
+      "attribution": "Barbara Illowsky and Susan Dean (senior contributing authors), OpenStax, Rice University, 2023",
+      "license": "CC BY-NC-SA 4.0",
+      "chapters": [12]
+    }
+  ]
+}

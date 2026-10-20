@@ -30,10 +30,11 @@ class ScoreControllerTest {
 
     @Test
     void postScoreReturns201AndTheNotionMastery() throws Exception {
-        when(service.mastery()).thenReturn(List.of(WEAK));
+        when(service.mastery("data-science")).thenReturn(List.of(WEAK));
         mvc.perform(post("/api/scores")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"notionId\":\"k_means\",\"source\":\"QUIZ\",\"score\":2}"))
+                        .content("{\"courseId\":\"data-science\",\"notionId\":\"k_means\","
+                                + "\"source\":\"QUIZ\",\"score\":2}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.notionId").value("k_means"))
                 .andExpect(jsonPath("$.level").value("WEAK"));
@@ -44,7 +45,8 @@ class ScoreControllerTest {
     void postScoreOutOfRangeIs400() throws Exception {
         mvc.perform(post("/api/scores")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"notionId\":\"k_means\",\"source\":\"QUIZ\",\"score\":7}"))
+                        .content("{\"courseId\":\"data-science\",\"notionId\":\"k_means\","
+                                + "\"source\":\"QUIZ\",\"score\":7}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -52,14 +54,23 @@ class ScoreControllerTest {
     void postScoreWithBadNotionIdIs400() throws Exception {
         mvc.perform(post("/api/scores")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"notionId\":\"K Means!\",\"source\":\"FEYNMAN\",\"score\":3}"))
+                        .content("{\"courseId\":\"data-science\",\"notionId\":\"K Means!\","
+                                + "\"source\":\"FEYNMAN\",\"score\":3}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void postScoreWithoutCourseIs400() throws Exception {
+        mvc.perform(post("/api/scores")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"notionId\":\"k_means\",\"source\":\"QUIZ\",\"score\":2}"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void weakNotionsUseTheLimit() throws Exception {
-        when(service.weak(3)).thenReturn(List.of(WEAK));
-        mvc.perform(get("/api/notions/weak").param("limit", "3"))
+        when(service.weak("statistics", 3)).thenReturn(List.of(WEAK));
+        mvc.perform(get("/api/notions/weak").param("course", "statistics").param("limit", "3"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].notionId").value("k_means"))
                 .andExpect(jsonPath("$[0].average").value(1.5));
@@ -67,13 +78,20 @@ class ScoreControllerTest {
 
     @Test
     void weakNotionsLimitBelowOneIs400() throws Exception {
-        mvc.perform(get("/api/notions/weak").param("limit", "0")).andExpect(status().isBadRequest());
+        mvc.perform(get("/api/notions/weak").param("course", "statistics").param("limit", "0"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void weakNotionsWithoutOrWithBadCourseIs400() throws Exception {
+        mvc.perform(get("/api/notions/weak")).andExpect(status().isBadRequest());
+        mvc.perform(get("/api/notions/weak").param("course", "Bad Course!")).andExpect(status().isBadRequest());
     }
 
     @Test
     void masteryListsEveryScoredNotion() throws Exception {
-        when(service.mastery()).thenReturn(List.of(WEAK));
-        mvc.perform(get("/api/mastery"))
+        when(service.mastery("data-science")).thenReturn(List.of(WEAK));
+        mvc.perform(get("/api/mastery").param("course", "data-science"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].level").value("WEAK"));
     }

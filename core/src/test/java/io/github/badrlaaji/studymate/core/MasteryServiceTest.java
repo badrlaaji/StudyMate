@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 class MasteryServiceTest {
 
     private static Score score(String notionId, int value) {
-        return new Score(notionId, Source.QUIZ, value, Instant.EPOCH);
+        return new Score("data-science", notionId, Source.QUIZ, value, Instant.EPOCH);
     }
 
     @Test
@@ -45,12 +45,13 @@ class MasteryServiceTest {
     }
 
     @Test
-    void weakKeepsOnlyWeakNotionsWithinTheLimit() {
+    void weakKeepsOnlyWeakNotionsOfTheCourseWithinTheLimit() {
         ScoreRepository repository = mock(ScoreRepository.class);
-        when(repository.findAllByOrderByCreatedAtDescIdDesc())
+        when(repository.findAllByCourseIdOrderByCreatedAtDescIdDesc("data-science"))
                 .thenReturn(List.of(score("a", 1), score("b", 2), score("c", 5)));
         MasteryService service = new MasteryService(repository);
-        assertThat(service.weak(5)).extracting(NotionMastery::notionId).containsExactly("a", "b");
-        assertThat(service.weak(1)).extracting(NotionMastery::notionId).containsExactly("a");
+        assertThat(service.weak("data-science", 5)).extracting(NotionMastery::notionId).containsExactly("a", "b");
+        assertThat(service.weak("data-science", 1)).extracting(NotionMastery::notionId).containsExactly("a");
+        assertThat(service.weak("statistics", 5)).isEmpty(); // another course: no scores
     }
 }

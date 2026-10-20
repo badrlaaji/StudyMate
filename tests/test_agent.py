@@ -30,6 +30,7 @@ from agent.quiz import (
 )
 from agent.router import Route, fallback_route, route_message
 from agent.spring import fetch_weak_notions, post_score
+from course.courses import Course, Registry
 from course.notions import Catalog, KeyIdea, Notion
 
 HITS = [
@@ -48,11 +49,15 @@ def isolated_llm_cache(tmp_path, monkeypatch):
     monkeypatch.setenv("LLM_MODEL", "gemini-test-model")
 
 
+PROMPTS: list[str] = []
+
+
 def fake_llm(answers: dict):
     """Fake chat model: answers[schema] is a list of results (or errors) to replay."""
 
     def with_structured_output(schema):
         def invoke(prompt):
+            PROMPTS.append(prompt)
             outcome = answers[schema].pop(0)
             if isinstance(outcome, Exception):
                 raise outcome
@@ -83,6 +88,31 @@ CATALOG = Catalog.model_construct(
     validated=False,
     notions=[notion("overfitting", [281, 282]), notion("k_means", [290, 291])]
     + [notion(f"other_{i}", [300 + i]) for i in range(3)],
+)
+
+
+def course(course_id: str, title: str, book_lang: str = "en") -> Course:
+    """Build a course entry of the registry."""
+    return Course(
+        id=course_id,
+        title=title,
+        scope_en="Chapter 1",
+        scope_fr="Chapitre 1",
+        book_lang=book_lang,
+        pdf_url="https://example.org/book.pdf",
+        book_url="https://example.org",
+        attribution="Authors",
+        license="CC BY-NC-SA 4.0",
+        chapters=[1],
+    )
+
+
+REGISTRY = Registry(
+    default="data-science",
+    courses=[
+        course("data-science", "Principles of Data Science"),
+        course("statistics", "Introductory Statistics 2e"),
+    ],
 )
 
 
@@ -122,6 +152,16 @@ def test_route_message_uses_rules_when_llm_fails():
     assert route_message("Quiz me please", llm=llm).route == "quiz"
 
 
+def test_route_message_rewrites_the_query_in_the_book_language():
+    PROMPTS.clear()
+    answer = Route(route="answer", lang="en", search_query="q")
+    llm = fake_llm({Route: [answer, answer]})
+    route_message("What is a mean?", "fr", llm=llm)
+    route_message("What is a mean?", llm=llm)
+    assert "one short French question" in PROMPTS[0]
+    assert "one short English question" in PROMPTS[1]
+
+
 def test_route_message_trusts_the_llm_when_it_works():
     llm = fake_llm({Route: [Route(route="plan", lang="fr", search_query="q")]})
     assert route_message("anything", llm=llm) == Route(
@@ -159,9 +199,10 @@ def test_build_citations_one_excerpt_per_page_in_page_order():
 
 
 def test_answer_prompt_language_markers_and_retry_reminder():
-    first = answer_prompt("Q?", "fr", HITS, retry=False)
-    second = answer_prompt("Q?", "fr", HITS, retry=True)
+    first = answer_prompt("Q?", "fr", HITS, retry=False, book="Stats 2e")
+    second = answer_prompt("Q?", "fr", HITS, retry=True, book="Stats 2e")
     assert "in French" in first and "[page 281]" in first
+    assert 'textbook "Stats 2e"' in first
     assert "rejected" not in first and "rejected" in second
 
 
@@ -233,19 +274,29 @@ def test_fetch_weak_notions_returns_json_or_none_when_down():
     def ok(request):
         assert request.url.path == "/api/notions/weak"
         assert request.url.params["limit"] == "5"
+        assert request.url.params["course"] == "statistics"
         return httpx.Response(200, json=[{"notionId": "k_means", "average": 2.0}])
 
-    assert asyncio.run(fetch_weak_notions(spring(ok), 5)) == [
+    assert asyncio.run(fetch_weak_notions(spring(ok), "statistics", 5)) == [
         {"notionId": "k_means", "average": 2.0}
     ]
-    assert asyncio.run(fetch_weak_notions(spring(spring_down), 5)) is None
+    down = spring(spring_down)
+    assert asyncio.run(fetch_weak_notions(down, "statistics", 5)) is None
 
 
 def test_post_score_false_on_server_error():
     def error(request):
         return httpx.Response(500)
 
-    assert asyncio.run(post_score(spring(error), "k_means", "QUIZ", 4)) is False
+    assert asyncio.run(post_score(spring(error), "ds", "k_means", "QUIZ", 4)) is False
+
+
+def test_post_score_sends_the_course_id():
+    def created(request):
+        assert b'"courseId":"statistics"' in request.content.replace(b" ", b"")
+        return httpx.Response(201)
+
+    assert asyncio.run(post_score(spring(created), "statistics", "r", "QUIZ", 4))
 
 
 # --- whole graph ----------------------------------------------------------------
@@ -254,14 +305,16 @@ def test_post_score_false_on_server_error():
 SEARCHED: list[str] = []
 
 
-def run_graph(message: str, answers: dict, http=None, monkeypatch=None) -> dict:
+def run_graph(
+    message: str, answers: dict, http=None, monkeypatch=None, course_id: str = ""
+) -> dict:
     """Run the compiled graph with fakes and return the /chat response."""
 
-    async def fake_retrieve(question, engine, k, embedder):
-        SEARCHED.append(question)
+    async def fake_retrieve(question, engine, course, k, embedder):
+        SEARCHED.append(f"{course}:{question}")
         return HITS
 
-    async def fake_chunks(engine, pages, model):
+    async def fake_chunks(engine, course, pages, model):
         return [
             {"page": p, "chunk_index": 0, "text": f"text of page {p}"} for p in pages
         ]
@@ -272,11 +325,13 @@ def run_graph(message: str, answers: dict, http=None, monkeypatch=None) -> dict:
     app = build_graph(
         engine=None,
         http=http or spring(spring_down),
-        catalog=CATALOG,
+        registry=REGISTRY,
+        catalogs={"data-science": CATALOG},
         llm=fake_llm(answers),
         rng=random.Random(0),
     )
-    return to_response(asyncio.run(app.ainvoke({"message": message})))
+    state = {"message": message, "course": course_id}
+    return to_response(asyncio.run(app.ainvoke(state)))
 
 
 def test_graph_answer_verified_on_first_try(monkeypatch):
@@ -288,10 +343,24 @@ def test_graph_answer_verified_on_first_try(monkeypatch):
     }
     SEARCHED.clear()
     response = run_graph("What is overfitting?", answers, monkeypatch=monkeypatch)
-    assert SEARCHED == ["q"]  # the router's English search_query, not the raw message
+    # Default course; English question, English book: the student's own words.
+    assert SEARCHED == ["data-science:What is overfitting?"]
+    assert response["course"] == "data-science"
     assert response["status"] == "ok"
     assert response["answer"] == "It fits noise."
     assert [c["page"] for c in response["citations"]] == [281]
+
+
+def test_graph_searches_the_translation_of_a_french_question(monkeypatch):
+    answers = {
+        Route: [Route(route="answer", lang="fr", search_query="What is overfitting?")],
+        AnswerDraft: [
+            AnswerDraft(found=True, answer="Il apprend le bruit.", cited_pages=[281])
+        ],
+    }
+    SEARCHED.clear()
+    run_graph("Qu'est-ce que le surapprentissage ?", answers, monkeypatch=monkeypatch)
+    assert SEARCHED == ["data-science:What is overfitting?"]
 
 
 def test_graph_retries_once_then_answers(monkeypatch):
@@ -325,6 +394,27 @@ def test_graph_quiz_in_degraded_mode_when_spring_is_down(monkeypatch):
     response = run_graph("Quiz me", answers, monkeypatch=monkeypatch)
     assert response["route"] == "quiz" and response["status"] == "degraded"
     assert isinstance(response["quiz"], list)
+
+
+def test_graph_answers_from_the_chosen_course_with_its_title(monkeypatch):
+    answers = {
+        Route: [Route(route="answer", lang="en", search_query="q")],
+        AnswerDraft: [AnswerDraft(found=True, answer="A line.", cited_pages=[281])],
+    }
+    SEARCHED.clear()
+    PROMPTS.clear()
+    response = run_graph(
+        "What is a regression line?", answers, None, monkeypatch, "statistics"
+    )
+    assert SEARCHED == ["statistics:What is a regression line?"]
+    assert 'textbook "Introductory Statistics 2e"' in PROMPTS[-1]
+    assert response["course"] == "statistics" and response["status"] == "ok"
+
+
+def test_graph_quiz_without_notions_for_the_course(monkeypatch):
+    answers = {Route: [Route(route="quiz", lang="en", search_query="q")]}
+    response = run_graph("Quiz me", answers, None, monkeypatch, "statistics")
+    assert response["status"] == "no_notions" and response["quiz"] == []
 
 
 def test_graph_plan_from_spring(monkeypatch):

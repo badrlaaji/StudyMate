@@ -2,39 +2,40 @@
   "model": "models/e5-small-studymate",
   "en": {
     "summary": {
-      "correct": 19,
-      "retrieved@4": 19,
+      "correct": 18,
+      "retrieved@4": 18,
       "questions": 20,
       "refused": 5,
       "traps": 5,
-      "median_s": 8.3
+      "median_s": 39.0
     },
     "rows": [
       {
         "id": "test01",
         "route": "answer",
-        "search_query": "What is the main difference between supervised and unsupervised learning?",
+        "search_query": "What is the main difference between learning from labeled data and learning from unlabeled data?",
         "status": "ok",
         "cited": [
           277,
           278
         ],
-        "seconds": 7.3,
+        "seconds": 59.6,
         "correct": true,
         "retrieved": true
       },
       {
         "id": "test02",
         "route": "answer",
-        "search_query": "Why do we keep part of the data aside for testing instead of training on all of it, and how big is that part usually?",
+        "search_query": "Why use a test dataset instead of training on all data and what is the typical test set size",
         "status": "ok",
         "cited": [
-          276,
-          279
+          280,
+          328,
+          348
         ],
-        "seconds": 4.3,
-        "correct": true,
-        "retrieved": true
+        "seconds": 55.5,
+        "correct": false,
+        "retrieved": false
       },
       {
         "id": "test03",
@@ -44,7 +45,7 @@
         "cited": [
           279
         ],
-        "seconds": 8.1,
+        "seconds": 62.9,
         "correct": true,
         "retrieved": true
       },
@@ -58,7 +59,7 @@
           281,
           336
         ],
-        "seconds": 8.3,
+        "seconds": 28.0,
         "correct": true,
         "retrieved": true
       },
@@ -72,7 +73,7 @@
           285,
           314
         ],
-        "seconds": 11.6,
+        "seconds": 51.0,
         "correct": true,
         "retrieved": true
       },
@@ -84,7 +85,7 @@
         "cited": [
           286
         ],
-        "seconds": 11.2,
+        "seconds": 46.1,
         "correct": true,
         "retrieved": true
       },
@@ -96,20 +97,20 @@
         "cited": [
           290
         ],
-        "seconds": 12.4,
+        "seconds": 28.4,
         "correct": true,
         "retrieved": true
       },
       {
         "id": "test08",
         "route": "answer",
-        "search_query": "How can I check whether the number of clusters I picked is a good choice?",
+        "search_query": "How to evaluate the number of clusters?",
         "status": "ok",
         "cited": [
-          296,
-          297
+          290,
+          296
         ],
-        "seconds": 5.9,
+        "seconds": 31.8,
         "correct": true,
         "retrieved": true
       },
@@ -121,46 +122,45 @@
         "cited": [
           297
         ],
-        "seconds": 13.8,
+        "seconds": 32.6,
         "correct": true,
         "retrieved": true
       },
       {
         "id": "test10",
         "route": "answer",
-        "search_query": "Why does k-means fail on concentric ring data?",
+        "search_query": "Why does k-means fail on concentric rings data?",
         "status": "ok",
         "cited": [
           294
         ],
-        "seconds": 10.5,
+        "seconds": 37.8,
         "correct": false,
         "retrieved": false
       },
       {
         "id": "test11",
         "route": "answer",
-        "search_query": "In a confusion matrix, what do large numbers outside the main diagonal tell you?",
+        "search_query": "What do large numbers outside the main diagonal in a confusion matrix tell you?",
         "status": "ok",
         "cited": [
-          300,
-          301,
-          302
+          301
         ],
-        "seconds": 11.4,
+        "seconds": 33.0,
         "correct": true,
         "retrieved": true
       },
       {
         "id": "test12",
         "route": "answer",
-        "search_query": "How can resampling with replacement show how much the slope of a regression line varies?",
+        "search_query": "How does resampling with replacement show slope variability of a regression line",
         "status": "ok",
         "cited": [
           304,
-          305
+          305,
+          306
         ],
-        "seconds": 13.6,
+        "seconds": 34.4,
         "correct": true,
         "retrieved": true
       },
@@ -172,7 +172,7 @@
         "cited": [
           309
         ],
-        "seconds": 12.2,
+        "seconds": 62.6,
         "correct": true,
         "retrieved": true
       },
@@ -184,7 +184,7 @@
         "cited": [
           319
         ],
-        "seconds": 12.6,
+        "seconds": 37.8,
         "correct": true,
         "retrieved": true
       },
@@ -197,7 +197,7 @@
           322,
           323
         ],
-        "seconds": 7.6,
+        "seconds": 34.7,
         "correct": true,
         "retrieved": true
       },
@@ -209,7 +209,7 @@
         "cited": [
           327
         ],
-        "seconds": 5.7,
+        "seconds": 25.0,
         "correct": true,
         "retrieved": true
       },
@@ -221,7 +221,7 @@
         "cited": [
           332
         ],
-        "seconds": 2.4,
+        "seconds": 39.0,
         "correct": true,
         "retrieved": true
       },
@@ -234,7 +234,7 @@
           344,
           380
         ],
-        "seconds": 2.2,
+        "seconds": 63.0,
         "correct": true,
         "retrieved": true
       },
@@ -246,7 +246,7 @@
         "cited": [
           359
         ],
-        "seconds": 2.9,
+        "seconds": 71.4,
         "correct": true,
         "retrieved": true
       },
@@ -259,7 +259,7 @@
           367,
           368
         ],
-        "seconds": 3.1,
+        "seconds": 43.5,
         "correct": true,
         "retrieved": true
       },
@@ -269,7 +269,7 @@
         "search_query": "What is a p-value in hypothesis testing?",
         "status": "not_found",
         "cited": [],
-        "seconds": 3.9
+        "seconds": 55.0
       },
       {
         "id": "trap02",
@@ -277,7 +277,7 @@
         "search_query": "How do I compute a moving average to forecast a time series?",
         "status": "not_found",
         "cited": [],
-        "seconds": 3.4
+        "seconds": 63.9
       },
       {
         "id": "trap03",
@@ -285,15 +285,15 @@
         "search_query": "How do I make a pivot table in Excel?",
         "status": "not_found",
         "cited": [],
-        "seconds": 3.4
+        "seconds": 70.1
       },
       {
         "id": "trap04",
         "route": "answer",
-        "search_query": "recipe for Moroccan couscous",
+        "search_query": "What is the recipe for Moroccan couscous?",
         "status": "not_found",
         "cited": [],
-        "seconds": 5.9
+        "seconds": 77.1
       },
       {
         "id": "trap05",
@@ -301,7 +301,7 @@
         "search_query": "Who won the 2022 FIFA World Cup?",
         "status": "not_found",
         "cited": [],
-        "seconds": 3.2
+        "seconds": 198.3
       }
     ]
   },
@@ -312,33 +312,31 @@
       "questions": 20,
       "refused": 5,
       "traps": 5,
-      "median_s": 2.8
+      "median_s": 53.8
     },
     "rows": [
       {
         "id": "test01",
         "route": "answer",
-        "search_query": "What is the main difference between learning from labeled data and unlabeled data?",
+        "search_query": "What is the main difference between learning from labeled and unlabeled data?",
         "status": "ok",
         "cited": [
-          277,
-          278,
-          337
+          277
         ],
-        "seconds": 2.4,
+        "seconds": 47.9,
         "correct": true,
         "retrieved": true
       },
       {
         "id": "test02",
         "route": "answer",
-        "search_query": "Why keep a portion of data for testing instead of using everything for training, and what is its typical proportion?",
+        "search_query": "Why keep a portion of data for testing instead of using all for training and what is the typical proportion?",
         "status": "ok",
         "cited": [
           276,
           279
         ],
-        "seconds": 2.1,
+        "seconds": 57.6,
         "correct": true,
         "retrieved": true
       },
@@ -350,35 +348,34 @@
         "cited": [
           279
         ],
-        "seconds": 2.4,
+        "seconds": 56.9,
         "correct": true,
         "retrieved": true
       },
       {
         "id": "test04",
         "route": "answer",
-        "search_query": "What happens when a model is too simple to capture the trend in the data?",
+        "search_query": "What happens when a model is too simple to capture the data trend?",
         "status": "ok",
         "cited": [
           276,
           281,
           336
         ],
-        "seconds": 2.2,
+        "seconds": 52.4,
         "correct": true,
         "retrieved": true
       },
       {
         "id": "test05",
         "route": "answer",
-        "search_query": "What S-shaped function does logistic regression use and between what values are its outputs?",
+        "search_query": "What S-shaped function does logistic regression use and what are its output values?",
         "status": "ok",
         "cited": [
-          284,
           285,
-          314
+          286
         ],
-        "seconds": 2.3,
+        "seconds": 48.2,
         "correct": true,
         "retrieved": true
       },
@@ -390,7 +387,7 @@
         "cited": [
           286
         ],
-        "seconds": 3.1,
+        "seconds": 56.6,
         "correct": true,
         "retrieved": true
       },
@@ -402,20 +399,20 @@
         "cited": [
           290
         ],
-        "seconds": 2.5,
+        "seconds": 45.6,
         "correct": true,
         "retrieved": true
       },
       {
         "id": "test08",
         "route": "answer",
-        "search_query": "How to evaluate if the chosen number of clusters is good",
+        "search_query": "How to verify if the number of clusters chosen is a good choice?",
         "status": "ok",
         "cited": [
           290,
           296
         ],
-        "seconds": 2.6,
+        "seconds": 51.2,
         "correct": true,
         "retrieved": true
       },
@@ -428,32 +425,31 @@
           297,
           298
         ],
-        "seconds": 2.5,
+        "seconds": 77.6,
         "correct": true,
         "retrieved": true
       },
       {
         "id": "test10",
         "route": "answer",
-        "search_query": "Why does k-means fail on concentric ring data?",
+        "search_query": "Why would k-means fail on data shaped like two concentric rings?",
         "status": "ok",
         "cited": [
           294
         ],
-        "seconds": 2.7,
+        "seconds": 57.4,
         "correct": false,
         "retrieved": false
       },
       {
         "id": "test11",
         "route": "answer",
-        "search_query": "What do large numbers off the main diagonal of a confusion matrix mean?",
+        "search_query": "What do large numbers outside the main diagonal mean in a confusion matrix?",
         "status": "ok",
         "cited": [
-          300,
-          302
+          301
         ],
-        "seconds": 2.8,
+        "seconds": 35.3,
         "correct": true,
         "retrieved": true
       },
@@ -463,10 +459,11 @@
         "search_query": "How does resampling with replacement show how much the slope of a regression line varies?",
         "status": "ok",
         "cited": [
+          303,
           304,
           305
         ],
-        "seconds": 3.3,
+        "seconds": 66.8,
         "correct": true,
         "retrieved": true
       },
@@ -478,7 +475,7 @@
         "cited": [
           309
         ],
-        "seconds": 3.4,
+        "seconds": 52.0,
         "correct": true,
         "retrieved": true
       },
@@ -490,7 +487,7 @@
         "cited": [
           319
         ],
-        "seconds": 3.6,
+        "seconds": 53.3,
         "correct": true,
         "retrieved": true
       },
@@ -503,19 +500,19 @@
           322,
           323
         ],
-        "seconds": 3.8,
+        "seconds": 138.1,
         "correct": true,
         "retrieved": true
       },
       {
         "id": "test16",
         "route": "answer",
-        "search_query": "How does a random forest combine multiple decision trees to make a prediction?",
+        "search_query": "How does a random forest combine many decision trees to make a prediction?",
         "status": "ok",
         "cited": [
           327
         ],
-        "seconds": 2.7,
+        "seconds": 50.2,
         "correct": true,
         "retrieved": true
       },
@@ -527,7 +524,7 @@
         "cited": [
           332
         ],
-        "seconds": 3.5,
+        "seconds": 53.8,
         "correct": true,
         "retrieved": true
       },
@@ -540,7 +537,7 @@
           344,
           380
         ],
-        "seconds": 4.1,
+        "seconds": 39.3,
         "correct": true,
         "retrieved": true
       },
@@ -552,7 +549,7 @@
         "cited": [
           359
         ],
-        "seconds": 5.2,
+        "seconds": 60.9,
         "correct": true,
         "retrieved": true
       },
@@ -565,7 +562,7 @@
           367,
           368
         ],
-        "seconds": 6.0,
+        "seconds": 166.3,
         "correct": true,
         "retrieved": true
       },
@@ -575,7 +572,7 @@
         "search_query": "What is a p-value in a hypothesis test?",
         "status": "not_found",
         "cited": [],
-        "seconds": 5.3
+        "seconds": 204.7
       },
       {
         "id": "trap02",
@@ -583,7 +580,7 @@
         "search_query": "How to calculate a moving average to forecast a time series?",
         "status": "not_found",
         "cited": [],
-        "seconds": 5.9
+        "seconds": 86.6
       },
       {
         "id": "trap03",
@@ -591,7 +588,7 @@
         "search_query": "How to create a pivot table in Excel?",
         "status": "not_found",
         "cited": [],
-        "seconds": 5.0
+        "seconds": 81.6
       },
       {
         "id": "trap04",
@@ -599,7 +596,7 @@
         "search_query": "What is the recipe for Moroccan couscous?",
         "status": "not_found",
         "cited": [],
-        "seconds": 4.6
+        "seconds": 170.3
       },
       {
         "id": "trap05",
@@ -607,7 +604,7 @@
         "search_query": "Who won the 2022 FIFA World Cup?",
         "status": "not_found",
         "cited": [],
-        "seconds": 22.1
+        "seconds": 67.7
       }
     ]
   }

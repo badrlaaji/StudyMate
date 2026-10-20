@@ -1,105 +1,163 @@
 {
   "app": {
     "name": "StudyMate",
-    "tagline": "Bureau d'étude pour Principles of Data Science"
+    "tagline": "Étudie n'importe quel manuel, preuves à l'appui",
+    "skip": "Aller au contenu"
   },
   "nav": {
-    "map": "Carte",
-    "study": "Étude",
+    "map": "Progression",
+    "study": "Demander",
     "feynman": "Feynman",
-    "quiz": "Quiz"
+    "quiz": "Quiz",
+    "library": "Bibliothèque",
+    "label": "Principal"
   },
   "lang": {
-    "switch": "English",
-    "label": "Passer l'interface en anglais"
+    "label": "Langue de l'interface"
+  },
+  "course": {
+    "label": "Cours",
+    "switch": "Changer de cours"
+  },
+  "levels": {
+    "WEAK": "À revoir",
+    "LEARNING": "En cours",
+    "MASTERED": "Maîtrisée",
+    "NONE": "Pas commencée"
+  },
+  "map": {
+    "eyebrow": "Ta progression",
+    "intro": "Chaque notion prend la couleur de la moyenne de tes 3 dernières notes (mode Feynman et quiz).",
+    "mastered": "maîtrisé",
+    "ofNotions": "{done} sur {total} notions maîtrisées",
+    "next": "À revoir en priorité",
+    "nextIntro": "Tes notions les plus faibles, avec les pages à relire.",
+    "nextEmpty": "Rien à revoir pour l'instant. Explique une notion ou fais un quiz : tes points faibles apparaîtront ici.",
+    "all": "Toutes les notions",
+    "explain": "Expliquer",
+    "quiz": "Quiz",
+    "read": "Lire p. {page}",
+    "average": "Moyenne {value} / 5",
+    "scores": "{count} notes",
+    "chart": "Moyenne de tes 3 dernières notes",
+    "chartIntro": "Notions travaillées, les plus faibles d'abord. À revoir sous 3, maîtrisée dès 4.",
+    "reviewLine": "à revoir sous 3",
+    "masteredLine": "maîtrisée dès 4",
+    "degraded": "Les notes sont indisponibles pour l'instant (service de maîtrise hors ligne). Tu peux toujours poser des questions.",
+    "noNotions": "Ce cours n'a pas encore de notions. Lance cette commande, puis relis le fichier proposé :",
+    "distribution": "Notions par niveau",
+    "percent": "{value} %"
   },
   "study": {
-    "title": "Interroger le livre",
-    "placeholder": "Pose une question sur les chapitres 6-7 (touche / pour écrire)",
+    "title": "Interroge le livre",
+    "lede": "Chaque réponse est vérifiée contre les pages qu'elle cite avant d'être affichée.",
+    "emptyTitle": "Qu'est-ce que tu veux comprendre ?",
+    "emptyText": "Pose une question sur ce cours ({scope}). Les réponses citent leurs pages ; clique sur une page pour la lire.",
+    "try": "Essaie",
+    "explainNotion": "Explique simplement : {name}",
+    "quizMe": "Interroge-moi sur mes points faibles",
+    "whatToReview": "Que dois-je réviser ?",
+    "placeholder": "Pose ta question…",
+    "shortcut": "Touche / pour écrire, Entrée pour envoyer, Maj+Entrée pour aller à la ligne",
     "ask": "Demander",
-    "empty": "Pose une question sur le machine learning, le deep learning ou l'IA. Les réponses citent les pages du livre.",
     "steps": {
-      "search": "Recherche dans le livre…",
-      "write": "Rédaction de la réponse…",
-      "verify": "Vérification des citations…"
+      "route": "Analyse",
+      "search": "Recherche dans le livre",
+      "write": "Rédaction",
+      "verify": "Vérification des citations"
     },
-    "verified": "✓ citations vérifiées",
-    "route": "route",
-    "notFound": "Absent du livre",
-    "degraded": "Mode limité : le service de maîtrise n'est pas disponible",
-    "openPage": "Ouvrir la page",
-    "newTab": "ouvrir dans un nouvel onglet",
-    "pdfTitle": "Livre",
-    "close": "Fermer",
+    "verified": "Citations vérifiées",
+    "agent": "Agent",
+    "routes": {
+      "answer": "réponse",
+      "quiz": "quiz",
+      "plan": "plan"
+    },
+    "notFound": "Absent de ce cours",
+    "noNotions": "Ce cours n'a pas encore de notions",
+    "degraded": "Mode limité : le service de maîtrise est hors ligne",
+    "openPage": "Ouvrir la page {page}",
     "you": "Toi",
     "assistant": "StudyMate",
-    "error": "Le service n'est pas disponible. Réessaie dans une minute."
+    "error": "StudyMate ne peut pas répondre pour l'instant. Le quota gratuit de Gemini est peut-être saturé : réessaie dans une minute.",
+    "goQuiz": "Ouvrir le quiz",
+    "plan": "Ton plan de révision",
+    "noPlan": "Rien à revoir pour l'instant."
+  },
+  "reader": {
+    "title": "Livre",
+    "page": "Page {page}",
+    "newTab": "Ouvrir dans un onglet",
+    "close": "Fermer la page",
+    "emptyTitle": "Le livre s'ouvre ici",
+    "emptyText": "Clique sur un numéro de page dans une réponse : la page s'ouvre avec le passage cité surligné.",
+    "loading": "Chargement du PDF…",
+    "error": "Le PDF ne peut pas s'afficher ici. Ouvre-le dans un onglet."
   },
   "feynman": {
     "title": "Mode Feynman",
-    "intro": "Choisis une notion et explique-la avec tes mots, comme à un ami. Le juge vérifie chaque idée clé ; la note est calculée par le code.",
-    "notion": "Notion",
-    "placeholder": "Ton explication (au moins 20 caractères)…",
+    "lede": "Explique une notion avec tes mots, comme à un ami. Chaque idée clé est vérifiée ; la note est calculée par le code.",
+    "notion": "Notion à expliquer",
+    "ideas": "{count} idées clés à couvrir",
+    "placeholder": "Explique simplement, avec tes mots…",
+    "chars": "{count} caractères (au moins 20)",
     "submit": "Vérifier mon explication",
-    "checking": "Vérification de ton explication…",
-    "covered": "Idées clés expliquées",
+    "checking": "Vérification…",
+    "resultTitle": "Ton retour",
+    "resultEmpty": "Écris ton explication, puis vérifie-la : les idées clés couvertes et oubliées apparaîtront ici.",
+    "score": "Note",
+    "covered": "Idées clés couvertes",
     "missing": "Idées clés à ajouter",
     "errors": "Erreurs",
     "noErrors": "Aucune erreur trouvée.",
-    "score": "Note",
-    "followUp": "Question de relance",
+    "followUp": "Question pour aller plus loin",
     "pages": "Pages à relire",
-    "notRecorded": "Note non enregistrée : le service de maîtrise n'est pas disponible."
-  },
-  "pdf": {
-    "loading": "Chargement du PDF…",
-    "error": "Le PDF ne peut pas être affiché ici.",
-    "page": "page"
-  },
-  "footer": {
-    "attribution": "Contenu : Principles of Data Science, OpenStax, CC BY-NC-SA 4.0.",
-    "book": "Lire le livre sur openstax.org"
-  },
-  "map": {
-    "title": "Carte de maîtrise",
-    "intro": "Une tuile par notion des chapitres 6-7. Couleur = moyenne de tes 3 dernières notes.",
-    "levels": {
-      "WEAK": "Faible",
-      "LEARNING": "En cours",
-      "MASTERED": "Maîtrisée",
-      "NONE": "Pas commencée"
-    },
-    "explain": "Expliquer",
-    "quiz": "Quiz",
-    "read": "Relire",
-    "average": "moyenne",
-    "chart": "Note moyenne par notion travaillée (0-5)",
-    "plan": "Plan de révision",
-    "planEmpty": "Aucune notion faible pour l'instant : entraîne-toi avec le mode Feynman ou un quiz.",
-    "pages": "pages",
-    "degraded": "Le service de maîtrise n'est pas disponible : couleurs et plan masqués."
+    "recorded": "Note ajoutée à ta progression.",
+    "notRecorded": "Note non enregistrée : le service de maîtrise est hors ligne.",
+    "explanation": "Ton explication"
   },
   "quiz": {
     "title": "Quiz",
-    "intro": "Des questions sur tes notions les plus faibles. Réponds avec les touches 1 à 4.",
-    "start": "Lancer un quiz",
+    "lede": "3 questions sur tes notions les plus faibles, écrites à partir des pages du livre et corrigées par le code.",
+    "start": "Commencer le quiz",
     "loading": "Préparation des questions…",
-    "question": "Question",
-    "of": "sur",
+    "question": "Question {index} sur {total}",
+    "keys": "Touches 1 à 4 pour répondre, Entrée pour la question suivante",
     "correct": "Bonne réponse !",
     "wrong": "Pas tout à fait.",
-    "answer": "Réponse",
     "source": "Source",
     "next": "Question suivante",
     "finish": "Voir mes résultats",
-    "scores": "Notes enregistrées",
-    "notRecorded": "Notes non enregistrées : le service de maîtrise n'est pas disponible.",
+    "resultTitle": "Tes résultats",
+    "recorded": "Notes ajoutées à ta progression.",
+    "notRecorded": "Notes non enregistrées : le service de maîtrise est hors ligne.",
     "again": "Nouveau quiz",
-    "empty": "Aucune question n'a pu être générée. Réessaie.",
-    "degraded": "Le service de maîtrise n'est pas disponible : notions choisies au hasard."
+    "empty": "Aucune question n'a pu être écrite cette fois. Réessaie.",
+    "degraded": "Le service de maîtrise est hors ligne : les notions ont été choisies au hasard."
   },
-  "chat": {
-    "goQuiz": "Ouvrir le quiz",
-    "plan": "Ton plan de révision"
+  "library": {
+    "title": "Bibliothèque",
+    "lede": "Chaque cours est un manuel public : son PDF, ses passages indexés pour la recherche, ses notions et ta progression.",
+    "current": "Cours actuel",
+    "open": "Étudier ce cours",
+    "pdf": "PDF téléchargé",
+    "noPdf": "PDF non téléchargé",
+    "indexed": "{count} passages indexés",
+    "notIndexed": "Pas encore indexé",
+    "dbDown": "Index inconnu (base hors ligne)",
+    "notions": "{count} notions",
+    "draft": "brouillon, à relire",
+    "validated": "validées",
+    "noNotions": "Pas encore de notions",
+    "bookPage": "Page du livre",
+    "addTitle": "Ajouter un cours",
+    "addIntro": "Tout manuel que tu as le droit de réutiliser convient, par exemple un livre OpenStax. Son texte est envoyé à Gemini pour proposer les notions : n'ajoute jamais de document privé.",
+    "add1": "Décris le cours dans course/courses.json : id, titre, lien du PDF, licence, chapitres (ou plage de pages).",
+    "add2": "Lance une seule commande : elle télécharge le PDF, indexe les pages et propose les notions.",
+    "add3": "Relis course/notions/<id>.json, mets « validated » à true, puis redémarre l'API."
+  },
+  "footer": {
+    "content": "Contenu",
+    "license": "Code : MIT. Contenu des cours : voir la licence de chaque livre."
   }
 }

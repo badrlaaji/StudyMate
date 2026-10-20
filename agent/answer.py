@@ -8,12 +8,12 @@ TOP_K = 4
 EXCERPT_CHARS = 300
 LANGUAGES = {"en": "English", "fr": "French"}
 NOT_FOUND = {
-    "en": "I could not find the answer in chapters 6 and 7 of the book.",
-    "fr": "Je n'ai pas trouvé la réponse dans les chapitres 6 et 7 du livre.",
+    "en": "I could not find the answer in this course.",
+    "fr": "Je n'ai pas trouvé la réponse dans ce cours.",
 }
 
-ANSWER_PROMPT = """You are a study assistant for the textbook "Principles of Data
-Science" (OpenStax). Answer the student's question using ONLY the excerpts below.
+ANSWER_PROMPT = """You are a study assistant for the textbook "{book}".
+Answer the student's question using ONLY the excerpts below.
 Each excerpt starts with its PDF page number as [page N].
 - found: true only if the excerpts explain the answer. If false: answer "" and
   cited_pages []. Never write that the text does not mention something.
@@ -44,9 +44,12 @@ def format_excerpts(hits: list[dict]) -> str:
     return "\n\n".join(f"[page {hit['page']}]\n{hit['text']}" for hit in hits)
 
 
-def answer_prompt(question: str, lang: str, hits: list[dict], retry: bool) -> str:
+def answer_prompt(
+    question: str, lang: str, hits: list[dict], retry: bool, book: str
+) -> str:
     """Fill the answer prompt (with a reminder on the second attempt)."""
     return ANSWER_PROMPT.format(
+        book=book,
         language=LANGUAGES[lang],
         reminder=RETRY_REMINDER if retry else "",
         excerpts=format_excerpts(hits),
@@ -71,7 +74,9 @@ def build_citations(pages: list[int], hits: list[dict]) -> list[dict]:
     return citations
 
 
-def generate(question: str, lang: str, hits: list[dict], retry: bool, llm=None):
+def generate(
+    question: str, lang: str, hits: list[dict], retry: bool, book: str, llm=None
+):
     """Ask the LLM for a grounded answer."""
-    prompt = answer_prompt(question, lang, hits, retry)
+    prompt = answer_prompt(question, lang, hits, retry, book)
     return invoke_structured(AnswerDraft, prompt, llm=llm)

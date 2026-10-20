@@ -17,6 +17,7 @@ from rag.embeddings import (
     with_prefix,
 )
 from rag.store import (
+    chunks_for_pages,
     count_chunks,
     create_schema,
     get_engine,
@@ -136,27 +137,34 @@ def unit(index: int) -> list[float]:
     return vector
 
 
-async def store_roundtrip() -> tuple[int, list[dict]]:
+async def store_roundtrip() -> tuple[int, list[dict], list[dict]]:
     """Store 3 chunks for a test model, search near the second one, clean up."""
     engine = get_engine(TEST_DB)
     try:
         await create_schema(engine)
         await create_schema(engine)  # idempotent
         chunks = [{**page(300 + i, 3), "chunk_index": 0} for i in range(3)]
-        await replace_chunks(engine, "test-model", chunks, [unit(0), unit(1), unit(2)])
-        await replace_chunks(engine, "test-model", chunks, [unit(0), unit(1), unit(2)])
-        stored = await count_chunks(engine, "test-model")
-        hits = await search(engine, unit(1), "test-model", k=2)
-        await replace_chunks(engine, "test-model", [], [])
-        return stored, hits
+        vectors = [unit(0), unit(1), unit(2)]
+        await replace_chunks(engine, "test-course", "test-model", chunks, vectors)
+        await replace_chunks(engine, "test-course", "test-model", chunks, vectors)
+        # Another course with the same vectors must not show up in the search.
+        await replace_chunks(engine, "other-course", "test-model", chunks, vectors)
+        stored = await count_chunks(engine, "test-course", "test-model")
+        hits = await search(engine, unit(1), "test-course", "test-model", k=10)
+        pages = await chunks_for_pages(engine, "test-course", [300, 301], "test-model")
+        for course in ("test-course", "other-course"):
+            await replace_chunks(engine, course, "test-model", [], [])
+        return stored, hits, pages
     finally:
         await engine.dispose()
 
 
 @needs_db
 def test_store_replaces_and_returns_nearest_first():
-    stored, hits = asyncio.run(store_roundtrip())
+    stored, hits, pages = asyncio.run(store_roundtrip())
     assert stored == 3  # replace, not append
+    assert len(hits) == 3  # only the chunks of the searched course
+    assert [c["page"] for c in pages] == [300, 301]  # quiz texts: one course only
     assert hits[0]["page"] == 301
     assert hits[0]["score"] == pytest.approx(1.0)
     assert hits[1]["score"] == pytest.approx(0.0)

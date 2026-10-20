@@ -6,19 +6,21 @@ from typing import Literal
 
 from pydantic import BaseModel
 
+from agent.answer import LANGUAGES
 from agent.llm import invoke_structured
 
 logger = logging.getLogger(__name__)
 
-ROUTER_PROMPT = """Classify a student's message sent to a study assistant for a data
-science textbook.
+ROUTER_PROMPT = """Classify a student's message sent to a study assistant for a
+textbook.
 route:
 - "quiz": the student wants to be quizzed or tested (multiple-choice questions).
 - "plan": the student asks what to review, a revision plan, or their weak topics.
 - "answer": anything else (a question about the course, or any other question).
 lang: "fr" if the message is written in French, otherwise "en".
-search_query: the message rewritten as one short English question to search the
-English textbook (translate if needed, keep the technical terms, add nothing).
+search_query: the message rewritten as one short {book_language} question to search
+the {book_language} textbook (translate if needed, keep the technical terms, add
+nothing).
 
 Message: {message}"""
 
@@ -42,7 +44,7 @@ class Route(BaseModel):
 
     route: Literal["answer", "quiz", "plan"]
     lang: Literal["en", "fr"]
-    search_query: str  # English: the book is in English (cross-lingual retrieval)
+    search_query: str  # in the book's language (cross-lingual retrieval)
 
 
 def fallback_route(message: str) -> Route:
@@ -56,10 +58,11 @@ def fallback_route(message: str) -> Route:
     return Route(route=route, lang=lang, search_query=message)  # no translation
 
 
-def route_message(message: str, llm=None) -> Route:
+def route_message(message: str, book_lang: str = "en", llm=None) -> Route:
     """Ask the LLM router; on any failure use the keyword rules."""
+    prompt = ROUTER_PROMPT.format(book_language=LANGUAGES[book_lang], message=message)
     try:
-        return invoke_structured(Route, ROUTER_PROMPT.format(message=message), llm=llm)
+        return invoke_structured(Route, prompt, llm=llm)
     except Exception as error:  # LLM down, quota reached, invalid output
         logger.warning("router fallback (%s): %s", type(error).__name__, error)
         return fallback_route(message)

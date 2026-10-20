@@ -1,10 +1,25 @@
-// Server-side helper: read the interface language from the cookie.
+// Server-side helpers: interface language and current course, from the cookies.
 import { cookies } from "next/headers";
 
-import { DICTS, LANG_COOKIE, toLang, type Dict, type Lang } from "@/lib/i18n";
+import { getCourses, type Course } from "@/lib/api";
+import { COURSE_COOKIE, DICTS, LANG_COOKIE, toLang, type Dict, type Lang } from "@/lib/i18n";
 
 export async function getLang(): Promise<{ lang: Lang; t: Dict }> {
   const store = await cookies();
   const lang = toLang(store.get(LANG_COOKIE)?.value);
   return { lang, t: DICTS[lang] };
+}
+
+// The course in the cookie if it still exists, else the default one.
+export async function getSession(): Promise<{
+  lang: Lang;
+  t: Dict;
+  courses: Course[];
+  course: Course | null;
+}> {
+  const { lang, t } = await getLang();
+  const courses = await getCourses(lang);
+  const wanted = (await cookies()).get(COURSE_COOKIE)?.value;
+  const course = courses.find((c) => c.id === wanted) ?? courses.find((c) => c.default) ?? null;
+  return { lang, t, courses, course };
 }

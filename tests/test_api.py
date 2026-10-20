@@ -11,6 +11,7 @@ from sqlalchemy.exc import ProgrammingError
 import api.main as main
 from agent.feynman import IdeaVerdict, Judgement, feynman_score, grade, round_half_up
 from agent.quiz import QuizQuestion
+from course.courses import Course, Registry
 from course.notions import Catalog, KeyIdea, Notion
 
 IDEAS = [KeyIdea(en=f"Idea number {i}.", fr=f"Idée numéro {i}.") for i in range(4)]
@@ -29,11 +30,33 @@ CATALOG = Catalog.model_construct(
 SCORES: list[dict] = []
 
 
+def make_course(course_id: str) -> Course:
+    """Build a course entry of the registry."""
+    return Course(
+        id=course_id,
+        title=f"Book {course_id}",
+        scope_en="Chapter 1",
+        scope_fr="Chapitre 1",
+        pdf_url="https://example.org/book.pdf",
+        book_url="https://example.org",
+        attribution="Authors",
+        license="CC BY-NC-SA 4.0",
+        chapters=[1],
+    )
+
+
+REGISTRY = Registry(
+    default="data-science",
+    courses=[make_course("data-science"), make_course("statistics")],
+)
+
+
 def spring_handler(request: httpx.Request) -> httpx.Response:
-    """Fake Spring: weak notions, mastery and score recording."""
+    """Fake Spring: weak notions, mastery and score recording (course required)."""
     if request.url.path == "/api/scores":
         SCORES.append(request.content)
         return httpx.Response(201)
+    assert request.url.params["course"] in {"data-science", "statistics"}
     if request.url.path == "/api/notions/weak":
         return httpx.Response(200, json=[{"notionId": "k_means", "average": 2.0}])
     return httpx.Response(
@@ -64,6 +87,7 @@ def client():
 
     async def ainvoke(state):
         return {
+            "course": state["course"],
             "route": "answer",
             "lang": "en",
             "answer": "Centroids move to the mean.",
@@ -75,7 +99,8 @@ def client():
     main.app.state.http = httpx.AsyncClient(
         transport=httpx.MockTransport(spring_handler), base_url="http://spring"
     )
-    main.app.state.catalog = CATALOG
+    main.app.state.registry = REGISTRY
+    main.app.state.catalogs = {"data-science": CATALOG}
     main.app.state.graph = SimpleNamespace(ainvoke=ainvoke)
     return TestClient(main.app)
 
@@ -149,6 +174,39 @@ def test_chat_rejects_an_empty_message(client):
     assert client.post("/chat", json={"message": ""}).status_code == 422
 
 
+def test_chat_uses_the_chosen_course_or_the_default(client):
+    message = {"message": "What is a regression line?"}
+    assert client.post("/chat", json=message).json()["course"] == "data-science"
+    body = client.post("/chat", json={**message, "course": "statistics"}).json()
+    assert body["course"] == "statistics"
+
+
+def test_unknown_course_is_404_and_bad_id_is_422(client):
+    message = {"message": "Hello there"}
+    assert (
+        client.post("/chat", json={**message, "course": "biology"}).status_code == 404
+    )
+    assert client.post("/chat", json={**message, "course": "../x"}).status_code == 422
+    assert client.get("/notions", params={"course": "biology"}).status_code == 404
+
+
+def test_courses_lists_the_library(client, monkeypatch):
+    async def fake_count(engine, course, model):
+        return {"data-science": 284, "statistics": 0}[course]
+
+    monkeypatch.setattr(main, "count_chunks", fake_count)
+    body = client.get("/courses", params={"lang": "fr"}).json()
+    assert [c["id"] for c in body] == ["data-science", "statistics"]
+    assert body[0]["default"] and body[0]["chunks"] == 284 and body[0]["notions"] == 1
+    assert body[1]["notions"] == 0 and body[1]["scope"] == "Chapitre 1"
+
+
+def test_course_without_notions_says_how_to_add_them(client):
+    response = client.get("/notions", params={"course": "statistics"})
+    assert response.status_code == 404
+    assert "course.add statistics" in response.json()["detail"]
+
+
 def test_notions_in_french(client):
     body = client.get("/notions", params={"lang": "fr"}).json()
     assert body[0]["name"] == "Clustering k-means"
@@ -171,6 +229,7 @@ def test_feynman_scores_by_code_and_records(client, monkeypatch):
     result = client.post("/feynman", json=body).json()
     assert result["score"] == 3 and result["recorded"] is True
     assert b'"source":"FEYNMAN"' in SCORES[0]
+    assert b'"courseId":"data-science"' in SCORES[0]
 
 
 def test_feynman_unknown_notion_is_404(client):
@@ -179,7 +238,7 @@ def test_feynman_unknown_notion_is_404(client):
 
 
 def test_quiz_returns_questions(client, monkeypatch):
-    async def fake_build_quiz(engine, http, catalog, n, lang):
+    async def fake_build_quiz(engine, http, course, catalog, n, lang):
         question = QuizQuestion(
             notion_id="k_means",
             question="What is a centroid?",
@@ -214,12 +273,13 @@ def test_plan_without_llm(client):
     assert body["plan"][0]["notion_id"] == "k_means" and body["plan"][0]["score"] == 2.0
 
 
-def test_book_pdf_served_or_404(client, monkeypatch, tmp_path):
-    monkeypatch.setattr(main, "BOOK_PATH", tmp_path / "missing.pdf")
+def test_book_pdf_served_per_course_or_404(client, monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        main, "pdf_path", lambda course_id: tmp_path / f"{course_id}.pdf"
+    )
     assert client.get("/book.pdf").status_code == 404
-    pdf = tmp_path / "book.pdf"
-    pdf.write_bytes(b"%PDF-1.7 test")
-    monkeypatch.setattr(main, "BOOK_PATH", pdf)
-    response = client.get("/book.pdf")
+    (tmp_path / "statistics.pdf").write_bytes(b"%PDF-1.7 test")
+    assert client.get("/book.pdf").status_code == 404  # default course: no PDF
+    response = client.get("/book.pdf", params={"course": "statistics"})
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/pdf"

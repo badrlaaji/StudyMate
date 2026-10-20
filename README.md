@@ -2,15 +2,18 @@
 
 [![CI](https://github.com/badrlaaji/studymate/actions/workflows/ci.yml/badge.svg)](https://github.com/badrlaaji/studymate/actions/workflows/ci.yml)
 
-A study assistant for one textbook — *Principles of Data Science* (OpenStax), chapters 6
-(machine learning) and 7 (deep learning and AI). It answers questions in **English or
-French** with **page citations checked by code**, opens the cited page with the passage
-highlighted, tests your understanding with a **Feynman mode**, and keeps a **mastery map**
-that drives targeted quizzes and a revision plan.
+A study assistant for **open textbooks**. Ask a question in **English or French**: the answer
+cites the book's pages, the **code checks every citation**, and the cited page opens next to
+the chat with the passage highlighted. Then explain a notion in your own words (**Feynman
+mode**), take a **quiz** on your weak spots, and follow your **progress** notion by notion.
+
+It ships with two courses — *Principles of Data Science* (chapters 6-7, machine learning and
+deep learning; the fully evaluated reference course) and *Introductory Statistics 2e*
+(chapter 12, regression and correlation) — and **a new course is added with one command**.
 
 > Demo video (2 min): coming soon.
 
-![Study desk: a cited answer, the PDF page opened and the cited passage highlighted](docs/img/study-desk.png)
+![Ask the book: a verified answer, page 327 opened with the cited passage highlighted](docs/img/study-desk.png)
 
 ## The problem
 
@@ -20,17 +23,36 @@ honest feedback on what they have actually understood.
 
 ## What it does
 
-- **Ask the book** (`/study`): a LangGraph agent retrieves passages, Gemini writes the answer,
-  and the code accepts it only if every cited page was really retrieved; otherwise one retry,
-  then "not found". The cited PDF page opens next to the chat with the passage highlighted.
-- **Feynman mode** (`/feynman`): explain a notion in your own words; the LLM judges each key
-  idea of the catalogue, and the **code** computes the 0-5 score.
-- **Mastery map** (`/`): one tile per notion, coloured by the average of the last 3 scores,
-  with a revision plan (weakest notions, pages to re-read) computed without any LLM.
-- **Quiz** (`/quiz`): multiple-choice questions on the weakest notions (keys 1-4), graded by
-  code, with the source page of each answer.
-- **Bilingual**: French questions are rewritten into an English search query by the router (the
-  book is in English); the interface switches between English and French.
+- **Ask the book** (`/study`): a LangGraph agent routes the message (answer, quiz or revision
+  plan), retrieves passages, Gemini writes the answer, and the code accepts it only if every
+  cited page was really retrieved; otherwise one retry, then "not in this course".
+- **Feynman mode** (`/feynman`): explain a notion; the LLM judges each key idea of the
+  catalogue, and the **code** computes the 0-5 score.
+- **Progress** (`/`): mastery of every notion (average of the last 3 scores), what to review
+  next with the pages to re-read, computed without any LLM.
+- **Quiz** (`/quiz`): multiple-choice questions on the weakest notions (keys 1-4, Enter),
+  graded by code, with the source page of each answer.
+- **Library** (`/library`): one card per course (PDF, indexed passages, notions); switch
+  course from the sidebar. Each course has its own index, notions and scores.
+- **Bilingual**: French questions are rewritten into a search query in the book's language;
+  the interface switches between English and French. Light and dark themes.
+
+![Progress: share of notions mastered, notions to review first, average per practised notion](docs/img/mastery-map.png)
+
+## Add your own course
+
+Any textbook you are allowed to reuse works (for example an [OpenStax](https://openstax.org)
+book). Its text is sent to Gemini to draft the notions, so never add private documents.
+
+1. Describe it in [`course/courses.json`](course/courses.json): id, title, PDF link, license,
+   attribution, chapters (from the PDF outline) or a page range.
+2. Run `uv run python -m course.add <id>`: it downloads the PDF, extracts and cleans the
+   pages, indexes them, and drafts the notion catalogue (`course/notions/<id>.json`).
+3. Review the catalogue, set `"validated": true`, restart the API.
+
+Measured for *Introductory Statistics 2e*, chapter 12: 61 pages, 135 indexed passages and
+11 drafted notions in 3 minutes (CPU, Gemini free tier). The same question about random
+forests finds page 327 in the data science course and is refused in the statistics course.
 
 ## Architecture
 
@@ -38,20 +60,22 @@ honest feedback on what they have actually understood.
 flowchart LR
   B[Browser] --> N["Next.js :3000<br/>pages + /api proxy"]
   N --> F["FastAPI :8000<br/>LangGraph agent"]
-  F --> P[("PostgreSQL + pgvector<br/>284 chunks")]
+  F --> P[("PostgreSQL + pgvector<br/>chunks per course")]
   F --> G["Gemini 3.5 Flash-Lite"]
-  F --> S["Spring Boot :8080<br/>scores and mastery"]
+  F --> S["Spring Boot :8080<br/>scores per course"]
   S --> A[("PostgreSQL<br/>schema app")]
 ```
 
-- Offline: PDF → clean pages (`pypdf`, headers and footers removed) → chunks of at most 300
-  tokens → `multilingual-e5-small` embeddings (fine-tuned) → pgvector.
+- Offline, per course: PDF → clean pages (`pypdf`, headers and footers removed) → chunks of
+  at most 300 tokens → `multilingual-e5-small` embeddings (fine-tuned) → pgvector, tagged
+  with the course id.
 - The browser only talks to Next.js; FastAPI is the only client of Spring. If Spring is down,
   the assistant still answers and scores are simply not recorded (degraded mode).
 
 ## Results
 
-All numbers come from the scripts in `eval/` (reports in `eval/results/`).
+All numbers come from the scripts in `eval/` (reports in `eval/results/`), on the reference
+course *Principles of Data Science*.
 
 **Retrieval** — 20 test questions, each asked in English and in French, written by paraphrasing
 the book (not generated by the LLM). A hit is a retrieved chunk on an expected PDF page.
@@ -72,37 +96,61 @@ the answer passed the citation check **and** cites an expected page (no LLM judg
 
 | Language | Correct | Expected page in top 4 | Traps refused |
 | --- | --- | --- | --- |
-| English | 19/20 | 19/20 | 5/5 |
+| English | 18/20 (19/20 before the multi-course prompts) | 18/20 | 5/5 |
 | French | 19/20 | 19/20 | 5/5 |
 
-Rewriting French questions into English search queries (inside the router call, no extra LLM
-call) raised French top-4 retrieval from 16/20 to 19/20.
+French questions are rewritten into English search queries inside the router call (no extra
+LLM call): French top-4 retrieval went from 16/20 to 19/20. The English miss (test02) came
+from the same rewrite applied to an English question, which dropped words; questions in the
+book's language are now searched verbatim, and test02 then cites the expected page (checked
+on that question; a full re-run is pending because the free-tier quota was exhausted).
 
-**Answer quality** (RAGAS 0.4.3, 20 English test questions): faithfulness **0.934**, answer
-relevancy **0.931**.
+**Answer quality** (RAGAS 0.4.3, 20 English test questions, before the multi-course prompts):
+faithfulness **0.934**, answer relevancy **0.931**.
 
-**Speed and front end** — median `/chat` latency **2.73 s** (p90 3.17 s) on 20 questions never
-asked before (dev set, English and French), Gemini free tier, CPU only. Lighthouse 13.5
-(production build):
+**Speed** — median `/chat` latency **2.73 s** (p90 3.17 s) on 20 questions never asked before (dev set, English and French), Gemini free tier, CPU only, measured before the multi-course change (same pipeline). When the free-tier quota is saturated, the code waits 60 s and retries: one call then took 2 min 30 s.
 
-| Page | Device | Performance | Accessibility | Best practices | SEO |
-| --- | --- | --- | --- | --- | --- |
-| `/study` | mobile | 98 | 100 | 100 | 100 |
-| `/study` | desktop | 100 | 100 | 100 | 100 |
-| `/` (map) | mobile | 99 | 100 | 100 | 100 |
-| `/` (map) | desktop | 100 | 100 | 100 | 100 |
+**Front end** — Lighthouse 13.5 on the production build, and axe-core (WCAG 2.2 AA rules):
+**0 violations** on the 6 pages × light/dark × desktop/mobile, and on the answered, Feynman
+and quiz states.
+
+| Page | Mobile: perf. / a11y / best pr. / SEO | Desktop |
+| --- | --- | --- |
+| `/` progress | 94 / 100 / 100 / 100 | 100 / 100 / 100 / 100 |
+| `/study` | 97 / 100 / 100 / 100 | 100 / 100 / 100 / 100 |
+| `/feynman` | 97 / 100 / 100 / 100 | 100 / 100 / 100 / 100 |
+| `/quiz` | 100 / 100 / 100 / 100 | 100 / 100 / 100 / 100 |
+| `/library` | 97 / 100 / 100 / 100 | 100 / 100 / 100 / 100 |
+
+## Interface
+
+A dot-grid notebook with one violet "highlighter" accent. Local fonts only (Bricolage
+Grotesque for the interface, Literata for the book's text, both SIL OFL), inline SVG icons,
+CSS tokens for light and dark themes. Mastery levels always pair colour with an icon and a
+label; their colours were checked with a palette validator for colour-blind separation and
+contrast. The progress chart uses one hue with threshold lines at 3 (review) and 4 (mastered).
+
+![Feynman mode: key ideas covered or missing, score computed by code, follow-up question](docs/img/feynman.png)
+
+![Library: one card per course and the steps to add one](docs/img/library.png)
+
+| Dark theme | Phone |
+| --- | --- |
+| ![Progress page in the dark theme](docs/img/mastery-map-dark.png) | ![Progress page on a phone](docs/img/mobile.png) |
 
 ## Limits
 
-- **Small evaluation sets** (20 test questions, 5 traps): differences of one or two questions
-  are within noise; the fine-tuning gain is indicative only.
+- **Small evaluation sets** (20 test questions, 5 traps, reference course only): differences
+  of one or two questions are within noise; the fine-tuning gain is indicative only.
 - **Same model as judge and generator** for RAGAS and the Feynman judge: scores may be
   optimistic. The Feynman judge is checked against blind human grades (protocol in
   `eval/eval_feynman.py`).
+- **Notions of a new course are an LLM draft**: they must be reviewed by hand (the statistics
+  catalogue still is a draft; its lab sections gave weak notions).
 - **Formulas are lost**: they are drawn as vector graphics in the PDF, so they are absent from
-  the extracted text (about 35 % of the pages are affected); the PDF panel still shows them.
+  the extracted text; the PDF panel still shows them.
 - **A verified citation is not always the best page**: the check proves the page was retrieved
-  and cited, not that it is the most relevant one (1 miss out of 20).
+  and cited, not that it is the most relevant one.
 - **Free tier**: rate limits and occasional 503 errors from Gemini; the code waits and retries
   once. No public deployment (the free tier does not allow it for EU/UK users): local demo only.
 
@@ -114,25 +162,22 @@ Windows, PowerShell, Python 3.13 with [uv](https://docs.astral.sh/uv/), Node 22,
 uv venv --python 3.13
 uv pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
 uv pip install -r requirements.txt -r requirements-dev.txt
-Copy-Item .env.example .env        # Gemini key, Neon connection strings
+Copy-Item .env.example .env              # Gemini key, Neon connection strings
 uv run python -m scripts.check_env all
-uv run python -m scripts.download_book
-uv run python -m rag.ingest        # pages -> chunks -> embeddings -> PostgreSQL
-.\scripts\dev.ps1                  # API :8000, Spring :8080, web :3000
+uv run python -m course.add data-science # download + index (its notions are in the repo)
+uv run python -m course.add statistics
+.\scripts\dev.ps1                        # API :8000, Spring :8080, web :3000
 ```
 
 With Docker: `docker compose -f infra/docker-compose.yml up --build` (PostgreSQL + pgvector,
-API, Spring, web), then index once with
-`docker compose -f infra/docker-compose.yml run --rm --user root api python -m rag.ingest`
+API, Spring, web). Download the PDFs on the host (`uv run python -m scripts.download_book <id>`),
+then index each course once with
+`docker compose -f infra/docker-compose.yml run --rm --user root api python -m rag.ingest <id>`
 (one-off job as root: the mounted `data/` folder may not be writable by the API's non-root
-user). Until the book is indexed, `/chat` answers 503 with that command. The image embeds the
+user). Until a course is indexed, `/chat` answers 503 with that command. The image embeds the
 base e5 model; pass `--build-arg EMBEDDING_MODEL=<Hub id>` to use the fine-tuned one.
 
 Tests: `uv run pytest -q` (no network), `cd core; .\mvnw.cmd test`, `cd frontend; npm run build`.
-
-![Mastery map: one tile per notion coloured by the average of the last 3 scores, revision plan](docs/img/mastery-map.png)
-
-![Feynman mode: key ideas covered or missing, score computed by code, follow-up question](docs/img/feynman.png)
 
 ## Stack
 
@@ -144,13 +189,19 @@ measured progress in [JOURNAL.md](JOURNAL.md).
 
 ## Attribution
 
-Course content: *Principles of Data Science* by Shaun V. Ault, Soohyun Nam Liao and Larry
-Musolino (senior contributing authors), OpenStax, Rice University, 2025, licensed under
-[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). Access for free at
-[openstax.org](https://openstax.org/details/books/principles-data-science). The book PDF is
-downloaded locally and never stored in this repository.
+- *Principles of Data Science* by Shaun V. Ault, Soohyun Nam Liao and Larry Musolino (senior
+  contributing authors), OpenStax, Rice University, 2025,
+  [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). Access for free at
+  [openstax.org](https://openstax.org/details/books/principles-data-science).
+- *Introductory Statistics 2e* by Barbara Illowsky and Susan Dean (senior contributing
+  authors), OpenStax, Rice University, 2023,
+  [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). Access for free at
+  [openstax.org](https://openstax.org/details/books/introductory-statistics-2e).
+- Fonts: Bricolage Grotesque and Literata, SIL Open Font License 1.1 (`frontend/app/fonts`).
+
+The book PDFs are downloaded locally and never stored in this repository.
 
 ## License
 
-Code: [MIT](LICENSE). Files derived from the book (`course/notions.json`, `eval/*.json`):
+Code: [MIT](LICENSE). Files derived from the books (`course/notions/*.json`, `eval/*.json`):
 CC BY-NC-SA 4.0, see [LICENSE-CONTENT.md](LICENSE-CONTENT.md).

@@ -1,9 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
+import Icon from "@/components/Icon";
 import type { Notion } from "@/lib/api";
-import { colon, type Dict, type Lang } from "@/lib/i18n";
+import { fmt, type Dict, type Lang } from "@/lib/i18n";
 
 type Result = {
   covered: string[];
@@ -16,23 +18,18 @@ type Result = {
 };
 
 const MIN_CHARS = 20;
+const MAX_SCORE = 5;
 
-export default function FeynmanForm({
-  notions,
-  lang,
-  t,
-  initialNotion,
-}: {
-  notions: Notion[];
-  lang: Lang;
-  t: Dict;
-  initialNotion?: string;
-}) {
-  const [notionId, setNotionId] = useState(initialNotion ?? notions[0]?.id ?? "");
+type Props = { notions: Notion[]; lang: Lang; t: Dict; course: string; initialNotion?: string };
+
+export default function FeynmanForm({ notions, lang, t, course, initialNotion }: Props) {
+  const known = notions.some((n) => n.id === initialNotion);
+  const [notionId, setNotionId] = useState(known ? initialNotion! : (notions[0]?.id ?? ""));
   const [explanation, setExplanation] = useState("");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState("");
+  const notion = notions.find((n) => n.id === notionId);
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -43,7 +40,7 @@ export default function FeynmanForm({
       const response = await fetch("/api/feynman", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ notion_id: notionId, explanation, lang }),
+        body: JSON.stringify({ notion_id: notionId, explanation, lang, course }),
       });
       if (!response.ok) throw new Error(String(response.status));
       setResult(await response.json());
@@ -55,69 +52,148 @@ export default function FeynmanForm({
   }
 
   return (
-    <>
-      <form onSubmit={submit} className="card">
-        <p>
-          <label htmlFor="notion">{t.feynman.notion}</label>{" "}
-          <select id="notion" value={notionId} onChange={(event) => setNotionId(event.target.value)}>
-            {notions.map((notion) => (
-              <option key={notion.id} value={notion.id}>
-                {notion.name}
+    <div className="feynman">
+      <form onSubmit={submit} className="card stack">
+        <div className="field">
+          <label className="field-label" htmlFor="notion">
+            {t.feynman.notion}
+          </label>
+          <select
+            id="notion"
+            className="select"
+            value={notionId}
+            onChange={(event) => {
+              setNotionId(event.target.value);
+              setResult(null);
+            }}
+          >
+            {notions.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name}
               </option>
             ))}
           </select>
-        </p>
-        <label htmlFor="explanation" className="sr-only">
-          {t.feynman.placeholder}
-        </label>
-        <textarea
-          id="explanation"
-          rows={8}
-          style={{ width: "100%" }}
-          value={explanation}
-          onChange={(event) => setExplanation(event.target.value)}
-          placeholder={t.feynman.placeholder}
-          maxLength={4000}
-        />
-        <p>
-          <button type="submit" disabled={busy || explanation.trim().length < MIN_CHARS}>
-            {busy ? t.feynman.checking : t.feynman.submit}
-          </button>
-        </p>
+          {notion && (
+            <span className="hint">
+              {notion.section} · {fmt(t.feynman.ideas, { count: notion.key_ideas.length })}
+            </span>
+          )}
+        </div>
+        <div className="field">
+          <label className="field-label" htmlFor="explanation">
+            {t.feynman.explanation}
+          </label>
+          <textarea
+            id="explanation"
+            className="textarea"
+            rows={10}
+            value={explanation}
+            onChange={(event) => setExplanation(event.target.value)}
+            placeholder={t.feynman.placeholder}
+            maxLength={4000}
+            aria-describedby="chars"
+          />
+          <span id="chars" className="hint">
+            {fmt(t.feynman.chars, { count: explanation.trim().length })}
+          </span>
+        </div>
+        <button
+          type="submit"
+          className="btn btn-primary btn-lg"
+          disabled={busy || explanation.trim().length < MIN_CHARS}
+          style={{ justifySelf: "start" }}
+        >
+          <Icon name="feynman" />
+          {busy ? t.feynman.checking : t.feynman.submit}
+        </button>
       </form>
-      <div aria-live="polite">
-        {error && <p role="alert">{error}</p>}
-        {result && (
-          <section className="card" style={{ marginTop: "1rem" }}>
-            <h2>
-              {t.feynman.score}
-              {colon(lang)}
-              {result.score} / 5
-            </h2>
-            {!result.recorded && <p className="muted">{t.feynman.notRecorded}</p>}
-            <h3>{t.feynman.covered}</h3>
-            <ul>{result.covered.map((idea) => <li key={idea}>✓ {idea}</li>)}</ul>
-            <h3>{t.feynman.missing}</h3>
-            <ul>{result.missing.map((idea) => <li key={idea}>✗ {idea}</li>)}</ul>
-            <h3>{t.feynman.errors}</h3>
-            {result.errors.length === 0 ? (
-              <p>{t.feynman.noErrors}</p>
-            ) : (
-              <ul>{result.errors.map((item) => <li key={item}>{item}</li>)}</ul>
-            )}
-            <h3>{t.feynman.followUp}</h3>
-            <p className="excerpt">{result.follow_up}</p>
-            <h3>{t.feynman.pages}</h3>
-            <p>
-              {result.pages.map((page) => (
-                <a key={page} href={`/api/book.pdf#page=${page}`} target="_blank" rel="noreferrer" style={{ marginRight: "0.5rem" }}>
-                  p.{page}
-                </a>
-              ))}
-            </p>
-          </section>
+
+      <section className="card stack" aria-labelledby="feedback-title" aria-live="polite" aria-busy={busy}>
+        <h2 id="feedback-title">{t.feynman.resultTitle}</h2>
+        {error && (
+          <p className="callout callout-warn" role="alert">
+            <Icon name="alert" />
+            {error}
+          </p>
+        )}
+        {!result && !error && <p className="muted">{busy ? t.feynman.checking : t.feynman.resultEmpty}</p>}
+        {result && <Feedback result={result} t={t} />}
+      </section>
+    </div>
+  );
+}
+
+function Feedback({ result, t }: { result: Result; t: Dict }) {
+  return (
+    <>
+      <div className="gauge">
+        <span className="eyebrow">{t.feynman.score}</span>
+        <span className="gauge-value">
+          {result.score}
+          <small> / {MAX_SCORE}</small>
+        </span>
+        <div className="gauge-segments" aria-hidden="true">
+          {Array.from({ length: MAX_SCORE }, (_, i) => (
+            <span key={i} data-on={i < result.score} />
+          ))}
+        </div>
+        <span className="hint">{result.recorded ? t.feynman.recorded : t.feynman.notRecorded}</span>
+      </div>
+
+      <Ideas title={t.feynman.covered} items={result.covered} ok />
+      <Ideas title={t.feynman.missing} items={result.missing} ok={false} />
+
+      <div className="stack" style={{ gap: "var(--space-2)" }}>
+        <h3>{t.feynman.errors}</h3>
+        {result.errors.length === 0 ? (
+          <p className="muted">{t.feynman.noErrors}</p>
+        ) : (
+          <ul className="ideas">
+            {result.errors.map((item) => (
+              <li key={item} className="idea idea-miss">
+                <Icon name="alert" />
+                {item}
+              </li>
+            ))}
+          </ul>
         )}
       </div>
+
+      <div className="stack" style={{ gap: "var(--space-2)" }}>
+        <h3>{t.feynman.followUp}</h3>
+        <p className="excerpt follow-up">{result.follow_up}</p>
+      </div>
+
+      <div className="stack" style={{ gap: "var(--space-2)" }}>
+        <h3>{t.feynman.pages}</h3>
+        <div className="row">
+          {result.pages.map((page) => (
+            <Link key={page} className="chip" href={`/study?page=${page}`} title={fmt(t.study.openPage, { page })}>
+              <Icon name="book" />
+              p. {page}
+            </Link>
+          ))}
+        </div>
+      </div>
     </>
+  );
+}
+
+function Ideas({ title, items, ok }: { title: string; items: string[]; ok: boolean }) {
+  if (items.length === 0) return null;
+  return (
+    <div className="stack" style={{ gap: "var(--space-2)" }}>
+      <h3>
+        {title} <span className="muted">({items.length})</span>
+      </h3>
+      <ul className="ideas">
+        {items.map((idea) => (
+          <li key={idea} className={`idea ${ok ? "idea-ok" : "idea-miss"}`}>
+            <Icon name={ok ? "check" : "cross"} />
+            {idea}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

@@ -4,6 +4,7 @@ import json
 
 import pytest
 
+from course.courses import notions_path
 from course.notions import load_catalog
 from eval.eval_retrieval import (
     first_relevant_rank,
@@ -11,7 +12,7 @@ from eval.eval_retrieval import (
     reciprocal_rank,
     summarize,
 )
-from eval.questions import load_questions
+from eval.questions import EVAL_COURSE, load_questions
 
 
 def test_first_relevant_rank_is_one_based_and_none_when_missing():
@@ -44,7 +45,8 @@ def test_question_set_follows_d3():
 
 def test_question_notions_and_pages_exist():
     questions = load_questions()
-    notion_ids = {notion.id for notion in load_catalog().notions}
+    catalog = load_catalog(notions_path(EVAL_COURSE))
+    notion_ids = {notion.id for notion in catalog.notions}
     for question in questions.dev + questions.test:
         assert question.notion is None or question.notion in notion_ids
         assert all(275 <= page <= 386 for page in question.pages)

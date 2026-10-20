@@ -1,10 +1,14 @@
 """Request and response schemas of the FastAPI service (the API contract)."""
 
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, Field
 
+from course.courses import COURSE_ID_PATTERN
+
 Lang = Literal["en", "fr"]
+# Course id (see course/courses.json); None = the default course.
+CourseId = Annotated[str, Field(pattern=COURSE_ID_PATTERN)] | None
 
 
 class ChatRequest(BaseModel):
@@ -12,6 +16,7 @@ class ChatRequest(BaseModel):
 
     message: str = Field(min_length=1, max_length=2000)
     lang: Lang = "en"
+    course: CourseId = None
 
 
 class Citation(BaseModel):
@@ -24,6 +29,7 @@ class Citation(BaseModel):
 class ChatResponse(BaseModel):
     """POST /chat answer: route, verified citations, quiz or plan when routed."""
 
+    course: str
     route: str
     lang: Lang
     answer: str | None = None
@@ -31,6 +37,23 @@ class ChatResponse(BaseModel):
     status: str
     quiz: list[dict] | None = None
     plan: list[dict] | None = None
+
+
+class CourseOut(BaseModel):
+    """One course of the library, with what is ready for it."""
+
+    id: str
+    title: str
+    scope: str
+    book_lang: Lang
+    license: str
+    attribution: str
+    book_url: str
+    default: bool
+    pdf: bool  # PDF downloaded
+    chunks: int | None  # indexed chunks (None: database unavailable)
+    notions: int  # 0 until the catalogue is drafted
+    validated: bool  # catalogue reviewed by hand (D1)
 
 
 class NotionOut(BaseModel):
@@ -50,6 +73,7 @@ class FeynmanRequest(BaseModel):
     notion_id: str
     explanation: str = Field(min_length=20, max_length=4000)
     lang: Lang = "en"
+    course: CourseId = None
 
 
 class FeynmanResponse(BaseModel):
@@ -69,6 +93,7 @@ class QuizRequest(BaseModel):
 
     n: int = Field(default=3, ge=1, le=10)
     lang: Lang = "en"
+    course: CourseId = None
 
 
 class QuizAnswer(BaseModel):
@@ -83,6 +108,7 @@ class QuizResultRequest(BaseModel):
     """POST /quiz/result body."""
 
     answers: list[QuizAnswer] = Field(min_length=1)
+    course: CourseId = None
 
 
 class QuizResultResponse(BaseModel):

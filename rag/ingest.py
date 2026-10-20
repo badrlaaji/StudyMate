@@ -1,6 +1,6 @@
-"""Book PDF -> clean pages (pages.jsonl) -> chunks -> e5 vectors -> chunks table.
+"""Course PDF -> clean pages (pages.jsonl) -> chunks -> e5 vectors -> chunks table.
 
-Usage: uv run python -m rag.ingest
+Usage: uv run python -m rag.ingest [course_id]   (default course if omitted)
 """
 
 import asyncio
@@ -12,14 +12,11 @@ from pathlib import Path
 
 from pypdf import PdfReader
 
-from config import ROOT
+from course.courses import Course, course_from_argv, pages_path, pdf_path
 from rag.chunking import chunk_pages
 from rag.embeddings import embed_passages, model_name
 from rag.store import count_chunks, create_schema, get_engine, replace_chunks
 
-BOOK_PATH = ROOT / "data" / "raw" / "book.pdf"
-PAGES_PATH = ROOT / "data" / "interim" / "pages.jsonl"
-CHAPTERS = (6, 7)
 # D8: a line found on more than 50 % of the pages is a header or footer.
 REPEAT_THRESHOLD = 0.5
 # Footers: "266     6 • Chapter title" (even), "6.1 • Section title     267" (odd).
@@ -94,11 +91,17 @@ def read_outline(reader: PdfReader) -> tuple[list, list]:
     return top, sorted(subs, key=lambda entry: entry[0])
 
 
+def page_ranges(course: Course, top: list) -> list[tuple[int, int, int]]:
+    """Return (chapter, first, last) ranges; chapter 0 for a plain page range."""
+    if course.pages:
+        return [(0, course.pages[0], course.pages[1])]
+    return [(n, *chapter_bounds(top, n)) for n in course.chapters]
+
+
 def chapter_records(
-    reader: PdfReader, number: int, top: list, subs: list
+    reader: PdfReader, number: int, first: int, last: int, subs: list
 ) -> list[dict]:
-    """Extract and clean every page of one chapter; skip empty pages."""
-    first, last = chapter_bounds(top, number)
+    """Extract and clean every page of one range; skip empty pages."""
     pages = list(range(first, last + 1))
     texts = {page: reader.pages[page - 1].extract_text() for page in pages}
     # Headers alternate between even and odd pages: count each parity apart.
@@ -125,33 +128,33 @@ def write_jsonl(records: list[dict], path: Path) -> None:
             file.write(json.dumps(record, ensure_ascii=False) + "\n")
 
 
-def read_jsonl(path: Path = PAGES_PATH) -> list[dict]:
+def read_jsonl(path: Path) -> list[dict]:
     """Read one JSON object per line (UTF-8)."""
     with path.open(encoding="utf-8") as file:
         return [json.loads(line) for line in file if line.strip()]
 
 
-def build_pages() -> list[dict]:
-    """Build pages.jsonl for the selected chapters, print counts, return the pages."""
-    reader = PdfReader(BOOK_PATH)
+def build_pages(course: Course) -> list[dict]:
+    """Build pages.jsonl for the studied part of a course, print counts."""
+    reader = PdfReader(pdf_path(course.id))
     top, subs = read_outline(reader)
     records = []
-    for number in CHAPTERS:
-        chapter = chapter_records(reader, number, top, subs)
+    for number, first, last in page_ranges(course, top):
+        chapter = chapter_records(reader, number, first, last, subs)
         chars = sum(len(r["text"]) for r in chapter)
-        first, last = chapter_bounds(top, number)
         print(
             f"chapter {number}: pages {first}-{last}, {len(chapter)} non-empty "
             f"pages, {chars} chars"
         )
         records.extend(chapter)
-    write_jsonl(records, PAGES_PATH)
+    path = pages_path(course.id)
+    write_jsonl(records, path)
     total = sum(len(r["text"]) for r in records)
-    print(f"total: {len(records)} pages, {total} chars -> {PAGES_PATH}")
+    print(f"total: {len(records)} pages, {total} chars -> {path}")
     return records
 
 
-async def index_pages(records: list[dict]) -> None:
+async def index_pages(course_id: str, records: list[dict]) -> None:
     """Chunk, embed ("passage: ") and store the pages, then print the counts."""
     start = time.perf_counter()
     chunks = chunk_pages(records)
@@ -160,16 +163,17 @@ async def index_pages(records: list[dict]) -> None:
     engine = get_engine()
     try:
         await create_schema(engine)
-        await replace_chunks(engine, model_name(), chunks, vectors)
-        stored = await count_chunks(engine, model_name())
-        print(f"{stored} chunks stored for {model_name()}")
+        await replace_chunks(engine, course_id, model_name(), chunks, vectors)
+        stored = await count_chunks(engine, course_id, model_name())
+        print(f"{stored} chunks stored for {course_id} ({model_name()})")
     finally:
         await engine.dispose()
 
 
 def main() -> None:
-    """Run the whole offline pipeline."""
-    asyncio.run(index_pages(build_pages()))
+    """Run the whole offline pipeline for one course."""
+    course = course_from_argv()
+    asyncio.run(index_pages(course.id, build_pages(course)))
 
 
 if __name__ == "__main__":

@@ -20,6 +20,7 @@ from agent.plan import PLAN_SIZE, build_plan
 from agent.quiz import QUIZ_SIZE, build_quiz
 from agent.router import route_message
 from agent.spring import fetch_weak_notions
+from course.courses import Registry, get_course
 from course.notions import Catalog
 from rag.retrieve import retrieve
 
@@ -30,6 +31,7 @@ class ChatState(BaseModel):
     """Everything the graph knows about one message."""
 
     message: str
+    course: str = ""  # course id; empty = the default course
     route: str = "answer"
     lang: str = "en"
     search_query: str = ""
@@ -53,7 +55,8 @@ def after_generate(state: ChatState) -> str:
 def build_graph(
     engine: AsyncEngine,
     http: httpx.AsyncClient,
-    catalog: Catalog,
+    registry: Registry,
+    catalogs: dict[str, Catalog],
     llm=None,
     embedder=None,
     rng: random.Random | None = None,
@@ -62,17 +65,25 @@ def build_graph(
     rng = rng or random.Random()
 
     async def route_node(state: ChatState) -> dict:
-        decision = await asyncio.to_thread(route_message, state.message, llm)
-        return decision.model_dump()
+        course = get_course(registry, state.course or None)
+        decision = await asyncio.to_thread(
+            route_message, state.message, course.book_lang, llm
+        )
+        # Rewrite only to translate: in the book's language, the student's own words
+        # are searched (a rewrite dropped words and missed a page, see DECISIONS S11-7).
+        same = decision.lang == course.book_lang
+        query = state.message if same else decision.search_query
+        return {**decision.model_dump(), "search_query": query, "course": course.id}
 
     async def retrieve_node(state: ChatState) -> dict:
         query = state.search_query or state.message
-        return {"hits": await retrieve(query, engine, TOP_K, embedder)}
+        return {"hits": await retrieve(query, engine, state.course, TOP_K, embedder)}
 
     async def generate_node(state: ChatState) -> dict:
         retry = state.attempts > 0
+        book = get_course(registry, state.course).title
         draft = await asyncio.to_thread(
-            generate, state.message, state.lang, state.hits, retry, llm
+            generate, state.message, state.lang, state.hits, retry, book, llm
         )
         return {"draft": draft, "attempts": state.attempts + 1}
 
@@ -84,14 +95,20 @@ def build_graph(
         return {"answer": NOT_FOUND[state.lang], "citations": [], "status": "not_found"}
 
     async def quiz_node(state: ChatState) -> dict:
+        catalog = catalogs.get(state.course)
+        if catalog is None:  # notions not drafted yet for this course
+            return {"quiz": [], "status": "no_notions"}
         questions, degraded = await build_quiz(
-            engine, http, catalog, QUIZ_SIZE, state.lang, llm, rng
+            engine, http, state.course, catalog, QUIZ_SIZE, state.lang, llm, rng
         )
         status = "degraded" if degraded else "ok"
         return {"quiz": [q.model_dump() for q in questions], "status": status}
 
     async def plan_node(state: ChatState) -> dict:
-        weak = await fetch_weak_notions(http, PLAN_SIZE)
+        catalog = catalogs.get(state.course)
+        if catalog is None:
+            return {"plan": [], "status": "no_notions"}
+        weak = await fetch_weak_notions(http, state.course, PLAN_SIZE)
         if weak is None:
             return {"plan": [], "status": "degraded"}
         return {"plan": build_plan(weak, catalog, state.lang), "status": "ok"}
@@ -124,6 +141,7 @@ def build_graph(
 def to_response(state: dict) -> dict:
     """Shape the final state as the /chat contract."""
     return {
+        "course": state["course"],
         "route": state["route"],
         "lang": state["lang"],
         "answer": state.get("answer"),

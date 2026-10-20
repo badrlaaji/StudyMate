@@ -1,6 +1,6 @@
 # Whole stack: docker compose -f infra/docker-compose.yml up --build
-# The book PDF and the index come from the host: run scripts.download_book first, then
-#   docker compose -f infra/docker-compose.yml run --rm --user root api python -m rag.ingest
+# Course PDFs come from the host (uv run python -m scripts.download_book <course>), then
+#   docker compose -f infra/docker-compose.yml run --rm --user root api python -m rag.ingest <course>
 # (root for this one-off job only: the mounted data/ may not be writable by the API user)
 name: studymate
 

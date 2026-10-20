@@ -1,20 +1,30 @@
 import FeynmanForm from "@/components/FeynmanForm";
+import Icon from "@/components/Icon";
 import { getNotions } from "@/lib/api";
-import { getLang } from "@/lib/lang";
+import { getSession } from "@/lib/lang";
 
-export default async function FeynmanPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ notion?: string }>;
-}) {
-  const { lang, t } = await getLang();
+export default async function FeynmanPage({ searchParams }: { searchParams: Promise<{ notion?: string }> }) {
+  const { lang, t, course } = await getSession();
   const { notion } = await searchParams;
-  const notions = await getNotions(lang);
+  const notions = course ? await getNotions(lang, course.id) : [];
   return (
-    <section>
-      <h1>{t.feynman.title}</h1>
-      <p className="muted">{t.feynman.intro}</p>
-      <FeynmanForm notions={notions} lang={lang} t={t} initialNotion={notion} />
-    </section>
+    <div className="page">
+      <header className="page-head">
+        <span className="eyebrow">{course?.title}</span>
+        <h1>{t.feynman.title}</h1>
+        <p className="lede">{t.feynman.lede}</p>
+      </header>
+      {course && notions.length > 0 ? (
+        <FeynmanForm key={course.id} notions={notions} lang={lang} t={t} course={course.id} initialNotion={notion} />
+      ) : (
+        <p className="callout">
+          <Icon name="info" />
+          <span>
+            {t.map.noNotions}
+            <code className="code">uv run python -m course.add {course?.id ?? "<id>"}</code>
+          </span>
+        </p>
+      )}
+    </div>
   );
 }

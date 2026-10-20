@@ -1,105 +1,163 @@
 {
   "app": {
     "name": "StudyMate",
-    "tagline": "Study desk for Principles of Data Science"
+    "tagline": "Study any textbook, with proof",
+    "skip": "Skip to content"
   },
   "nav": {
-    "map": "Map",
-    "study": "Study",
+    "map": "Progress",
+    "study": "Ask",
     "feynman": "Feynman",
-    "quiz": "Quiz"
+    "quiz": "Quiz",
+    "library": "Library",
+    "label": "Main"
   },
   "lang": {
-    "switch": "Français",
-    "label": "Switch the interface to French"
+    "label": "Interface language"
+  },
+  "course": {
+    "label": "Course",
+    "switch": "Switch course"
+  },
+  "levels": {
+    "WEAK": "To review",
+    "LEARNING": "In progress",
+    "MASTERED": "Mastered",
+    "NONE": "Not started"
+  },
+  "map": {
+    "eyebrow": "Your progress",
+    "intro": "Each notion is coloured by the average of your last 3 scores (Feynman mode and quizzes).",
+    "mastered": "mastered",
+    "ofNotions": "{done} of {total} notions mastered",
+    "next": "Review next",
+    "nextIntro": "Your weakest notions, with the pages to re-read.",
+    "nextEmpty": "Nothing to review yet. Explain a notion or take a quiz: your weak spots will show up here.",
+    "all": "All notions",
+    "explain": "Explain",
+    "quiz": "Quiz",
+    "read": "Read p. {page}",
+    "average": "Average {value} / 5",
+    "scores": "{count} scores",
+    "chart": "Average of your last 3 scores",
+    "chartIntro": "Practised notions, weakest first. Review below 3, mastered from 4.",
+    "reviewLine": "review below 3",
+    "masteredLine": "mastered from 4",
+    "degraded": "Scores are unavailable right now (the mastery service is offline). You can still ask questions.",
+    "noNotions": "This course has no notions yet. Run this command, then review the drafted file:",
+    "distribution": "Notions by level",
+    "percent": "{value}%"
   },
   "study": {
     "title": "Ask the book",
-    "placeholder": "Ask a question about chapters 6-7 (press / to focus)",
+    "lede": "Every answer is checked against the pages it cites before you see it.",
+    "emptyTitle": "What do you want to understand?",
+    "emptyText": "Ask anything about this course ({scope}). Answers cite the pages they come from; click one to read it.",
+    "try": "Try",
+    "explainNotion": "Explain {name} simply",
+    "quizMe": "Quiz me on my weak spots",
+    "whatToReview": "What should I review?",
+    "placeholder": "Ask a question…",
+    "shortcut": "Press / to ask, Enter to send, Shift+Enter for a new line",
     "ask": "Ask",
-    "empty": "Ask anything about machine learning, deep learning or AI. Answers cite the book's pages.",
     "steps": {
-      "search": "Searching the book…",
-      "write": "Writing the answer…",
-      "verify": "Checking the citations…"
+      "route": "Understanding",
+      "search": "Searching the book",
+      "write": "Writing",
+      "verify": "Checking citations"
     },
-    "verified": "✓ citations verified",
-    "route": "route",
-    "notFound": "Not found in the book",
-    "degraded": "Limited mode: the mastery service is not available",
-    "openPage": "Open page",
-    "newTab": "open in a new tab",
-    "pdfTitle": "Book",
-    "close": "Close",
+    "verified": "Citations verified",
+    "agent": "Agent",
+    "routes": {
+      "answer": "answer",
+      "quiz": "quiz",
+      "plan": "plan"
+    },
+    "notFound": "Not in this course",
+    "noNotions": "This course has no notions yet",
+    "degraded": "Limited mode: the mastery service is offline",
+    "openPage": "Open page {page}",
     "you": "You",
     "assistant": "StudyMate",
-    "error": "The service is not available. Try again in a minute."
+    "error": "StudyMate can't answer right now. The free Gemini quota may be busy: try again in a minute.",
+    "goQuiz": "Open the quiz",
+    "plan": "Your revision plan",
+    "noPlan": "Nothing to review yet."
+  },
+  "reader": {
+    "title": "Book",
+    "page": "Page {page}",
+    "newTab": "Open in a new tab",
+    "close": "Close the page",
+    "emptyTitle": "The book opens here",
+    "emptyText": "Click a page number in an answer: the page opens with the cited passage highlighted.",
+    "loading": "Loading the PDF…",
+    "error": "The PDF can't be shown here. Open it in a new tab."
   },
   "feynman": {
     "title": "Feynman mode",
-    "intro": "Pick a notion and explain it in your own words, as if to a friend. The judge checks each key idea; the score is computed by code.",
-    "notion": "Notion",
-    "placeholder": "Your explanation (at least 20 characters)…",
+    "lede": "Explain a notion in your own words, as if to a friend. Each key idea is checked; the score is computed by code.",
+    "notion": "Notion to explain",
+    "ideas": "{count} key ideas to cover",
+    "placeholder": "Explain it simply, in your own words…",
+    "chars": "{count} characters (at least 20)",
     "submit": "Check my explanation",
-    "checking": "Checking your explanation…",
-    "covered": "Key ideas you explained",
+    "checking": "Checking…",
+    "resultTitle": "Your feedback",
+    "resultEmpty": "Write your explanation, then check it: the key ideas you covered and missed will appear here.",
+    "score": "Score",
+    "covered": "Key ideas covered",
     "missing": "Key ideas to add",
     "errors": "Mistakes",
-    "noErrors": "No mistake found.",
-    "score": "Score",
-    "followUp": "Follow-up question",
+    "noErrors": "No mistakes found.",
+    "followUp": "Question to go further",
     "pages": "Pages to re-read",
-    "notRecorded": "Score not recorded: the mastery service is not available."
-  },
-  "pdf": {
-    "loading": "Loading the PDF…",
-    "error": "The PDF could not be shown here.",
-    "page": "page"
-  },
-  "footer": {
-    "attribution": "Content: Principles of Data Science, OpenStax, CC BY-NC-SA 4.0.",
-    "book": "Read the book on openstax.org"
-  },
-  "map": {
-    "title": "Mastery map",
-    "intro": "One tile per notion of chapters 6-7. Colour = average of your last 3 scores.",
-    "levels": {
-      "WEAK": "Weak",
-      "LEARNING": "Learning",
-      "MASTERED": "Mastered",
-      "NONE": "Not started"
-    },
-    "explain": "Explain",
-    "quiz": "Quiz",
-    "read": "Re-read",
-    "average": "average",
-    "chart": "Average score per practised notion (0-5)",
-    "plan": "Revision plan",
-    "planEmpty": "No weak notion yet: practise with Feynman mode or a quiz.",
-    "pages": "pages",
-    "degraded": "The mastery service is not available: colours and plan are hidden."
+    "recorded": "Score saved to your progress.",
+    "notRecorded": "Score not saved: the mastery service is offline.",
+    "explanation": "Your explanation"
   },
   "quiz": {
     "title": "Quiz",
-    "intro": "Questions on your weakest notions. Answer with the keys 1 to 4.",
-    "start": "Start a quiz",
-    "loading": "Preparing the questions…",
-    "question": "Question",
-    "of": "of",
+    "lede": "3 questions on your weakest notions, written from the book's pages and graded by code.",
+    "start": "Start the quiz",
+    "loading": "Writing your questions…",
+    "question": "Question {index} of {total}",
+    "keys": "Keys 1–4 to answer, Enter for the next question",
     "correct": "Correct!",
     "wrong": "Not quite.",
-    "answer": "Answer",
     "source": "Source",
     "next": "Next question",
     "finish": "See my results",
-    "scores": "Scores recorded",
-    "notRecorded": "Scores not recorded: the mastery service is not available.",
+    "resultTitle": "Your results",
+    "recorded": "Scores added to your progress.",
+    "notRecorded": "Scores not saved: the mastery service is offline.",
     "again": "New quiz",
-    "empty": "No question could be generated. Try again.",
-    "degraded": "The mastery service is not available: random notions were chosen."
+    "empty": "No questions could be written this time. Try again.",
+    "degraded": "The mastery service is offline: notions were picked at random."
   },
-  "chat": {
-    "goQuiz": "Open the quiz",
-    "plan": "Your revision plan"
+  "library": {
+    "title": "Library",
+    "lede": "Each course is a public textbook: its PDF, the passages indexed for search, its notions and your progress.",
+    "current": "Current course",
+    "open": "Study this course",
+    "pdf": "PDF downloaded",
+    "noPdf": "PDF not downloaded",
+    "indexed": "{count} passages indexed",
+    "notIndexed": "Not indexed yet",
+    "dbDown": "Index status unknown (database offline)",
+    "notions": "{count} notions",
+    "draft": "draft, to review",
+    "validated": "validated",
+    "noNotions": "No notions yet",
+    "bookPage": "Book page",
+    "addTitle": "Add a course",
+    "addIntro": "Any textbook you are allowed to reuse works, for example an OpenStax book. Its text is sent to Gemini to draft the notions, so never add private documents.",
+    "add1": "Describe the course in course/courses.json: id, title, PDF link, license, chapters (or a page range).",
+    "add2": "Run one command: it downloads the PDF, indexes the pages and drafts the notions.",
+    "add3": "Review course/notions/<id>.json, set \"validated\" to true, then restart the API."
+  },
+  "footer": {
+    "content": "Content",
+    "license": "Code: MIT. Course content: see each book's license."
   }
 }

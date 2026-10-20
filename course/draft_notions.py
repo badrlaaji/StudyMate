@@ -1,7 +1,8 @@
-"""Draft course/notions.json with the LLM, one call per main section of chapters 6-7.
+"""Draft the notion catalogue of a course with the LLM, one call per main section.
 
-Usage: uv run python -m course.draft_notions
-The draft must then be reviewed by hand (D1) and "validated" set to true.
+Usage: uv run python -m course.draft_notions [course_id]   (default course if omitted)
+The draft (course/notions/<course_id>.json) must then be reviewed by hand (D1) and
+"validated" set to true.
 """
 
 import json
@@ -14,15 +15,12 @@ from pydantic import BaseModel
 from agent.cache import cache_get, cache_key
 from agent.llm import invoke_structured
 from config import get_env
-from course.notions import NOTIONS_PATH, Catalog, KeyIdea, Notion, load_catalog
+from course.courses import Course, course_from_argv, notions_path, pages_path
+from course.notions import Catalog, KeyIdea, Notion, load_catalog
 from rag.ingest import read_jsonl
 
-SOURCE = (
-    "Principles of Data Science (OpenStax, 2025), chapters 6-7, "
-    "https://openstax.org/details/books/principles-data-science"
-)
-LICENSE = "CC BY-NC-SA 4.0"
 MAIN_SECTION = re.compile(r"^\d+\.\d+ ")  # "6.2 Classification ..." (not Key Terms)
+BLOCK_PAGES = 10  # no numbered sections in the outline: blocks of 10 pages
 PAGES_PER_NOTION = 5  # about one notion per 5 pages of a section
 MAX_PER_SECTION = 4
 PAUSE_S = float(os.environ.get("LLM_PAUSE_S", "6"))  # stay under the per-minute quota
@@ -72,12 +70,26 @@ class SectionDraft(BaseModel):
 
 
 def group_sections(pages: list[dict]) -> dict[str, list[dict]]:
-    """Group pages by main section ("6.1 ...", "7.2 ..."), in book order."""
+    """Group pages by main section ("6.1 ...", "7.2 ..."), else by blocks of pages."""
     sections: dict[str, list[dict]] = {}
     for page in pages:
         if MAIN_SECTION.match(page["section"]):
             sections.setdefault(page["section"], []).append(page)
-    return sections
+    return sections or page_blocks(pages)
+
+
+def page_blocks(pages: list[dict]) -> dict[str, list[dict]]:
+    """Split pages into blocks of BLOCK_PAGES, named "Pages first-last"."""
+    blocks = {}
+    for start in range(0, len(pages), BLOCK_PAGES):
+        block = pages[start : start + BLOCK_PAGES]
+        blocks[f"Pages {block[0]['page']}-{block[-1]['page']}"] = block
+    return blocks
+
+
+def catalog_source(course: Course) -> str:
+    """Source line of a catalogue: book, scope, authors and link."""
+    return f"{course.title}, {course.scope_en}, {course.attribution}, {course.book_url}"
 
 
 def notion_count(section_pages: list[dict]) -> int:
@@ -129,19 +141,34 @@ def draft_section(section: str, section_pages: list[dict]) -> list[Notion]:
     return notions
 
 
-def main() -> None:
-    """Draft the whole catalogue and write notions.json (validated = false)."""
-    if NOTIONS_PATH.exists() and load_catalog().validated:
-        raise SystemExit("notions.json is validated (D1): it is never overwritten.")
+def draft_catalog(course: Course) -> Catalog:
+    """Draft the catalogue of a course and write it (validated = false)."""
+    path = notions_path(course.id)
+    if path.exists() and load_catalog(path).validated:
+        raise SystemExit(f"{path} is validated (D1): it is never overwritten.")
     notions = []
-    for section, section_pages in group_sections(read_jsonl()).items():
+    for section, section_pages in group_sections(
+        read_jsonl(pages_path(course.id))
+    ).items():
         found = draft_section(section, section_pages)
         print(f"{section}: {[n.id for n in found]}")
         notions.extend(found)
-    catalog = Catalog(source=SOURCE, license=LICENSE, validated=False, notions=notions)
+    catalog = Catalog(
+        source=catalog_source(course),
+        license=course.license,
+        validated=False,
+        notions=notions,
+    )
     text = json.dumps(catalog.model_dump(), ensure_ascii=False, indent=2)
-    NOTIONS_PATH.write_text(text + "\n", encoding="utf-8")
-    print(f"{len(notions)} notions -> {NOTIONS_PATH}")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text + "\n", encoding="utf-8")
+    print(f"{len(notions)} notions -> {path}")
+    return catalog
+
+
+def main() -> None:
+    """Draft the catalogue of the course named on the command line."""
+    draft_catalog(course_from_argv())
 
 
 if __name__ == "__main__":

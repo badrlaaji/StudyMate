@@ -1,38 +1,79 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import Link from "next/link";
 
+import BrandMark from "@/components/BrandMark";
+import CourseSwitcher from "@/components/CourseSwitcher";
 import LangToggle from "@/components/LangToggle";
-import { getLang } from "@/lib/lang";
+import NavLinks from "@/components/NavLinks";
+import { getSession } from "@/lib/lang";
 
 import "./globals.css";
 
+// Local fonts only (SIL Open Font License, files in app/fonts).
+const sans = localFont({
+  src: "./fonts/bricolage-grotesque-latin.woff2",
+  variable: "--font-sans",
+  weight: "200 800",
+  display: "swap",
+});
+const serif = localFont({
+  src: "./fonts/literata-latin.woff2",
+  variable: "--font-serif",
+  weight: "200 900",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "StudyMate",
-  description: "Study desk for Principles of Data Science (OpenStax), chapters 6-7.",
+  description: "Study assistant for open textbooks: verified page citations, Feynman mode, quizzes and a mastery map.",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const { lang, t } = await getLang();
+  const { lang, t, courses, course } = await getSession();
   return (
-    <html lang={lang}>
+    <html lang={lang} className={`${sans.variable} ${serif.variable}`}>
       <body>
-        <header className="header">
-          <Link href="/" className="brand">
-            {t.app.name}
-          </Link>
-          <nav aria-label="main">
-            <Link href="/">{t.nav.map}</Link>
-            <Link href="/study">{t.nav.study}</Link>
-            <Link href="/feynman">{t.nav.feynman}</Link>
-            <Link href="/quiz">{t.nav.quiz}</Link>
-          </nav>
-          <LangToggle lang={lang} text={t.lang.switch} label={t.lang.label} />
-        </header>
-        <main>{children}</main>
-        <footer className="footer">
-          {t.footer.attribution}{" "}
-          <a href="https://openstax.org/details/books/principles-data-science">{t.footer.book}</a>
-        </footer>
+        <a className="skip-link" href="#content">
+          {t.app.skip}
+        </a>
+        <div className="shell">
+          <aside className="sidebar">
+            <Link href="/" className="brand">
+              <BrandMark />
+              <span className="brand-name">
+                {t.app.name}
+                <span className="brand-tag">{t.app.tagline}</span>
+              </span>
+            </Link>
+            <CourseSwitcher courses={courses} current={course} t={t} id="course-desktop" />
+            <NavLinks t={t} variant="nav" />
+            <div className="sidebar-foot">
+              <LangToggle lang={lang} label={t.lang.label} />
+              {course && (
+                <p>
+                  {t.footer.content}
+                  {lang === "fr" ? " : " : ": "}
+                  <a href={course.book_url}>{course.title}</a>, {course.attribution}, {course.license}.
+                </p>
+              )}
+              <p>{t.footer.license}</p>
+            </div>
+          </aside>
+
+          <header className="topbar">
+            <Link href="/" className="brand" aria-label={t.app.name}>
+              <BrandMark />
+            </Link>
+            <CourseSwitcher courses={courses} current={course} t={t} id="course-mobile" />
+            <LangToggle lang={lang} label={t.lang.label} />
+          </header>
+
+          <main id="content" className="main">
+            {children}
+          </main>
+          <NavLinks t={t} variant="tabbar" />
+        </div>
       </body>
     </html>
   );

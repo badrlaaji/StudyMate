@@ -259,3 +259,27 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S10-6 Index absent : 503 avec la commande, pas 500
 - Testé en compose sur une base vide : `/chat` renvoyait 500 (`relation "chunks" does not exist`). Options : créer la table au démarrage (réponse « introuvable » trompeuse, 2 appels LLM perdus) ou un 503 explicite. Choix : gestionnaire `ProgrammingError` → 503 « Run python -m rag.ingest », l'erreur SQL complète va dans les logs.
+
+## Étape 11 — Plusieurs cours, nouvelle interface
+
+### S11-1 Registre des cours plutôt qu'un livre écrit en dur
+- Le livre, les chapitres 6-7 et le catalogue étaient fixés dans une dizaine de fichiers. Options : une base ou une table par cours, ou une colonne `course_id`. Choix : `course/courses.json` (id, titre, PDF, licence, chapitres ou pages) + `course_id` dans `chunks` et dans les notes Spring. Une seule table, une recherche filtrée, et aucun code à toucher pour ajouter un cours.
+- Ajout en une commande : `python -m course.add <id>` (téléchargement, indexation, brouillon des notions). Un catalogue existant n'est jamais réécrit.
+
+### S11-2 Migration sans outil de migration
+- Table `chunks` existante : `ALTER TABLE … ADD COLUMN IF NOT EXISTS course_id … DEFAULT '<cours par défaut>'` (les anciennes lignes étaient toutes du cours de référence ; testé sur la base locale : 568 lignes rattachées). Spring : colonne nullable (Hibernate `update` ne peut pas ajouter un NOT NULL sur une table remplie) ; la validation de la requête impose le cours.
+
+### S11-3 D1 assoupli pour les autres cours
+- 15 à 25 notions reste vrai et testé pour le cours de référence. Un chapitre de 60 pages en donne 11 : le schéma accepte 3 à 40.
+
+### S11-4 Prompts sans livre en dur
+- Titre du livre dans le prompt de réponse ; le routeur réécrit la recherche dans la langue du livre (`book_lang`). Les chiffres d'éval du README ont été mesurés avec l'ancien prompt (même pipeline, texte du titre différent).
+
+### S11-5 Pas d'upload dans l'interface (D6 conservé)
+- Un upload enverrait n'importe quel document à Gemini (offre gratuite : contenu réutilisable par Google), prendrait des minutes et du quota. Ajout par la ligne de commande, avec la licence écrite dans le registre.
+
+### S11-6 Interface : système de design et contrôles mesurés
+- Critique de l'ancienne interface, puis jetons CSS (neutres, un accent violet, 3 statuts), polices locales OFL (Bricolage Grotesque, Literata), icônes SVG maison (pas de dépendance). Couleurs de statut validées par script (daltonisme, contraste) ; graphique à une teinte + lignes de seuil 3 et 4 (pas de couleur par valeur). Audit axe-core + clavier + zoom 200 % : 4 défauts corrigés.
+
+### S11-7 Réécrire la requête seulement pour traduire
+- Mesuré après les prompts multi-cours : anglais 18/20 (19/20 avant). Cause : test02, question anglaise réécrite par le routeur avec des mots perdus, page 279 manquée. Le routeur réécrivait 5 à 7 questions anglaises sur 25. Choix : si la langue de la question est celle du livre, on cherche avec les mots de l'étudiant (comme l'éval de recherche, hit@4 19/20) ; sinon la traduction. test02 vérifié seul : page 279 citée. Éval complète à relancer (quota gratuit épuisé).

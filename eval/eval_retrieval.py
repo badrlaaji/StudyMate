@@ -10,7 +10,7 @@ import sys
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from config import ROOT
-from eval.questions import EvalQuestion, load_questions
+from eval.questions import EVAL_COURSE, EvalQuestion, load_questions
 from rag.embeddings import embed_query, load_model, model_name
 from rag.store import get_engine, search
 
@@ -72,7 +72,7 @@ async def top_hits(
     """Search one text with the given setting."""
     excluded = END_MATTER if setting == "no-end-matter" else ()
     vector = query_vector(text, model, setting)
-    return await search(engine, vector, model_name(), k, excluded)
+    return await search(engine, vector, EVAL_COURSE, model_name(), k, excluded)
 
 
 async def question_rank(

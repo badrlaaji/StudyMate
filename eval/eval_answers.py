@@ -12,9 +12,10 @@ import time
 
 from agent.graph import build_graph
 from agent.spring import make_client
+from course.courses import load_registry, notions_path
 from course.notions import load_catalog
 from eval.eval_retrieval import LANGS, RESULTS_DIR
-from eval.questions import load_questions
+from eval.questions import EVAL_COURSE, load_questions
 from rag.embeddings import model_name
 from rag.store import get_engine
 
@@ -51,7 +52,7 @@ def row(item_id: str, state: dict, seconds: float, expected: list[int] | None) -
 async def run_one(app, item_id: str, text: str, expected: list[int] | None) -> dict:
     """Run the agent on one message, then pause to respect the quota."""
     start = time.perf_counter()
-    state = await app.ainvoke({"message": text})
+    state = await app.ainvoke({"message": text, "course": EVAL_COURSE})
     result = row(item_id, state, time.perf_counter() - start, expected)
     await asyncio.sleep(PAUSE_S)
     return result
@@ -73,7 +74,8 @@ async def evaluate() -> dict:
     """Run the 20 test questions and 5 traps in both languages."""
     questions = load_questions()
     engine, http = get_engine(), make_client()
-    app = build_graph(engine, http, load_catalog())
+    catalogs = {EVAL_COURSE: load_catalog(notions_path(EVAL_COURSE))}
+    app = build_graph(engine, http, load_registry(), catalogs)
     report = {"model": model_name()}
     try:
         for lang in LANGS:

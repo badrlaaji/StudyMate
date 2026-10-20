@@ -24,18 +24,19 @@ public class MasteryService {
 
     /** Save one validated score with the current time. */
     public Score record(ScoreRequest request) {
-        Score score = new Score(request.notionId(), request.source(), request.score(), Instant.now());
+        Score score = new Score(
+                request.courseId(), request.notionId(), request.source(), request.score(), Instant.now());
         return repository.save(score);
     }
 
-    /** Mastery of every scored notion, weakest first. */
-    public List<NotionMastery> mastery() {
-        return summarizeAll(repository.findAllByOrderByCreatedAtDescIdDesc());
+    /** Mastery of every scored notion of a course, weakest first. */
+    public List<NotionMastery> mastery(String courseId) {
+        return summarizeAll(repository.findAllByCourseIdOrderByCreatedAtDescIdDesc(courseId));
     }
 
-    /** Weak notions only, weakest first, at most {@code limit}. */
-    public List<NotionMastery> weak(int limit) {
-        return mastery().stream().filter(m -> m.level().equals("WEAK")).limit(limit).toList();
+    /** Weak notions of a course only, weakest first, at most {@code limit}. */
+    public List<NotionMastery> weak(String courseId, int limit) {
+        return mastery(courseId).stream().filter(m -> m.level().equals("WEAK")).limit(limit).toList();
     }
 
     /** Group scores (newest first) by notion and summarize each group. */

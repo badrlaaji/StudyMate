@@ -88,11 +88,13 @@ def notion_scores(results: list[tuple[str, bool]]) -> dict[str, int]:
     return {nid: round_half_up(5 * correct[nid] / asked[nid]) for nid in asked}
 
 
-async def page_texts(engine: AsyncEngine, notions: list[Notion]) -> dict[int, str]:
+async def page_texts(
+    engine: AsyncEngine, course: str, notions: list[Notion]
+) -> dict[int, str]:
     """Rebuild the text of each page of the notions from the stored chunks."""
     pages = [page for notion in notions for page in notion.pages[:PAGES_PER_NOTION]]
     texts: dict[int, str] = {}
-    for chunk in await chunks_for_pages(engine, pages, model_name()):
+    for chunk in await chunks_for_pages(engine, course, pages, model_name()):
         texts[chunk["page"]] = texts.get(chunk["page"], "") + chunk["text"] + "\n"
     return texts
 
@@ -100,6 +102,7 @@ async def page_texts(engine: AsyncEngine, notions: list[Notion]) -> dict[int, st
 async def build_quiz(
     engine: AsyncEngine,
     http: httpx.AsyncClient,
+    course: str,
     catalog: Catalog,
     n: int,
     lang: str,
@@ -107,9 +110,9 @@ async def build_quiz(
     rng: random.Random | None = None,
 ) -> tuple[list[QuizQuestion], bool]:
     """Weak notions from Spring, then the quiz; also say if Spring was down."""
-    weak = await fetch_weak_notions(http, n)
+    weak = await fetch_weak_notions(http, course, n)
     weak_ids = [item["notionId"] for item in weak or []]
     notions = pick_notions(weak_ids, catalog, n, rng or random.Random())
-    texts = await page_texts(engine, notions)
+    texts = await page_texts(engine, course, notions)
     questions = await asyncio.to_thread(make_quiz, notions, texts, lang, llm)
     return questions, weak is None

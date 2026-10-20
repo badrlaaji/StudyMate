@@ -1,6 +1,21 @@
 // Server-side calls to FastAPI (API_URL is never sent to the browser).
 const API_URL = process.env.API_URL ?? "http://localhost:8000";
 
+export type Course = {
+  id: string;
+  title: string;
+  scope: string;
+  book_lang: string;
+  license: string;
+  attribution: string;
+  book_url: string;
+  default: boolean;
+  pdf: boolean;
+  chunks: number | null;
+  notions: number;
+  validated: boolean;
+};
+
 export type Notion = {
   id: string;
   name: string;
@@ -10,32 +25,31 @@ export type Notion = {
   key_ideas: string[];
 };
 
-export async function getNotions(lang: string): Promise<Notion[]> {
-  try {
-    const response = await fetch(`${API_URL}/notions?lang=${lang}`, { cache: "no-store" });
-    return response.ok ? await response.json() : [];
-  } catch {
-    return []; // API down: the page still renders
-  }
-}
-
 export type Mastery = { notionId: string; average: number; count: number; level: string };
 export type PlanRow = { notion_id: string; name: string; score: number; pages: number[]; action: string };
 
-export async function getMastery(): Promise<{ notions: Mastery[]; status: string }> {
+// GET a JSON body; the fallback keeps the page rendering when the API is down.
+async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
-    const response = await fetch(`${API_URL}/mastery`, { cache: "no-store" });
-    return response.ok ? await response.json() : { notions: [], status: "degraded" };
+    const response = await fetch(`${API_URL}${path}`, { cache: "no-store" });
+    return response.ok ? await response.json() : fallback;
   } catch {
-    return { notions: [], status: "degraded" };
+    return fallback;
   }
 }
 
-export async function getPlan(lang: string): Promise<{ plan: PlanRow[]; status: string }> {
-  try {
-    const response = await fetch(`${API_URL}/plan?lang=${lang}`, { cache: "no-store" });
-    return response.ok ? await response.json() : { plan: [], status: "degraded" };
-  } catch {
-    return { plan: [], status: "degraded" };
-  }
+export function getCourses(lang: string): Promise<Course[]> {
+  return getJson(`/courses?lang=${lang}`, []);
+}
+
+export function getNotions(lang: string, course: string): Promise<Notion[]> {
+  return getJson(`/notions?lang=${lang}&course=${course}`, []);
+}
+
+export function getMastery(course: string): Promise<{ notions: Mastery[]; status: string }> {
+  return getJson(`/mastery?course=${course}`, { notions: [], status: "degraded" });
+}
+
+export function getPlan(lang: string, course: string): Promise<{ plan: PlanRow[]; status: string }> {
+  return getJson(`/plan?lang=${lang}&course=${course}`, { plan: [], status: "degraded" });
 }

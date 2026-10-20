@@ -1,14 +1,12 @@
-"""Notion catalogue: Pydantic schema, loading, and checks against the book pages."""
+"""Notion catalogue of a course: Pydantic schema, loading, checks against its pages."""
 
 from pathlib import Path
 
 from pydantic import BaseModel, Field, model_validator
 
-from config import ROOT
-
-NOTIONS_PATH = ROOT / "course" / "notions.json"
-MIN_NOTIONS = 15
-MAX_NOTIONS = 25
+# D1: 15 to 25 notions for the reference course; a short course has fewer.
+MIN_NOTIONS = 3
+MAX_NOTIONS = 40
 ID_PATTERN = r"^[a-z0-9]+(_[a-z0-9]+)*$"
 
 
@@ -32,7 +30,7 @@ class Notion(BaseModel):
 
 
 class Catalog(BaseModel):
-    """The frozen notion catalogue, single source of truth (D1)."""
+    """The notion catalogue of one course, single source of truth (D1)."""
 
     source: str
     license: str
@@ -49,8 +47,8 @@ class Catalog(BaseModel):
         return self
 
 
-def load_catalog(path: Path = NOTIONS_PATH) -> Catalog:
-    """Read and validate notions.json."""
+def load_catalog(path: Path) -> Catalog:
+    """Read and validate a notion catalogue (course/notions/<course_id>.json)."""
     return Catalog.model_validate_json(path.read_text(encoding="utf-8"))
 
 

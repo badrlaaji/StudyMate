@@ -2,22 +2,36 @@
 
 import { useRouter } from "next/navigation";
 
-import { LANG_COOKIE, type Lang } from "@/lib/i18n";
+import { LANG_COOKIE, saveCookie, type Lang } from "@/lib/i18n";
 
-// FR/EN button: store the choice in a cookie, then re-render the server pages.
-export default function LangToggle({ lang, text, label }: { lang: Lang; text: string; label: string }) {
+const LANGS: { code: Lang; text: string; name: string }[] = [
+  { code: "en", text: "EN", name: "English" },
+  { code: "fr", text: "FR", name: "Français" },
+];
+
+// EN | FR segmented control: the choice goes to a cookie, the pages render again.
+export default function LangToggle({ lang, label }: { lang: Lang; label: string }) {
   const router = useRouter();
-  const next: Lang = lang === "en" ? "fr" : "en";
 
-  function switchLang() {
-    document.cookie = `${LANG_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
+  function choose(code: Lang) {
+    saveCookie(LANG_COOKIE, code);
     router.refresh();
   }
 
   return (
-    // Accessible name = visible text (WCAG 2.5.3); the longer label is a description.
-    <button type="button" className="secondary" onClick={switchLang} title={label} lang={next}>
-      {text}
-    </button>
+    <div className="segmented" role="group" aria-label={label}>
+      {LANGS.map((item) => (
+        <button
+          key={item.code}
+          type="button"
+          lang={item.code}
+          title={item.name}
+          aria-pressed={lang === item.code}
+          onClick={() => choose(item.code)}
+        >
+          {item.text}
+        </button>
+      ))}
+    </div>
   );
 }

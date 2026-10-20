@@ -1,0 +1,307 @@
+{
+  "source": "Introductory Statistics 2e, Chapter 12: linear regression and correlation, Barbara Illowsky and Susan Dean (senior contributing authors), OpenStax, Rice University, 2023, https://openstax.org/details/books/introductory-statistics-2e",
+  "license": "CC BY-NC-SA 4.0",
+  "validated": false,
+  "notions": [
+    {
+      "id": "linear_equations",
+      "name_en": "Linear equations",
+      "name_fr": "Équations linéaires",
+      "chapter": 12,
+      "section": "12.1 Linear Equations",
+      "pages": [
+        629,
+        630,
+        631
+      ],
+      "key_ideas": [
+        {
+          "en": "Linear regression with one independent variable relies on a linear equation where an independent variable determines a dependent variable through constant coefficients.",
+          "fr": "La régression linéaire avec une variable indépendante repose sur une équation linéaire où une variable indépendante détermine une variable dépendante par l'intermédiaire de coefficients constants."
+        },
+        {
+          "en": "The graph of any non-vertical linear equation forms a straight line in two dimensions.",
+          "fr": "Le graphique de toute équation linéaire non verticale forme une ligne droite en deux dimensions."
+        },
+        {
+          "en": "In a linear equation, the slope represents the steepness of the line and the y-intercept represents the point where the line crosses the y-axis.",
+          "fr": "Dans une équation linéaire, la pente représente l'inclinaison de la ligne et l'ordonnée à l'origine représente le point où la ligne coupe l'axe des ordonnées."
+        }
+      ]
+    },
+    {
+      "id": "scatter_plots",
+      "name_en": "Scatter Plots",
+      "name_fr": "Nuages de points",
+      "chapter": 12,
+      "section": "12.2 Scatter Plots",
+      "pages": [
+        632,
+        633,
+        634
+      ],
+      "key_ideas": [
+        {
+          "en": "A scatter plot displays the relationship between two variables by plotting data points on a coordinate system.",
+          "fr": "Un nuage de points affiche la relation entre deux variables en représentant des points de données sur un système de coordonnées."
+        },
+        {
+          "en": "Scatter plots reveal the direction of a relationship, showing whether variables increase together or if one increases as the other decreases.",
+          "fr": "Les nuages de points révèlent la direction d'une relation, montrant si les variables augmentent ensemble ou si l'une augmente pendant que l'autre diminue."
+        },
+        {
+          "en": "The strength of a relationship is determined by observing how closely the points on a scatter plot follow a specific type of function.",
+          "fr": "La force d'une relation est déterminée en observant à quel point les points d'un nuage de points suivent un type de fonction spécifique."
+        }
+      ]
+    },
+    {
+      "id": "least_squares_regression_line",
+      "name_en": "Least-Squares Regression Line",
+      "name_fr": "Droite de régression des moindres carrés",
+      "chapter": 12,
+      "section": "12.3 The Regression Equation",
+      "pages": [
+        635,
+        636,
+        637,
+        638,
+        639,
+        640
+      ],
+      "key_ideas": [
+        {
+          "en": "The least-squares regression line minimizes the sum of squared errors between the actual and predicted data points.",
+          "fr": "La droite de régression des moindres carrés minimise la somme des erreurs quadratiques entre les points de données réels et prédits."
+        },
+        {
+          "en": "Residuals measure the vertical distance between an observed data value and the estimated value on the regression line.",
+          "fr": "Les résidus mesurent la distance verticale entre une valeur de données observée et la valeur estimée sur la droite de régression."
+        },
+        {
+          "en": "The slope of the regression line indicates how much the dependent variable changes for every one-unit increase in the independent variable, on average.",
+          "fr": "La pente de la droite de régression indique de combien la variable dépendante change pour chaque augmentation d'une unité de la variable indépendante, en moyenne."
+        },
+        {
+          "en": "Predictions using the regression line should only be made within the domain of the x-values present in the sample data.",
+          "fr": "Les prédictions utilisant la droite de régression ne doivent être faites que dans le domaine des valeurs de x présentes dans le jeu de données d'échantillon."
+        }
+      ]
+    },
+    {
+      "id": "correlation_coefficient",
+      "name_en": "Correlation Coefficient",
+      "name_fr": "Coefficient de corrélation",
+      "chapter": 12,
+      "section": "12.3 The Regression Equation",
+      "pages": [
+        641,
+        642
+      ],
+      "key_ideas": [
+        {
+          "en": "The correlation coefficient provides a numerical measure of the strength and direction of the linear association between two variables.",
+          "fr": "Le coefficient de corrélation fournit une mesure numérique de la force et de la direction de l'association linéaire entre deux variables."
+        },
+        {
+          "en": "Values of the correlation coefficient always range between negative one and positive one inclusively.",
+          "fr": "Les valeurs du coefficient de corrélation se situent toujours entre moins un et plus un inclusivement."
+        },
+        {
+          "en": "Strong linear correlation does not imply causation between the independent and dependent variables.",
+          "fr": "Une forte corrélation linéaire n'implique pas de relation de cause à effet entre les variables indépendante et dépendante."
+        }
+      ]
+    },
+    {
+      "id": "significance_of_correlation_coefficient",
+      "name_en": "Testing the Significance of the Correlation Coefficient",
+      "name_fr": "Test de significativité du coefficient de corrélation",
+      "chapter": 12,
+      "section": "12.4 Testing the Significance of the Correlation Coefficient",
+      "pages": [
+        643,
+        644,
+        645,
+        646
+      ],
+      "key_ideas": [
+        {
+          "en": "The hypothesis test for the significance of the correlation coefficient determines whether the linear relationship found in the sample data is strong enough to model the relationship in the population.",
+          "fr": "Le test d'hypothèse pour la significativité du coefficient de corrélation détermine si la relation linéaire trouvée dans l'échantillon est assez forte pour modéliser la relation dans la population."
+        },
+        {
+          "en": "The null hypothesis states that the population correlation coefficient is equal to zero, while the alternative hypothesis states that it is different from zero.",
+          "fr": "L'hypothèse nulle indique que le coefficient de corrélation de la population est égal à zéro, tandis que l'hypothèse alternative indique qu'il en est différent."
+        },
+        {
+          "en": "The decision to reject or fail to reject the null hypothesis can be made using either the p-value method or a table of critical values at a given significance level.",
+          "fr": "La décision de rejeter ou de ne pas rejeter l'hypothèse nulle peut être prise en utilisant la méthode de la valeur p ou une table de valeurs critiques à un niveau de significativité donné."
+        },
+        {
+          "en": "A significant correlation coefficient indicates that the regression line can be used for predictions within the domain of observed values, provided the scatter plot shows a linear trend.",
+          "fr": "Un coefficient de corrélation significatif indique que la droite de régression peut être utilisée pour des prévisions dans le domaine des valeurs observées, à condition que le nuage de points montre une tendance linéaire."
+        }
+      ]
+    },
+    {
+      "id": "regression_line_prediction",
+      "name_en": "Regression line prediction",
+      "name_fr": "Prédiction par droite de régression",
+      "chapter": 12,
+      "section": "12.5 Prediction",
+      "pages": [
+        647
+      ],
+      "key_ideas": [
+        {
+          "en": "The least-squares regression line calculated from a sample is used as an estimate for the population regression line.",
+          "fr": "La droite de régression des moindres carrés calculée à partir d'un échantillon sert d'estimation pour la droite de régression de la population."
+        },
+        {
+          "en": "Making predictions requires substituting a specific value of the independent variable into the equation of the best-fit line.",
+          "fr": "Effectuer des prédictions nécessite de substituer une valeur spécifique de la variable indépendante dans l'équation de la droite d'ajustement."
+        },
+        {
+          "en": "Predictions are reliable when the given value falls within the range of observed data values used to construct the model.",
+          "fr": "Les prédictions sont fiables lorsque la valeur donnée se situe dans la plage des valeurs de données observées utilisées pour construire le modèle."
+        }
+      ]
+    },
+    {
+      "id": "outliers_and_residuals",
+      "name_en": "Outliers and Residuals",
+      "name_fr": "Valeurs aberrantes et résidus",
+      "chapter": 12,
+      "section": "12.6 Outliers",
+      "pages": [
+        648,
+        649,
+        650,
+        651,
+        652
+      ],
+      "key_ideas": [
+        {
+          "en": "Outliers are observed data points that lie far from the least squares line with large vertical errors.",
+          "fr": "Les valeurs aberrantes sont des points de données observés qui se trouvent loin de la droite des moindres carrés avec de grandes erreurs verticales."
+        },
+        {
+          "en": "A rough guideline flags any point located further than two standard deviations of the residuals above or below the best-fit line as an outlier.",
+          "fr": "Une règle empirique signale comme valeur aberrante tout point situé à plus de deux écarts-types des résidus au-dessus ou au-dessous de la droite de meilleur ajustement."
+        },
+        {
+          "en": "Removing an erroneous outlier from a dataset can significantly improve the correlation coefficient and the predictive accuracy of the regression line.",
+          "fr": "La suppression d'une valeur aberrante erronée d'un jeu de données peut améliorer considérablement le coefficient de corrélation et la précision prédictive de la droite de régression."
+        }
+      ]
+    },
+    {
+      "id": "influential_points",
+      "name_en": "Influential Points",
+      "name_fr": "Points influents",
+      "chapter": 12,
+      "section": "12.6 Outliers",
+      "pages": [
+        648
+      ],
+      "key_ideas": [
+        {
+          "en": "Influential points are observed data points that are located far from the other observed data points in the horizontal direction.",
+          "fr": "Les points influents sont des points de données observés qui sont situés loin des autres points de données observés dans la direction horizontale."
+        },
+        {
+          "en": "Influential points may have a substantial effect on the slope and position of the regression line.",
+          "fr": "Les points influents peuvent avoir un effet substantiel sur la pente et la position de la droite de régression."
+        },
+        {
+          "en": "The effect of an influential point can be identified by removing it from the dataset and observing the resulting change in the slope of the regression line.",
+          "fr": "L'effet d'un point influent peut être identifié en le supprimant du jeu de données et en observant le changement résultant dans la pente de la droite de régression."
+        }
+      ]
+    },
+    {
+      "id": "regression_distance_from_school",
+      "name_en": "Regression and line of best fit",
+      "name_fr": "Régression et droite de meilleur ajustement",
+      "chapter": 12,
+      "section": "12.7 Regression (Distance from School)",
+      "pages": [
+        656,
+        657
+      ],
+      "key_ideas": [
+        {
+          "en": "Bivariate data collection involves gathering paired measurements for two variables, such as distance from school and cost of supplies.",
+          "fr": "La collecte de données bivariées implique le rassemblement de mesures appariées pour deux variables, telles que la distance de l'école et le coût des fournitures."
+        },
+        {
+          "en": "The line of best fit models the linear relationship between an independent variable and a dependent variable.",
+          "fr": "La droite de meilleur ajustement modélise la relation linéaire entre une variable indépendante et une variable dépendante."
+        },
+        {
+          "en": "Evaluating the significance of the correlation helps determine whether the linear relationship between the two variables is meaningful.",
+          "fr": "L'évaluation de la signification de la corrélation aide à déterminer si la relation linéaire entre les deux variables est significative."
+        },
+        {
+          "en": "Regression equations are used to make predictions for the dependent variable based on given values of the independent variable.",
+          "fr": "Les équations de régression sont utilisées pour faire des prévisions pour la variable dépendante sur la base de valeurs données de la variable indépendante."
+        }
+      ]
+    },
+    {
+      "id": "regression_textbook_cost",
+      "name_en": "Regression and textbook cost",
+      "name_fr": "Régression et coût des manuels",
+      "chapter": 12,
+      "section": "12.8 Regression (Textbook Cost)",
+      "pages": [
+        658
+      ],
+      "key_ideas": [
+        {
+          "en": "Bivariate data analysis involves collecting and examining pairs of variables such as the number of pages in a textbook and its cost.",
+          "fr": "L'analyse de données bivariées implique la collecte et l'examen de paires de variables telles que le nombre de pages d'un manuel et son coût."
+        },
+        {
+          "en": "Determining dependent and independent variables is essential before constructing the line of best fit between two variables.",
+          "fr": "La détermination des variables dépendantes et indépendantes est essentielle avant de construire la droite de meilleur ajustement entre deux variables."
+        },
+        {
+          "en": "Evaluating the relationship between two variables helps determine if that relationship is statistically significant.",
+          "fr": "L'évaluation de la relation entre deux variables aide à déterminer si cette relation est statistiquement significative."
+        },
+        {
+          "en": "Identifying outliers and deciding whether they should be removed impacts the overall interpretation of the regression data.",
+          "fr": "L'identification des valeurs aberrantes et la décision de les supprimer ou non influencent l'interprétation globale des données de régression."
+        }
+      ]
+    },
+    {
+      "id": "regression_fuel_efficiency",
+      "name_en": "Regression and fuel efficiency",
+      "name_fr": "Régression et efficacité énergétique",
+      "chapter": 12,
+      "section": "12.9 Regression (Fuel Efficiency)",
+      "pages": [
+        659,
+        660,
+        661
+      ],
+      "key_ideas": [
+        {
+          "en": "The line of best fit describes the linear relationship between two variables such as car weight and fuel efficiency.",
+          "fr": "La droite de meilleur ajustement décrit la relation linéaire entre deux variables telles que le poids de la voiture et l'efficacité énergétique."
+        },
+        {
+          "en": "The correlation coefficient and its significance help determine if the linear relationship between the variables is meaningful.",
+          "fr": "Le coefficient de corrélation et sa signification aident à déterminer si la relation linéaire entre les variables est significative."
+        },
+        {
+          "en": "Outliers and data limits must be considered when evaluating the accuracy of predictions made from the regression model.",
+          "fr": "Les valeurs aberrantes et les limites des données doivent être prises en compte lors de l'évaluation de la précision des prévisions faites à partir du modèle de régression."
+        }
+      ]
+    }
+  ]
+}

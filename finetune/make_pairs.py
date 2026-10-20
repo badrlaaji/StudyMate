@@ -12,6 +12,8 @@ from pydantic import BaseModel
 from agent.cache import cache_get, cache_key
 from agent.llm import invoke_structured
 from config import ROOT, get_env
+from course.courses import pages_path
+from eval.questions import EVAL_COURSE
 from rag.chunking import chunk_pages
 from rag.ingest import read_jsonl, write_jsonl
 
@@ -85,7 +87,7 @@ def to_records(answer: PairBatch, chunks: list[dict]) -> list[dict]:
 
 def main() -> None:
     """Generate pairs for every chunk and write data/pairs/pairs.jsonl."""
-    chunks = chunk_pages(read_jsonl())
+    chunks = chunk_pages(read_jsonl(pages_path(EVAL_COURSE)))  # the reference course
     records, calls = [], 0
     for batch in batches(chunks, CHUNKS_PER_CALL):
         prompt = build_prompt(batch)

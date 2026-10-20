@@ -1,8 +1,8 @@
 """HTTP client for the Spring Boot mastery service; None means "Spring is down".
 
-Contract: GET /api/notions/weak?limit=N and GET /api/mastery return
+Contract: GET /api/notions/weak?course=C&limit=N and GET /api/mastery?course=C return
 [{"notionId": str, "average": float, "count": int, ...}]; POST /api/scores takes
-{"notionId", "source": "FEYNMAN" | "QUIZ", "score": 0-5}.
+{"courseId", "notionId", "source": "FEYNMAN" | "QUIZ", "score": 0-5}.
 """
 
 import logging
@@ -33,21 +33,23 @@ async def get_json(http: httpx.AsyncClient, path: str, params: dict | None = Non
         return None
 
 
-async def fetch_weak_notions(http: httpx.AsyncClient, limit: int) -> list[dict] | None:
-    """Return the weak notions (average of the last 3 scores < 3), weakest first."""
-    return await get_json(http, "/api/notions/weak", {"limit": limit})
+async def fetch_weak_notions(
+    http: httpx.AsyncClient, course: str, limit: int
+) -> list[dict] | None:
+    """Return the weak notions of a course (average of last 3 < 3), weakest first."""
+    return await get_json(http, "/api/notions/weak", {"course": course, "limit": limit})
 
 
-async def fetch_mastery(http: httpx.AsyncClient) -> list[dict] | None:
-    """Return the mastery of every scored notion."""
-    return await get_json(http, "/api/mastery")
+async def fetch_mastery(http: httpx.AsyncClient, course: str) -> list[dict] | None:
+    """Return the mastery of every scored notion of a course."""
+    return await get_json(http, "/api/mastery", {"course": course})
 
 
 async def post_score(
-    http: httpx.AsyncClient, notion_id: str, source: str, score: int
+    http: httpx.AsyncClient, course: str, notion_id: str, source: str, score: int
 ) -> bool:
     """Record a 0-5 score; return False (and log) if Spring is down."""
-    body = {"notionId": notion_id, "source": source, "score": score}
+    body = {"courseId": course, "notionId": notion_id, "source": source, "score": score}
     try:
         response = await http.post("/api/scores", json=body)
         response.raise_for_status()

@@ -2,6 +2,7 @@
 const API_URL = process.env.API_URL ?? "http://localhost:8000";
 const ALLOWED = new Set([
   "health",
+  "courses",
   "chat",
   "notions",
   "feynman",

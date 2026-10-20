@@ -10,7 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.Instant;
 
-/** One 0-5 score for one notion (table app.scores). */
+/** One 0-5 score for one notion of one course (table app.scores). */
 @Entity
 @Table(name = "scores")
 public class Score {
@@ -18,6 +18,9 @@ public class Score {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    // Nullable in the database: rows saved before multi-course support have none.
+    private String courseId;
 
     @Column(nullable = false)
     private String notionId;
@@ -36,7 +39,8 @@ public class Score {
         // required by JPA
     }
 
-    public Score(String notionId, Source source, int score, Instant createdAt) {
+    public Score(String courseId, String notionId, Source source, int score, Instant createdAt) {
+        this.courseId = courseId;
         this.notionId = notionId;
         this.source = source;
         this.score = score;
@@ -45,6 +49,10 @@ public class Score {
 
     public Long getId() {
         return id;
+    }
+
+    public String getCourseId() {
+        return courseId;
     }
 
     public String getNotionId() {

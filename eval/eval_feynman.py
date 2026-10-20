@@ -11,8 +11,10 @@ import time
 
 from agent.feynman import evaluate_explanation
 from config import ROOT
+from course.courses import notions_path
 from course.notions import load_catalog
 from eval.eval_retrieval import RESULTS_DIR
+from eval.questions import EVAL_COURSE
 
 SET_PATH = ROOT / "eval" / "feynman_set.json"
 PAUSE_S = float(os.environ.get("LLM_PAUSE_S", "6"))
@@ -37,7 +39,8 @@ def main() -> None:
     items = json.loads(SET_PATH.read_text(encoding="utf-8"))["items"]
     if any(item["human_score"] is None for item in items):
         sys.exit("Blind protocol: fill every human_score (0-5) in feynman_set.json.")
-    notions = {notion.id: notion for notion in load_catalog().notions}
+    catalog = load_catalog(notions_path(EVAL_COURSE))
+    notions = {notion.id: notion for notion in catalog.notions}
     rows = []
     for item in items:
         notion = notions[item["notion_id"]]

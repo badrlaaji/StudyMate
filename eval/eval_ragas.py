@@ -14,9 +14,10 @@ import types
 from agent.graph import build_graph
 from agent.spring import make_client
 from config import ROOT, get_env
+from course.courses import load_registry, notions_path
 from course.notions import load_catalog
 from eval.eval_retrieval import RESULTS_DIR
-from eval.questions import load_questions
+from eval.questions import EVAL_COURSE, load_questions
 from rag.embeddings import BASE_MODEL, model_name
 from rag.store import get_engine
 
@@ -69,11 +70,13 @@ async def evaluate() -> dict:
     """Run the agent on the test questions (EN), then score the answered ones."""
     faithfulness, relevancy = ragas_metrics()
     engine, http = get_engine(), make_client()
-    app = build_graph(engine, http, load_catalog())
+    catalogs = {EVAL_COURSE: load_catalog(notions_path(EVAL_COURSE))}
+    app = build_graph(engine, http, load_registry(), catalogs)
     rows = []
     try:
         for question in load_questions().test:
-            state = await app.ainvoke({"message": question.en})
+            message = {"message": question.en, "course": EVAL_COURSE}
+            state = await app.ainvoke(message)
             if state["status"] != "ok":
                 rows.append({"id": question.id, "status": state["status"]})
                 continue

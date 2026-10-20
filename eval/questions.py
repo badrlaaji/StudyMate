@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 from config import ROOT
 
 QUESTIONS_PATH = ROOT / "eval" / "questions.json"
+EVAL_COURSE = "data-science"  # every evaluation question is about this course
 
 
 class EvalQuestion(BaseModel):

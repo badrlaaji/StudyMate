@@ -1,20 +1,14 @@
-"""Download the official OpenStax PDF of Principles of Data Science.
+"""Download the official PDF of a course (URL from course/courses.json).
 
-Usage: uv run python -m scripts.download_book
+Usage: uv run python -m scripts.download_book [course_id]   (default course if omitted)
 """
 
 from pathlib import Path
 
 import httpx
 
-from config import ROOT
+from course.courses import Course, course_from_argv, pdf_path
 
-# From the OpenStax CMS API: book "principles-data-science", high_resolution_pdf_url.
-BOOK_URL = (
-    "https://assets.openstax.org/oscms-prodcms/media/documents/"
-    "Principles-of-Data-Science-WEB.pdf"
-)
-BOOK_PATH = ROOT / "data" / "raw" / "book.pdf"
 TIMEOUT_S = 120.0
 
 
@@ -36,16 +30,22 @@ def download(url: str, path: Path) -> None:
     part.replace(path)
 
 
+def download_course(course: Course) -> Path:
+    """Download the PDF of a course once and check it is a real PDF."""
+    path = pdf_path(course.id)
+    if path.exists() and is_pdf(path):
+        print(f"Already downloaded: {path}")
+        return path
+    download(course.pdf_url, path)
+    if not is_pdf(path):
+        raise RuntimeError(f"Not a PDF: {path}")
+    print(f"Downloaded {path} ({path.stat().st_size / 1e6:.1f} MB)")
+    return path
+
+
 def main() -> None:
-    """Download the book once and check it is a real PDF."""
-    if BOOK_PATH.exists() and is_pdf(BOOK_PATH):
-        print(f"Already downloaded: {BOOK_PATH}")
-        return
-    download(BOOK_URL, BOOK_PATH)
-    if not is_pdf(BOOK_PATH):
-        raise RuntimeError(f"Not a PDF: {BOOK_PATH}")
-    size_mb = BOOK_PATH.stat().st_size / 1e6
-    print(f"Downloaded {BOOK_PATH} ({size_mb:.1f} MB)")
+    """Download the PDF of the course named on the command line."""
+    download_course(course_from_argv())
 
 
 if __name__ == "__main__":
