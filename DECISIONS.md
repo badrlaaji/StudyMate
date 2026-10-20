@@ -283,3 +283,21 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S11-7 Réécrire la requête seulement pour traduire
 - Mesuré après les prompts multi-cours : anglais 18/20 (19/20 avant). Cause : test02, question anglaise réécrite par le routeur avec des mots perdus, page 279 manquée. Le routeur réécrivait 5 à 7 questions anglaises sur 25. Choix : si la langue de la question est celle du livre, on cherche avec les mots de l'étudiant (comme l'éval de recherche, hit@4 19/20) ; sinon la traduction. test02 vérifié seul : page 279 citée. Éval complète à relancer (quota gratuit épuisé).
+
+## Étape 12 — Importer un manuel depuis l'interface
+
+### S12-1 D6 changé à la demande : upload dans la Bibliothèque
+- Demande explicite de Badr. Garde-fous gardés : case obligatoire « j'ai le droit d'utiliser ce document, sans données personnelles » (le texte part chez Gemini, offre gratuite), PDF vérifié (signature `%PDF-`, 100 Mo max), 150 pages étudiées au plus (temps CPU et quota), licence et auteurs demandés.
+
+### S12-2 PDF envoyé tel quel, pas en multipart
+- FastAPI a besoin de `python-multipart` pour les formulaires de fichiers (dépendance hors liste). Options : ajouter la dépendance, base64 dans du JSON (+33 %), ou le corps brut `application/pdf`. Choix : corps brut, puis un 2e appel JSON pour le formulaire. Le proxy Next.js transmet les octets tels quels.
+
+### S12-3 Traitement en arrière-plan, un cours à la fois
+- L'indexation (CPU) et le brouillon (Gemini) durent des minutes : tâche asyncio + `to_thread`, verrou pour un seul cours à la fois, état en mémoire (`queued`, `indexing`, `drafting`, `ready`, `failed`) interrogé toutes les 2 s. Après un redémarrage, l'état se déduit des notions. « Réessayer » ne réindexe pas si les passages sont déjà en base.
+
+### S12-4 Cours importés hors de Git
+- Registre `data/courses.local.json`, notions `data/notions/<id>.json`, PDF `data/raw/` : un document importé peut être privé, rien ne doit partir sur GitHub. Supprimer un cours efface ses passages, ses fichiers et son entrée (les notes Spring restent).
+
+### S12-5 Deux défauts trouvés en vrai
+- Le dernier chapitre du sommaire ne gardait qu'une page (fin = début) : il va maintenant jusqu'à la fin du livre. Les sections numérotées de résumé (« 5.6 Chapter summary ») donnaient une fausse notion : elles sont ignorées au brouillon (6 → 5 notions).
+

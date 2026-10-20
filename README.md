@@ -32,8 +32,9 @@ honest feedback on what they have actually understood.
   next with the pages to re-read, computed without any LLM.
 - **Quiz** (`/quiz`): multiple-choice questions on the weakest notions (keys 1-4, Enter),
   graded by code, with the source page of each answer.
-- **Library** (`/library`): one card per course (PDF, indexed passages, notions); switch
-  course from the sidebar. Each course has its own index, notions and scores.
+- **Library** (`/library`): one card per course (PDF, indexed passages, notions); **upload
+  a textbook PDF** and choose its chapters; switch course from the sidebar. Each course has
+  its own index, notions and scores.
 - **Bilingual**: French questions are rewritten into a search query in the book's language;
   the interface switches between English and French. Light and dark themes.
 
@@ -44,11 +45,23 @@ honest feedback on what they have actually understood.
 Any textbook you are allowed to reuse works (for example an [OpenStax](https://openstax.org)
 book). Its text is sent to Gemini to draft the notions, so never add private documents.
 
-1. Describe it in [`course/courses.json`](course/courses.json): id, title, PDF link, license,
-   attribution, chapters (from the PDF outline) or a page range.
-2. Run `uv run python -m course.add <id>`: it downloads the PDF, extracts and cleans the
-   pages, indexes them, and drafts the notion catalogue (`course/notions/<id>.json`).
-3. Review the catalogue, set `"validated": true`, restart the API.
+**From the interface** (`/library` → *Upload a textbook*): drop the PDF (up to 100 MB),
+pick chapters found in its outline or a page range (at most 150 pages), give the license and
+the authors, and confirm you may use the document. The API indexes the pages, then drafts
+the notions in the background; the card shows each step, a *Retry* button if Gemini's free
+quota runs out, and *Delete*. Uploaded courses stay in `data/` (never in Git).
+
+![Upload a textbook: chapters found in the PDF outline, license, authors](docs/img/upload.png)
+
+Measured with *Introduction to Python Programming* (OpenStax, 397 pages, 15 chapters found):
+chapter 5 gave 22 pages, 33 indexed passages and 5 notions; the question "What is the
+difference between a for loop and a while loop?" was answered with verified citations
+(pages 125 and 143).
+
+**From the command line** (courses kept in Git): describe the course in
+[`course/courses.json`](course/courses.json) (id, title, PDF link, license, chapters or a
+page range), then run `uv run python -m course.add <id>`; review `course/notions/<id>.json`
+and set `"validated": true`.
 
 Measured for *Introductory Statistics 2e*, chapter 12: 61 pages, 135 indexed passages and
 11 drafted notions in 3 minutes (CPU, Gemini free tier). The same question about random
@@ -132,7 +145,7 @@ contrast. The progress chart uses one hue with threshold lines at 3 (review) and
 
 ![Feynman mode: key ideas covered or missing, score computed by code, follow-up question](docs/img/feynman.png)
 
-![Library: one card per course and the steps to add one](docs/img/library.png)
+![Library: one card per course, an uploaded course ready to study, the upload area](docs/img/library.png)
 
 | Dark theme | Phone |
 | --- | --- |

@@ -90,6 +90,14 @@ async def replace_chunks(
     return len(rows)
 
 
+async def delete_course_chunks(engine: AsyncEngine, course: str) -> None:
+    """Delete every chunk of a course (all embedding models)."""
+    async with engine.begin() as conn:
+        await conn.execute(
+            text("DELETE FROM chunks WHERE course_id = :course"), {"course": course}
+        )
+
+
 async def count_chunks(engine: AsyncEngine, course: str, model: str) -> int:
     """Return how many chunks are stored for one course and embedding model."""
     async with engine.connect() as conn:

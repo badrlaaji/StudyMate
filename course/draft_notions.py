@@ -20,6 +20,8 @@ from course.notions import Catalog, KeyIdea, Notion, load_catalog
 from rag.ingest import read_jsonl
 
 MAIN_SECTION = re.compile(r"^\d+\.\d+ ")  # "6.2 Classification ..." (not Key Terms)
+# Numbered sections that recap or test, without new notions ("5.6 Chapter summary").
+END_MATTER = re.compile(r"summary|review|exercises|key terms", re.IGNORECASE)
 BLOCK_PAGES = 10  # no numbered sections in the outline: blocks of 10 pages
 PAGES_PER_NOTION = 5  # about one notion per 5 pages of a section
 MAX_PER_SECTION = 4
@@ -73,7 +75,8 @@ def group_sections(pages: list[dict]) -> dict[str, list[dict]]:
     """Group pages by main section ("6.1 ...", "7.2 ..."), else by blocks of pages."""
     sections: dict[str, list[dict]] = {}
     for page in pages:
-        if MAIN_SECTION.match(page["section"]):
+        section = page["section"]
+        if MAIN_SECTION.match(section) and not END_MATTER.search(section):
             sections.setdefault(page["section"], []).append(page)
     return sections or page_blocks(pages)
 
@@ -89,7 +92,8 @@ def page_blocks(pages: list[dict]) -> dict[str, list[dict]]:
 
 def catalog_source(course: Course) -> str:
     """Source line of a catalogue: book, scope, authors and link."""
-    return f"{course.title}, {course.scope_en}, {course.attribution}, {course.book_url}"
+    parts = [course.title, course.scope_en, course.attribution, course.book_url]
+    return ", ".join(part for part in parts if part)
 
 
 def notion_count(section_pages: list[dict]) -> int:
@@ -143,7 +147,7 @@ def draft_section(section: str, section_pages: list[dict]) -> list[Notion]:
 
 def draft_catalog(course: Course) -> Catalog:
     """Draft the catalogue of a course and write it (validated = false)."""
-    path = notions_path(course.id)
+    path = notions_path(course.id, course.uploaded)
     if path.exists() and load_catalog(path).validated:
         raise SystemExit(f"{path} is validated (D1): it is never overwritten.")
     notions = []

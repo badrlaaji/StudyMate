@@ -5,6 +5,7 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, Field
 
 from course.courses import COURSE_ID_PATTERN
+from course.upload import UPLOAD_ID_PATTERN
 
 Lang = Literal["en", "fr"]
 # Course id (see course/courses.json); None = the default course.
@@ -54,6 +55,22 @@ class CourseOut(BaseModel):
     chunks: int | None  # indexed chunks (None: database unavailable)
     notions: int  # 0 until the catalogue is drafted
     validated: bool  # catalogue reviewed by hand (D1)
+    uploaded: bool  # added from the interface (files in data/, deletable)
+    job: str | None  # uploaded course: queued, indexing, drafting, ready or failed
+    job_detail: str = ""
+
+
+class NewCourse(BaseModel):
+    """POST /courses body: a course built from an uploaded PDF."""
+
+    upload_id: str = Field(pattern=UPLOAD_ID_PATTERN)
+    title: str = Field(min_length=3, max_length=120)
+    book_lang: Lang = "en"
+    license: str = Field(min_length=2, max_length=80)
+    attribution: str = Field(min_length=2, max_length=300)
+    chapters: list[int] = []
+    pages: list[int] = []  # [first, last] when no chapter is chosen
+    rights: bool = False  # "I may use this document; it holds no personal data"
 
 
 class NotionOut(BaseModel):

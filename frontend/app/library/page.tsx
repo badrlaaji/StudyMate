@@ -1,5 +1,7 @@
+import CourseJob from "@/components/CourseJob";
 import Icon from "@/components/Icon";
 import OpenCourse from "@/components/OpenCourse";
+import UploadCourse from "@/components/UploadCourse";
 import type { Course } from "@/lib/api";
 import { fmt, type Dict } from "@/lib/i18n";
 import { getSession } from "@/lib/lang";
@@ -21,7 +23,10 @@ export default async function LibraryPage() {
       <ul className="courses" style={{ listStyle: "none", padding: 0, margin: 0 }}>
         {courses.map((item) => (
           <li key={item.id} className="card course-card" data-current={item.id === course?.id}>
-            <div className="course-cover">{item.title}</div>
+            <div className="course-cover">
+              {item.title}
+              {item.uploaded && <span className="cover-tag">{t.library.uploaded}</span>}
+            </div>
             <div className="stack" style={{ gap: "var(--space-1)" }}>
               <strong>{item.scope}</strong>
               <span className="hint">
@@ -36,13 +41,25 @@ export default async function LibraryPage() {
                   {t.library.current}
                 </span>
               ) : (
-                <OpenCourse course={item.id} label={t.library.open} />
+                !item.uploaded && <OpenCourse course={item.id} label={t.library.open} />
               )}
-              <a className="btn btn-ghost btn-sm" href={item.book_url} target="_blank" rel="noreferrer">
-                <Icon name="external" />
-                {t.library.bookPage}
-              </a>
+              {item.book_url && (
+                <a className="btn btn-ghost btn-sm" href={item.book_url} target="_blank" rel="noreferrer">
+                  <Icon name="external" />
+                  {t.library.bookPage}
+                </a>
+              )}
             </div>
+            {item.uploaded && (
+              <CourseJob
+                courseId={item.id}
+                initialState={item.job ?? "ready"}
+                initialDetail={item.job_detail}
+                t={t}
+                canDelete
+                showOpen={item.id !== course?.id}
+              />
+            )}
           </li>
         ))}
       </ul>
@@ -50,8 +67,14 @@ export default async function LibraryPage() {
       <section className="card stack" aria-labelledby="add-title">
         <div className="card-title" style={{ marginBottom: 0 }}>
           <Icon name="plus" />
-          <h2 id="add-title">{t.library.addTitle}</h2>
+          <h2 id="add-title">{t.library.upload}</h2>
         </div>
+        <p className="muted">{t.library.uploadIntro}</p>
+        <UploadCourse t={t} />
+      </section>
+
+      <details className="card stack">
+        <summary className="field-label">{t.library.cli}</summary>
         <p className="muted">{t.library.addIntro}</p>
         <ol className="steps-add">
           <li>
@@ -72,7 +95,7 @@ export default async function LibraryPage() {
             <div>{t.library.add3}</div>
           </li>
         </ol>
-      </section>
+      </details>
     </div>
   );
 }

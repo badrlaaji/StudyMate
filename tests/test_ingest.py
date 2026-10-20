@@ -55,13 +55,13 @@ def test_clean_page_removes_footers_and_rejoins_hyphenated_words():
 
 def test_chapter_bounds_ends_before_next_top_level_entry():
     top = [(7, "Contents"), (275, "Chapter 6 ML"), (341, "Chapter 7 DL"), (387, "C8")]
-    assert chapter_bounds(top, 6) == (275, 340)
-    assert chapter_bounds(top, 7) == (341, 386)
+    assert chapter_bounds(top, 6, 900) == (275, 340)
+    assert chapter_bounds(top, 7, 900) == (341, 386)
 
 
 def test_chapter_bounds_unknown_chapter_raises():
     with pytest.raises(ValueError):
-        chapter_bounds([(275, "Chapter 6 ML")], 9)
+        chapter_bounds([(275, "Chapter 6 ML")], 9, 900)
 
 
 def test_section_for_page_takes_last_section_started():

@@ -15,7 +15,7 @@ limit, ❌ not met. Last checked: 2026-10-20.
 | F7 | Know what they master | Average of the last 3 scores per notion; weak < 3, mastered ≥ 4 (Spring) | 13 Spring tests; progress page shows levels with icon + label | ✅ |
 | F8 | Know what to review next | Revision plan without LLM: weakest notions with pages | `test_build_plan_*`, `test_plan_without_llm`; "Review next" cards | ✅ |
 | F9 | Practise on weak spots | Quiz on weak notions (Spring), MCQ anchored on their pages, graded by code, keys 1-4 | `test_notion_scores_graded_by_code`, quiz tests; journey: key 1 → "Correct!", source p. 364 | ✅ |
-| F10 | Study other textbooks | Course registry + `course.add <id>`; index, notions and scores separated per course | Statistics 2e ch. 12 added: 61 pages, 135 passages, 11 notions in 3 min; isolation tests (store, Spring) | ⚠️ new catalogues are LLM drafts to review |
+| F10 | Study other textbooks | Upload a PDF in the library (chapters from its outline or a page range), or the course registry + `course.add <id>`; index, notions and scores separated per course | Browser journey: *Introduction to Python Programming* uploaded, chapter 5 → 33 passages, 5 notions, verified answer (p. 125, 143), deleted and uploaded again; Statistics 2e ch. 12 by command (135 passages, 11 notions); API tests for upload, processing, retry, delete | ⚠️ new catalogues are LLM drafts to review |
 | F11 | Use the app in French | FR/EN dictionaries, cookie, French typography | French screenshots; same pages in both languages | ✅ |
 | F12 | Keep studying when a service is down | Degraded mode: answers still work when Spring is down; 503 with the fix when the course is not indexed or Gemini is unavailable | `test_graph_quiz_in_degraded_mode_*`, `test_chat_without_index_is_a_clear_503`; compose run on an empty database | ✅ |
 | F13 | Use it with a keyboard or a screen reader | Skip link, visible focus, "/" shortcut, `aria-live` results, labelled controls | axe-core (WCAG 2.2 AA rules): 0 violations, 6 pages × light/dark × desktop/mobile + 3 dynamic states; keyboard tour | ✅ |
@@ -26,7 +26,7 @@ limit, ❌ not met. Last checked: 2026-10-20.
 
 - **One learner per installation**: no accounts; scores are per course, not per person
   (local demo, the Gemini free tier forbids a public deployment for EU/UK users).
-- **No upload from the interface**: a course is added from the command line, so that only
-  books the user may reuse are sent to Gemini (`DECISIONS.md` S11-5).
+- **Uploads trust the user**: the interface asks to confirm the right to use the document
+  and that it holds no personal data, but cannot check it (its text is sent to Gemini).
 - **The statistics course has no evaluation set**: its quality was only spot-checked
   (3 questions, pages read by hand).

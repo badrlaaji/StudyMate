@@ -26,6 +26,12 @@ science catalogue was then reviewed by hand, the statistics catalogue is still a
 The books themselves (PDF) are not redistributed here: they are downloaded from OpenStax by
 `scripts/download_book.py`, using the links in `course/courses.json`.
 
+## Courses uploaded from the interface
+
+Books uploaded from the library page, and everything derived from them (pages, passages,
+notions), stay in the local `data/` folder and are never added to this repository. Their
+license is the one given in the upload form.
+
 ## Non-commercial use
 
 Because of the NonCommercial clause, these derived files, and any model fine-tuned on

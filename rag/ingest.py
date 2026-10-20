@@ -58,12 +58,15 @@ def clean_page(text: str, repeated: set[str]) -> str:
     return re.sub(r"(\w)-\n(\w)", r"\1-\2", "\n".join(kept))
 
 
-def chapter_bounds(chapters: list[tuple[int, str]], number: int) -> tuple[int, int]:
+def chapter_bounds(
+    chapters: list[tuple[int, str]], number: int, book_pages: int
+) -> tuple[int, int]:
     """Return (first, last) PDF pages of a chapter from top-level (page, title)."""
     for i, (page, title) in enumerate(chapters):
         match = CHAPTER_TITLE.match(title)
         if match and int(match.group(1)) == number:
-            last = chapters[i + 1][0] - 1 if i + 1 < len(chapters) else page
+            # The last outline entry runs to the end of the book.
+            last = chapters[i + 1][0] - 1 if i + 1 < len(chapters) else book_pages
             return page, last
     raise ValueError(f"Chapter {number} not found in the outline")
 
@@ -91,11 +94,13 @@ def read_outline(reader: PdfReader) -> tuple[list, list]:
     return top, sorted(subs, key=lambda entry: entry[0])
 
 
-def page_ranges(course: Course, top: list) -> list[tuple[int, int, int]]:
+def page_ranges(
+    course: Course, top: list, book_pages: int
+) -> list[tuple[int, int, int]]:
     """Return (chapter, first, last) ranges; chapter 0 for a plain page range."""
     if course.pages:
-        return [(0, course.pages[0], course.pages[1])]
-    return [(n, *chapter_bounds(top, n)) for n in course.chapters]
+        return [(0, course.pages[0], min(course.pages[1], book_pages))]
+    return [(n, *chapter_bounds(top, n, book_pages)) for n in course.chapters]
 
 
 def chapter_records(
@@ -139,7 +144,7 @@ def build_pages(course: Course) -> list[dict]:
     reader = PdfReader(pdf_path(course.id))
     top, subs = read_outline(reader)
     records = []
-    for number, first, last in page_ranges(course, top):
+    for number, first, last in page_ranges(course, top, len(reader.pages)):
         chapter = chapter_records(reader, number, first, last, subs)
         chars = sum(len(r["text"]) for r in chapter)
         print(

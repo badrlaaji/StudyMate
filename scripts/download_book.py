@@ -36,6 +36,8 @@ def download_course(course: Course) -> Path:
     if path.exists() and is_pdf(path):
         print(f"Already downloaded: {path}")
         return path
+    if course.pdf_url is None:  # uploaded from the interface: nothing to download
+        raise RuntimeError(f"Missing PDF of the uploaded course: {path}")
     download(course.pdf_url, path)
     if not is_pdf(path):
         raise RuntimeError(f"Not a PDF: {path}")

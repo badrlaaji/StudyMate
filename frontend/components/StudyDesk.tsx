@@ -177,7 +177,8 @@ export default function StudyDesk({ lang, t, course, scope, examples, initialPag
           )}
 
           {busy && (
-            <ol className="steps" role="status" aria-label={t.study.steps[step]}>
+            <div role="status" aria-label={t.study.steps[step]}>
+            <ol className="steps">
               {STEPS.map((item, i) => {
                 const current = STEPS.findIndex((s) => s.step === step);
                 const state = i < current ? "done" : i === current ? "active" : "todo";
@@ -189,6 +190,7 @@ export default function StudyDesk({ lang, t, course, scope, examples, initialPag
                 );
               })}
             </ol>
+            </div>
           )}
           <div ref={end} />
         </div>

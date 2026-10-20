@@ -1,9 +1,10 @@
-"""Course registry (course/courses.json): one entry per book, and its file paths.
+"""Course registry: one entry per book, and its file paths.
 
-Add a course: write its entry in courses.json, then
-uv run python -m course.add <course_id>
+Two sources: course/courses.json (in Git, added with uv run python -m course.add <id>)
+and data/courses.local.json (courses uploaded from the interface, never in Git).
 """
 
+import json
 import sys
 from pathlib import Path
 from typing import Literal
@@ -13,6 +14,7 @@ from pydantic import BaseModel, Field, model_validator
 from config import ROOT
 
 COURSES_PATH = ROOT / "course" / "courses.json"
+LOCAL_COURSES_PATH = ROOT / "data" / "courses.local.json"
 COURSE_ID_PATTERN = r"^[a-z0-9]+(-[a-z0-9]+)*$"
 
 
@@ -24,16 +26,19 @@ class Course(BaseModel):
     scope_en: str
     scope_fr: str
     book_lang: Literal["en", "fr"] = "en"
-    pdf_url: str = Field(pattern=r"^https://")
-    book_url: str
+    pdf_url: str | None = Field(default=None, pattern=r"^https://")
+    book_url: str = ""
     attribution: str
     license: str
     chapters: list[int] = []  # "Chapter N" entries of the PDF outline
     pages: list[int] = []  # or [first, last] PDF pages when there is no such outline
+    uploaded: bool = False  # added from the interface: its files stay in data/
 
     @model_validator(mode="after")
     def check_scope(self) -> "Course":
-        """Exactly one of chapters / pages; pages is [first, last]."""
+        """A PDF link for repository courses; exactly one of chapters / pages."""
+        if not self.uploaded and not self.pdf_url:
+            raise ValueError("A course of course/courses.json needs a pdf_url")
         if bool(self.chapters) == bool(self.pages):
             raise ValueError("Give either chapters or pages [first, last], not both")
         if self.pages and (len(self.pages) != 2 or self.pages[0] > self.pages[1]):
@@ -58,9 +63,22 @@ class Registry(BaseModel):
         return self
 
 
-def load_registry(path: Path = COURSES_PATH) -> Registry:
-    """Read and validate courses.json."""
-    return Registry.model_validate_json(path.read_text(encoding="utf-8"))
+def load_registry(path: Path = COURSES_PATH, local: Path | None = None) -> Registry:
+    """Read courses.json, add the uploaded courses, validate the whole registry."""
+    data = json.loads(path.read_text(encoding="utf-8"))
+    local = local or LOCAL_COURSES_PATH
+    if local.exists():
+        data["courses"] += json.loads(local.read_text(encoding="utf-8"))["courses"]
+    return Registry.model_validate(data)
+
+
+def save_uploaded(registry: Registry, local: Path | None = None) -> None:
+    """Write the uploaded courses of the registry to data/courses.local.json."""
+    local = local or LOCAL_COURSES_PATH
+    courses = [c.model_dump() for c in registry.courses if c.uploaded]
+    local.parent.mkdir(parents=True, exist_ok=True)
+    text = json.dumps({"courses": courses}, ensure_ascii=False, indent=2)
+    local.write_text(text + "\n", encoding="utf-8")
 
 
 def get_course(registry: Registry, course_id: str | None = None) -> Course:
@@ -88,6 +106,7 @@ def pages_path(course_id: str) -> Path:
     return ROOT / "data" / "interim" / course_id / "pages.jsonl"
 
 
-def notions_path(course_id: str) -> Path:
-    """Notion catalogue of a course (validated by hand, D1)."""
-    return ROOT / "course" / "notions" / f"{course_id}.json"
+def notions_path(course_id: str, uploaded: bool = False) -> Path:
+    """Notion catalogue of a course (in data/ for an uploaded course)."""
+    folder = ROOT / "data" / "notions" if uploaded else ROOT / "course" / "notions"
+    return folder / f"{course_id}.json"

@@ -87,6 +87,11 @@ def test_group_sections_keeps_only_numbered_sections():
     assert [p["page"] for p in groups["6.1 What Is ML?"]] == [276, 277]
 
 
+def test_group_sections_skips_numbered_summaries():
+    pages = PAGES[1:3] + [{"page": 300, "section": "5.6 Chapter summary", "text": "s"}]
+    assert list(group_sections(pages)) == ["6.1 What Is ML?"]
+
+
 def test_group_sections_without_numbered_sections_uses_blocks_of_10_pages():
     pages = [{"page": 10 + i, "section": "", "text": "t"} for i in range(23)]
     groups = group_sections(pages)

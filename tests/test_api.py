@@ -1,5 +1,7 @@
 """One test per endpoint, plus the Feynman formula (fakes only, no network)."""
 
+import asyncio
+import time
 from contextlib import asynccontextmanager
 from types import SimpleNamespace
 
@@ -99,9 +101,12 @@ def client():
     main.app.state.http = httpx.AsyncClient(
         transport=httpx.MockTransport(spring_handler), base_url="http://spring"
     )
-    main.app.state.registry = REGISTRY
+    main.app.state.registry = REGISTRY.model_copy(deep=True)
     main.app.state.catalogs = {"data-science": CATALOG}
     main.app.state.graph = SimpleNamespace(ainvoke=ainvoke)
+    main.app.state.jobs = {}
+    main.app.state.job_lock = asyncio.Lock()
+    main.app.state.tasks = set()
     return TestClient(main.app)
 
 
@@ -283,3 +288,161 @@ def test_book_pdf_served_per_course_or_404(client, monkeypatch, tmp_path):
     response = client.get("/book.pdf", params={"course": "statistics"})
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/pdf"
+
+
+# --- courses uploaded from the interface -------------------------------------------
+
+
+def make_pdf(pages: int = 10, title: str = "") -> bytes:
+    """Small PDF with an outline: Chapter 1 on pages 3-6, Chapter 2 on pages 7-10."""
+    import io
+
+    from pypdf import PdfWriter
+
+    writer = PdfWriter()
+    for _ in range(pages):
+        writer.add_blank_page(width=200, height=200)
+    writer.add_outline_item("Chapter 1 Basics", 2)
+    writer.add_outline_item("Chapter 2 More", 6)
+    if title:
+        writer.add_metadata({"/Title": title})
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    return buffer.getvalue()
+
+
+@pytest.fixture
+def uploads(monkeypatch, tmp_path):
+    """Files in tmp_path, fake processing; returns what the fakes recorded."""
+    seen = {"indexed": [], "saved": 0}
+
+    @asynccontextmanager
+    async def no_lifespan(app):
+        yield
+
+    async def fake_create_schema(engine):
+        return None
+
+    async def fake_delete(engine, course):
+        seen["deleted"] = course
+
+    async def fake_count(engine, course, model):
+        return 5
+
+    def fake_index(course):
+        seen["indexed"].append(course.chapters)
+
+    def fake_save(registry):
+        seen["saved"] += 1
+
+    folder = "api.uploads."
+    monkeypatch.setattr(main.app.router, "lifespan_context", no_lifespan)
+    monkeypatch.setattr(folder + "upload_path", lambda uid: tmp_path / f"{uid}.pdf")
+    monkeypatch.setattr(folder + "pdf_path", lambda cid: tmp_path / f"{cid}.pdf")
+    monkeypatch.setattr(folder + "pages_path", lambda cid: tmp_path / cid / "p.jsonl")
+    monkeypatch.setattr(folder + "notions_path", lambda cid, uploaded: tmp_path / "n")
+    monkeypatch.setattr(folder + "save_uploaded", fake_save)
+    monkeypatch.setattr(folder + "index_course", fake_index)
+    monkeypatch.setattr(folder + "draft_catalog", lambda course: CATALOG)
+    monkeypatch.setattr(folder + "create_schema", fake_create_schema)
+    monkeypatch.setattr(folder + "delete_course_chunks", fake_delete)
+    monkeypatch.setattr(folder + "count_chunks", fake_count)
+    return seen
+
+
+def send_pdf(http: TestClient, content: bytes):
+    return http.post(
+        "/uploads", content=content, headers={"content-type": "application/pdf"}
+    )
+
+
+def new_course(upload_id: str, **changes) -> dict:
+    body = {
+        "upload_id": upload_id,
+        "title": "Intro to Stats",
+        "license": "CC BY 4.0",
+        "attribution": "Some Authors, 2024",
+        "chapters": [2],
+        "rights": True,
+    }
+    return {**body, **changes}
+
+
+def wait_until(http: TestClient, course_id: str, states: set[str]) -> dict:
+    """Poll the status endpoint like the interface does."""
+    for _ in range(100):
+        status = http.get(f"/courses/{course_id}/status").json()
+        if status["state"] in states:
+            return status
+        time.sleep(0.02)
+    raise AssertionError(f"still {status}")
+
+
+def test_upload_rejects_a_file_that_is_not_a_pdf(client, uploads):
+    response = send_pdf(client, b"hello, not a pdf")
+    assert response.status_code == 400
+
+
+def test_upload_returns_pages_chapters_and_title(client, uploads):
+    body = send_pdf(client, make_pdf(title="Intro to Stats")).json()
+    assert body["pages"] == 10 and body["title"] == "Intro to Stats"
+    assert [(c["number"], c["first"], c["last"]) for c in body["chapters"]] == [
+        (1, 3, 6),
+        (2, 7, 10),
+    ]
+
+
+def test_new_course_needs_the_rights_box_and_a_known_upload(client, uploads):
+    upload_id = send_pdf(client, make_pdf()).json()["upload_id"]
+    assert (
+        client.post("/courses", json=new_course(upload_id, rights=False)).status_code
+        == 422
+    )
+    assert client.post("/courses", json=new_course("0" * 32)).status_code == 404
+    unknown = new_course(upload_id, chapters=[9])
+    assert client.post("/courses", json=unknown).status_code == 422
+
+
+def test_new_course_rejects_too_many_pages(client, uploads, monkeypatch):
+    monkeypatch.setattr("api.uploads.MAX_STUDY_PAGES", 3)
+    upload_id = send_pdf(client, make_pdf()).json()["upload_id"]
+    response = client.post("/courses", json=new_course(upload_id))  # chapter 2: 4 pages
+    assert response.status_code == 422 and "4 selected" in response.json()["detail"]
+
+
+def test_uploaded_course_is_processed_listed_and_deleted(client, uploads):
+    with TestClient(main.app) as http:  # one event loop: the background task runs
+        upload_id = send_pdf(http, make_pdf()).json()["upload_id"]
+        created = http.post("/courses", json=new_course(upload_id))
+        assert created.status_code == 202 and created.json()["id"] == "intro-to-stats"
+        assert (
+            wait_until(http, "intro-to-stats", {"ready", "failed"})["state"] == "ready"
+        )
+        assert uploads["indexed"] == [[2]] and uploads["saved"] == 1
+        listed = {c["id"]: c for c in http.get("/courses").json()}["intro-to-stats"]
+        assert (
+            listed["uploaded"] and listed["job"] == "ready" and listed["notions"] == 1
+        )
+        assert listed["scope"] == "Chapter 2"
+        assert http.delete("/courses/data-science").status_code == 403
+        assert http.delete("/courses/intro-to-stats").status_code == 204
+        assert uploads["deleted"] == "intro-to-stats"
+        assert http.get("/courses/intro-to-stats/status").status_code == 404
+
+
+def test_failed_processing_is_shown_and_retried_without_reindexing(
+    uploads, monkeypatch
+):
+    def quota_error(course):
+        raise RuntimeError("LLM unavailable twice in a row")
+
+    monkeypatch.setattr("api.uploads.draft_catalog", quota_error)
+    with TestClient(main.app) as http:
+        upload_id = send_pdf(http, make_pdf()).json()["upload_id"]
+        http.post("/courses", json=new_course(upload_id, title="Stats again"))
+        failed = wait_until(http, "stats-again", {"ready", "failed"})
+        assert failed["state"] == "failed" and "LLM unavailable" in failed["detail"]
+        monkeypatch.setattr("api.uploads.draft_catalog", lambda course: CATALOG)
+        assert http.post("/courses/stats-again/retry").status_code == 202
+        assert wait_until(http, "stats-again", {"ready", "failed"})["state"] == "ready"
+        assert uploads["indexed"] == [[2]]  # 5 chunks stored: not indexed again

@@ -14,6 +14,9 @@ export type Course = {
   chunks: number | null;
   notions: number;
   validated: boolean;
+  uploaded: boolean;
+  job: string | null; // uploaded course: queued, indexing, drafting, ready or failed
+  job_detail: string;
 };
 
 export type Notion = {

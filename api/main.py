@@ -32,6 +32,8 @@ from api.schemas import (
     QuizResultRequest,
     QuizResultResponse,
 )
+from api.uploads import job_state
+from api.uploads import router as uploads_router
 from course.courses import (
     COURSE_ID_PATTERN,
     Course,
@@ -55,9 +57,9 @@ INDEX_HINT = (
 def load_catalogs(registry: Registry) -> dict[str, Catalog]:
     """Notion catalogues of the courses that already have one."""
     return {
-        course.id: load_catalog(notions_path(course.id))
+        course.id: load_catalog(notions_path(course.id, course.uploaded))
         for course in registry.courses
-        if notions_path(course.id).exists()
+        if notions_path(course.id, course.uploaded).exists()
     }
 
 
@@ -71,13 +73,17 @@ async def lifespan(app: FastAPI):
     app.state.graph = build_graph(
         app.state.engine, app.state.http, app.state.registry, app.state.catalogs
     )
+    app.state.jobs = {}  # processing of uploaded courses
+    app.state.job_lock = asyncio.Lock()
+    app.state.tasks = set()
     await asyncio.to_thread(load_model, model_name())
     yield
     await app.state.http.aclose()
     await app.state.engine.dispose()
 
 
-app = FastAPI(title="StudyMate API", version="1.1.0", lifespan=lifespan)
+app = FastAPI(title="StudyMate API", version="1.2.0", lifespan=lifespan)
+app.include_router(uploads_router)
 
 
 @app.exception_handler(RuntimeError)
@@ -152,6 +158,7 @@ async def courses(request: Request, lang: Lang = "en") -> list[dict]:
     rows = []
     for course in registry.courses:
         catalog = request.app.state.catalogs.get(course.id)
+        job = job_state(request.app, course)
         rows.append(
             {
                 "id": course.id,
@@ -166,6 +173,9 @@ async def courses(request: Request, lang: Lang = "en") -> list[dict]:
                 "chunks": await indexed_chunks(request, course.id),
                 "notions": len(catalog.notions) if catalog else 0,
                 "validated": bool(catalog and catalog.validated),
+                "uploaded": course.uploaded,
+                "job": job["state"] if course.uploaded else None,
+                "job_detail": job["detail"] if course.uploaded else "",
             }
         )
     return rows

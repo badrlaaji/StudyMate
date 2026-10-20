@@ -62,6 +62,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : éval complète des réponses à relancer (quota gratuit épuisé : un appel a pris 2 min 30 s) ; catalogue statistics à relire (sections de TP faibles) ; pas de jeu d'éval pour ce cours ; notes Feynman humaines toujours en attente.
 - **Chiffres** : statistics : 61 pages, 108 712 caractères, 135 morceaux (embeddings 66 s), 11 notions, 2 min 58 s ; migration : 568 morceaux rattachés, 7 notes locales rattachées par SQL ; réponses (prompts multi-cours) EN 18/20, FR 19/20, pièges 5/5 et 5/5 ; test02 corrigé (page 279 citée) ; axe-core 0 violation (24 combinaisons + 5 états, après 4 défauts corrigés) ; Lighthouse mobile 94-100 en performance, 100 en accessibilité, bonnes pratiques, SEO (carte mobile 87 → 94 avec le graphique chargé à part) ; tests : 144 Python (143 + 1 base), 13 Spring.
 
+## Étape 12 — Importer un manuel depuis l'interface (2026-10-20)
+- **Fait** : upload d'un PDF dans la Bibliothèque (chapitres du sommaire ou plage de pages, licence, auteurs, case de droits), traitement en arrière-plan avec suivi, Réessayer, Supprimer ; cours importés dans `data/` ; essai réel dans le navigateur ; 2 défauts corrigés (dernier chapitre, sections de résumé).
+- **Bloqué** : rien de nouveau ; l'upload fait confiance à l'utilisateur pour les droits et les données personnelles (case à cocher).
+- **Chiffres** : Introduction to Python Programming : 9,96 Mo, 397 pages, 15 chapitres détectés ; chapitre 5 → 22 pages, 33 passages, 5 notions (6 avant la règle des résumés) ; réponse vérifiée p. 125 et 143 ; axe-core 0 violation (formulaire, traitement, 6 pages × 4 variantes) ; Lighthouse Bibliothèque 97/100/100/100 mobile, 100 partout ordinateur ; 158 tests Python (+ 1 base), 13 Spring.
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |
