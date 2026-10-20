@@ -67,3 +67,25 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 - Constat : les formules sont dessinées (aucune police mathématique sur la page ; `pdftotext` donne le même résultat). Indicateur : 39 pages sur 111 avec au moins 3 traces de formule perdue.
 - Options écartées pour la v1 : OCR (lent, hors liste), version HTML d'OpenStax avec MathML (pas de numéros de page PDF, contraire à D8).
 - Atténuation : le panneau PDF affiche la vraie page citée.
+
+## Étape 2 — Catalogue de notions
+
+### S2-1 Un appel LLM par section, nombre de notions proportionnel
+- Options : un seul appel pour 111 pages ; un appel par page ; un appel par section numérotée.
+- Choix : un appel par section (10 appels), 1 notion pour ~5 pages, entre 1 et 4 → 21 notions (D1 : 15 à 25).
+- Pourquoi : chaque appel voit un texte cohérent avec ses marqueurs `[page N]` ; le code garde seulement les pages de la section.
+
+### S2-2 Le code contrôle ce que le LLM propose
+- Schéma Pydantic : id en snake_case, 3 à 5 idées clés EN/FR, 15 à 25 notions, ids uniques.
+- Pages citées ∩ pages de la section ; une notion sans page valide est rejetée (pas de « page devinée »).
+
+### S2-3 Prompt corrigé après relecture
+- 1re génération : 4 défauts relevés (accents absents dans la section 6.1, majuscules à l'anglaise, idées formulées en consignes, « surajustement » / « surapprentissage » mélangés).
+- Choix : règles explicites dans le prompt + mini-glossaire FR → 0 défaut aux contrôles automatiques. Puis 3 corrections à la main (nom DBSCAN, « k-means », « rééchantillonnage »).
+
+### S2-4 Appels LLM : cache disque + politique 429 (`agent/llm.py`)
+- `invoke_structured()` : cache sha256(modèle + prompt) dans `.cache/llm/`, puis 1 seul nouvel essai après un 429 (délai lu dans l'erreur, sinon 60 s), puis message clair.
+- On attrape `langchain_core.exceptions.ModelRateLimitError` (générique, parent de l'erreur Gemini) : un futur fournisseur (Groq) passe par le même code.
+
+### S2-5 Validation humaine (D1) non bloquante
+- `notions.json` est commité avec `"validated": false`. Le script de brouillon refuse d'écraser un catalogue validé.

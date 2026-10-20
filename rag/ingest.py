@@ -120,6 +120,12 @@ def write_jsonl(records: list[dict], path: Path) -> None:
             file.write(json.dumps(record, ensure_ascii=False) + "\n")
 
 
+def read_jsonl(path: Path = PAGES_PATH) -> list[dict]:
+    """Read one JSON object per line (UTF-8)."""
+    with path.open(encoding="utf-8") as file:
+        return [json.loads(line) for line in file if line.strip()]
+
+
 def main() -> None:
     """Build pages.jsonl for the selected chapters and print counts."""
     reader = PdfReader(BOOK_PATH)

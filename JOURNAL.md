@@ -12,6 +12,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : rien. Limite : formules perdues (dessinées dans le PDF).
 - **Chiffres** : PDF 569 pages, 37,3 Mo ; chapitre 6 = 66 pages, 129 116 caractères ; chapitre 7 = 45 pages non vides (1 page blanche écartée), 116 340 caractères ; total 111 pages, 245 456 caractères ; 39/111 pages avec ≥ 3 traces de formule perdue ; ingestion en 3 s ; 22 tests passés.
 
+## Étape 2 — Catalogue de notions (2026-10-20)
+- **Fait** : schéma Pydantic du catalogue ; brouillon par `gemini-3.5-flash-lite` (1 appel par section) ; relecture : 4 défauts au 1er essai → prompt corrigé → 0 défaut aux contrôles, + 3 corrections à la main ; cache LLM et politique 429 ; `LICENSE-CONTENT.md`.
+- **Bloqué** : validation du catalogue par Badr (D1) — `"validated": false` en attendant.
+- **Chiffres** : 21 notions issues des 10 sections numérotées, 2 à 8 pages par notion, 3 à 5 idées clés ; 20 appels Gemini (2 générations × 10), 1 min 30 par génération (pause 6 s incluse), 0 erreur 429 ; 45 tests passés.
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |

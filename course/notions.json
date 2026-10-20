@@ -1,0 +1,609 @@
+{
+  "source": "Principles of Data Science (OpenStax, 2025), chapters 6-7, https://openstax.org/details/books/principles-data-science",
+  "license": "CC BY-NC-SA 4.0",
+  "validated": false,
+  "notions": [
+    {
+      "id": "supervised_unsupervised_learning",
+      "name_en": "Supervised and Unsupervised Learning",
+      "name_fr": "Apprentissage supervisé et non supervisé",
+      "chapter": 6,
+      "section": "6.1 What Is Machine Learning?",
+      "pages": [
+        276,
+        277,
+        278
+      ],
+      "key_ideas": [
+        {
+          "en": "Supervised learning uses labeled data in its training and testing sets to map input features to output values or labels.",
+          "fr": "L'apprentissage supervisé utilise des données étiquetées dans ses ensembles d'entraînement et de test pour associer des caractéristiques d'entrée à des valeurs de sortie ou des étiquettes."
+        },
+        {
+          "en": "Unsupervised learning trains on unlabeled data to discover inherent structures, clusters, or patterns within the dataset.",
+          "fr": "L'apprentissage non supervisé s'entraîne sur des données non étiquetées pour découvrir des structures inhérentes, des groupes ou des motifs au sein du jeu de données."
+        },
+        {
+          "en": "The machine learning life cycle includes problem formulation, data collection, feature engineering, model training, validation, and implementation.",
+          "fr": "Le cycle de vie de l'apprentissage automatique comprend la formulation du problème, la collecte de données, l'ingénierie des caractéristiques, l'entraînement du modèle, la validation et la mise en œuvre."
+        }
+      ]
+    },
+    {
+      "id": "overfitting_and_underfitting",
+      "name_en": "Overfitting and Underfitting",
+      "name_fr": "Surapprentissage et sous-apprentissage",
+      "chapter": 6,
+      "section": "6.1 What Is Machine Learning?",
+      "pages": [
+        281,
+        282,
+        283
+      ],
+      "key_ideas": [
+        {
+          "en": "Overfitting happens when a model fits the training data too closely, resulting in high variance and poor performance on new data.",
+          "fr": "Le surapprentissage se produit lorsqu'un modèle s'ajuste trop étroitement aux données d'entraînement, ce qui entraîne une variance élevée et de piètres performances sur de nouvelles données."
+        },
+        {
+          "en": "Underfitting occurs when a model is too rigid or trained on data that is too small, failing to capture essential features of the data.",
+          "fr": "Le sous-apprentissage se produit lorsqu'un modèle est trop rigide ou entraîné sur des données trop restreintes, ne parvurant pas à capturer les caractéristiques essentielles des données."
+        },
+        {
+          "en": "The bias-variance trade-off describes the balance where reducing a model's bias often increases its variance and vice versa.",
+          "fr": "Le compromis biais-variance décrit l'équilibre selon lequel la réduction du biais d'un modèle augmente souvent sa variance et vice versa."
+        }
+      ]
+    },
+    {
+      "id": "logistic_regression",
+      "name_en": "Logistic Regression",
+      "name_fr": "Régression logistique",
+      "chapter": 6,
+      "section": "6.2 Classification Using Machine Learning",
+      "pages": [
+        284,
+        285,
+        286,
+        287,
+        288,
+        289
+      ],
+      "key_ideas": [
+        {
+          "en": "Logistic regression uses a sigmoid function to map arbitrary input features to a value between 0 and 1, representing the probability of a binary outcome.",
+          "fr": "La régression logistique utilise une fonction sigmoïde pour associer des caractéristiques d'entrée arbitraires à une valeur comprise entre 0 et 1, représentant la probabilité d'un résultat binaire."
+        },
+        {
+          "en": "The logit function acts as the inverse of the sigmoid function, linearizing the model so that standard linear regression techniques can be applied to log-odds.",
+          "fr": "La fonction logit agit comme l'inverse de la fonction sigmoïde, linéarisant le modèle afin que des techniques de régression linéaire standard puissent être appliquées aux logarithmes des cotes."
+        },
+        {
+          "en": "Maximum likelihood estimation is employed to find the optimal parameters of the sigmoid function that produce the most accurate classification results for a given dataset.",
+          "fr": "L'estimation du maximum de vraisemblance est employée pour trouver les paramètres optimaux de la fonction sigmoïde qui produisent les résultats de classification les plus précis pour un jeu de données donné."
+        }
+      ]
+    },
+    {
+      "id": "k_means_clustering",
+      "name_en": "K-Means Clustering",
+      "name_fr": "Clustering k-means",
+      "chapter": 6,
+      "section": "6.2 Classification Using Machine Learning",
+      "pages": [
+        289,
+        290,
+        291,
+        292,
+        293,
+        294,
+        295,
+        296
+      ],
+      "key_ideas": [
+        {
+          "en": "K-means clustering is an unsupervised machine learning algorithm that groups similar data points into a predefined number of clusters denoted by k.",
+          "fr": "Le clustering k-means est un algorithme d'apprentissage automatique non supervisé qui regroupe des points de données similaires en un nombre prédéfini de clusters désigné par k."
+        },
+        {
+          "en": "The algorithm iteratively calculates distances from data points to cluster centers, reassigns points to the closest centroid, and updates the centroids until stability is reached.",
+          "fr": "L'algorithme calcule de manière itérative les distances entre les points de données et les centres des clusters, réassigne les points au centroïde le plus proche et met à jour les centroïdes jusqu'à ce que la stabilité soit atteinte."
+        },
+        {
+          "en": "The silhouette score measures how well-separated the resulting clusters are, with values near 1 indicating distinct separation and values near 0 indicating ambiguity.",
+          "fr": "Le score de silhouette mesure dans quelle mesure les clusters résultants sont bien séparés, des valeurs proches de 1 indiquant une séparation nette et des valeurs proches de 0 indiquant une ambigüité."
+        }
+      ]
+    },
+    {
+      "id": "dbscan_clustering",
+      "name_en": "Density-Based Spatial Clustering of Applications with Noise",
+      "name_fr": "Clustering par densité (DBSCAN)",
+      "chapter": 6,
+      "section": "6.2 Classification Using Machine Learning",
+      "pages": [
+        297,
+        298,
+        299,
+        300
+      ],
+      "key_ideas": [
+        {
+          "en": "DBScan identifies core data points within dense regions of a dataset and expands clusters by incorporating neighboring points that satisfy specific distance and density criteria.",
+          "fr": "DBScan identifie les points de données centraux dans les régions denses d'un jeu de données et étend les clusters en incorporant les points voisins qui satisfont à des critères spécifiques de distance et de densité."
+        },
+        {
+          "en": "Points that fail to meet the core point criteria or lack sufficient proximity to any core cluster are classified as outliers or noise rather than being forced into a group.",
+          "fr": "Les points qui ne satisfont pas aux critères de point central ou qui manquent de proximité suffisante avec un cluster central sont classés comme des valeurs aberrantes ou du bruit plutôt que d'être forcés dans un groupe."
+        },
+        {
+          "en": "Inappropriate tuning of the algorithm parameters epsilon and minimum samples can result in models suffering from either underfitting or overfitting.",
+          "fr": "Un réglage inapproprié des paramètres de l'algorithme epsilon et du nombre minimal d'échantillons peut entraîner des modèles souffrant soit de sous-apprentissage, soit de surapprentissage."
+        }
+      ]
+    },
+    {
+      "id": "confusion_matrix",
+      "name_en": "Confusion Matrix",
+      "name_fr": "Matrice de confusion",
+      "chapter": 6,
+      "section": "6.2 Classification Using Machine Learning",
+      "pages": [
+        300,
+        301,
+        302
+      ],
+      "key_ideas": [
+        {
+          "en": "A confusion matrix provides a detailed tabulation of correct and incorrect classification results, helping to identify specific patterns of misidentification across multiple categories.",
+          "fr": "Une matrice de confusion fournit un tableau détaillé des résultats de classification corrects et incorrects, aidant à identifier des schémas spécifiques de mauvaise identification à travers de multiples catégories."
+        },
+        {
+          "en": "For binary classification problems, the confusion matrix organizes outcomes into true positives, true negatives, false positives, and false negatives.",
+          "fr": "Pour les problèmes de classification binaire, la matrice de confusion organise les résultats en vrais positifs, vrais négatifs, faux positifs et faux négatifs."
+        },
+        {
+          "en": "Adjusting a classification model to reduce one type of classification error typically increases the rate of the alternative error type.",
+          "fr": "L'ajustement d'un modèle de classification pour réduire un type d'erreur de classification augmente typiquement le taux de l'autre type d'erreur."
+        }
+      ]
+    },
+    {
+      "id": "bootstrapping_linear_regression",
+      "name_en": "Bootstrapping in Linear Regression",
+      "name_fr": "Bootstrap pour la régression linéaire",
+      "chapter": 6,
+      "section": "6.3 Machine Learning in Regression Analysis",
+      "pages": [
+        303,
+        304,
+        305,
+        306,
+        307,
+        308
+      ],
+      "key_ideas": [
+        {
+          "en": "Bootstrapping involves repeatedly resampling a dataset with replacement to estimate parameter variations and calculate standard deviations.",
+          "fr": "Le rééchantillonnage consiste à prélever de manière répétée des échantillons dans un jeu de données avec remplacement pour estimer les variations des paramètres."
+        },
+        {
+          "en": "Resampling the original dataset provides distributions of possible slope and intercept values for the true linear fit.",
+          "fr": "Réchantillonner le jeu de données d'origine fournit des distributions de valeurs possibles pour la pente et l'ordonnée à l'origine."
+        },
+        {
+          "en": "Standard deviations obtained from bootstrapping allow the construction of confidence intervals for regression parameters.",
+          "fr": "Les écarts-types obtenus par rééchantillonnage permettent de construire des intervalles de confiance pour les paramètres de régression."
+        }
+      ]
+    },
+    {
+      "id": "multiple_linear_regression",
+      "name_en": "Multiple Linear Regression",
+      "name_fr": "Régression linéaire multiple",
+      "chapter": 6,
+      "section": "6.3 Machine Learning in Regression Analysis",
+      "pages": [
+        308,
+        309,
+        310,
+        311,
+        312,
+        313,
+        314
+      ],
+      "key_ideas": [
+        {
+          "en": "Multiple linear regression models the relationship between an output variable and several continuous input characteristics.",
+          "fr": "La régression linéaire multiple modélise la relation entre une variable de sortie et plusieurs caractéristiques d'entrée continues."
+        },
+        {
+          "en": "Assumptions for multiple linear regression include continuous data, linear relationships, and the absence of multicollinearity.",
+          "fr": "Les hypothèses de la régression linéaire multiple incluent des données continues, des relations linéaires et l'absence de multicolinéarité."
+        },
+        {
+          "en": "Adding more features increases the R-squared score but introduces complexity that can lead to surapprentissage.",
+          "fr": "L'ajout de caractéristiques augmente le score R-carré mais introduit une complexité pouvant mener au surapprentissage."
+        }
+      ]
+    },
+    {
+      "id": "multiple_logistic_regression",
+      "name_en": "Multiple Logistic Regression",
+      "name_fr": "Régression logistique multiple",
+      "chapter": 6,
+      "section": "6.3 Machine Learning in Regression Analysis",
+      "pages": [
+        314,
+        315
+      ],
+      "key_ideas": [
+        {
+          "en": "Multiple logistic regression extends single-variable logistic regression to estimate the probability of a categorical dependent variable using multiple inputs.",
+          "fr": "La régression logistique multiple étend la régression logistique à une seule variable pour estimer la probabilité d'une variable dépendante catégorielle."
+        },
+        {
+          "en": "The logit function transforms the data, a multiple linear regression is performed, and results are transformed back by a logistic function.",
+          "fr": "La fonction logit transforme les données, une régression linéaire multiple est effectuée, et les résultats sont transformés par une fonction logistique."
+        },
+        {
+          "en": "Features in multiple logistic regression can include continuous numerical data or discrete data such as Boolean values.",
+          "fr": "Les caractéristiques de la régression logistique multiple peuvent inclure des données numériques continues ou des données discrètes comme des valeurs booléennes."
+        }
+      ]
+    },
+    {
+      "id": "decision_tree_construction",
+      "name_en": "Decision Tree Construction",
+      "name_fr": "Construction d'arbres de décision",
+      "chapter": 6,
+      "section": "6.4 Decision Trees",
+      "pages": [
+        316,
+        317,
+        318,
+        319,
+        320,
+        321
+      ],
+      "key_ideas": [
+        {
+          "en": "Decision trees combine simplicity and flexibility in data analysis by breaking down decisions into a series of hierarchical choices.",
+          "fr": "Les arbres de décision combinent simplicité et flexibilité dans l'analyse de données en décomposant les décisions en une série de choix hiérarchiques."
+        },
+        {
+          "en": "Entropy measures the average amount of information, uncertainty, or randomness in a system or probability distribution.",
+          "fr": "L'entropie mesure la quantité moyenne d'information, d'incertitude ou de hasard dans un système ou une distribution de probabilité."
+        },
+        {
+          "en": "Information gain determines the best feature to split the data at each node by selecting the split that maximizes information and minimizes entropy.",
+          "fr": "Le gain d'information détermine la meilleure caractéristique pour diviser les données à chaque nœud en sélectionnant la division qui maximise l'information et minimise l'entropie."
+        }
+      ]
+    },
+    {
+      "id": "pruning_and_overfitting",
+      "name_en": "Pruning and Overfitting",
+      "name_fr": "Élagage et surapprentissage",
+      "chapter": 6,
+      "section": "6.4 Decision Trees",
+      "pages": [
+        321,
+        322,
+        323,
+        324,
+        325
+      ],
+      "key_ideas": [
+        {
+          "en": "Overfitting occurs when a decision tree grows too deep and makes overly complex decisions based on tiny differences or noise in the training dataset.",
+          "fr": "Le surapprentissage se produit lorsqu'un arbre de décision grandit trop et prend des décisions trop complexes basées sur des différences infimes ou du bruit dans le jeu de données d'entraînement."
+        },
+        {
+          "en": "Pruning is the process of reducing the size of a decision tree by removing branches that split the data too finely into singletons.",
+          "fr": "L'élagage est le processus de réduction de la taille d'un arbre de décision en supprimant les branches qui divisent les données trop finement en singletons."
+        },
+        {
+          "en": "Pre-pruning and post-pruning methods such as depth-limiting and leaf-limiting help balance model simplicity with predictive accuracy on unseen data.",
+          "fr": "Les méthodes de pré-élagage et de post-élagage telles que la limitation de profondeur et de feuilles aident à équilibrer la simplicité du modèle et la précision prédictive sur de nouvelles données."
+        }
+      ]
+    },
+    {
+      "id": "random_forest",
+      "name_en": "Random Forest",
+      "name_fr": "Forêt aléatoire",
+      "chapter": 6,
+      "section": "6.5 Other Machine Learning Techniques",
+      "pages": [
+        327,
+        328,
+        329,
+        330
+      ],
+      "key_ideas": [
+        {
+          "en": "A random forest is a classification algorithm that combines multiple decision trees using bootstrap aggregating.",
+          "fr": "Une forêt aléatoire est un algorithme de classification qui combine plusieurs arbres de décision en utilisant le bagging."
+        },
+        {
+          "en": "Random feature selection builds each tree using a randomly selected subset of feature variables to increase diversity among weak learners.",
+          "fr": "La sélection aléatoire de caractéristiques construit chaque arbre en utilisant un sous-ensemble de variables de caractéristiques choisi au hasard pour augmenter la diversité parmi les apprenants faibles."
+        },
+        {
+          "en": "The final prediction of a random forest model is determined by a majority vote among the individual decision trees.",
+          "fr": "La prédiction finale d'un modèle de forêt aléatoire est déterminée par un vote majoritaire parmi les arbres de décision individuels."
+        },
+        {
+          "en": "Feature importance in a random forest can be inferred by evaluating the accuracy of decision trees that utilize specific feature variables.",
+          "fr": "L'importance des caractéristiques dans une forêt aléatoire peut être déduite en évaluant la précision des arbres de décision qui utilisent des variables de caractéristiques spécifiques."
+        }
+      ]
+    },
+    {
+      "id": "naive_bayes_classifiers",
+      "name_en": "Naïve Bayes Classifiers",
+      "name_fr": "Classifieurs bayésiens naïfs",
+      "chapter": 6,
+      "section": "6.5 Other Machine Learning Techniques",
+      "pages": [
+        330,
+        331,
+        332,
+        333
+      ],
+      "key_ideas": [
+        {
+          "en": "Multinomial naïve Bayes classification relies on Bayes theorem and prior probabilities derived from training datasets to predict data classes.",
+          "fr": "La classification bayésienne naïve multinomiale repose sur le théorème de Bayes et sur les probabilités a priori tirées des jeux de données d'entraînement pour prédire les classes de données."
+        },
+        {
+          "en": "Naïve Bayes algorithms assume that all features of the dataset are independent, which still allows the model to perform effectively in real-world situations.",
+          "fr": "Les algorithmes bayésiens naïfs supposent que toutes les caractéristiques du jeu de données sont indépendantes, ce qui permet tout de même au modèle d'être performant dans des situations réelles."
+        },
+        {
+          "en": "Gaussian naïve Bayes is a specialized variant of the algorithm designed specifically for continuous numerical features that follow a normal distribution.",
+          "fr": "Le bayésien naïf gaussien est une variante spécialisée de l'algorithme conçue spécifiquement pour les caractéristiques numériques continues qui suivent une distribution normale."
+        },
+        {
+          "en": "Comparing numerators of Bayes formula provides proportional scores that allow simple classification decisions without computing exact probabilities.",
+          "fr": "La comparaison des numérateurs de la formule de Bayes fournit des scores proportionnels qui permettent des décisions de classification simples sans calculer de probabilités exactes."
+        }
+      ]
+    },
+    {
+      "id": "neural_network_structure_and_components",
+      "name_en": "Neural Network Structure and Components",
+      "name_fr": "Structure et composants des réseaux de neurones",
+      "chapter": 7,
+      "section": "7.1 Introduction to Neural Networks",
+      "pages": [
+        342,
+        343,
+        344,
+        345,
+        346
+      ],
+      "key_ideas": [
+        {
+          "en": "A neural network consists of layers of interconnected decision-making units called neurons, including an input layer, an output layer, and one or more hidden layers.",
+          "fr": "Un réseau de neurones est constitué de couches d'unités de décision interconnectées appelées neurones, comprenant une couche d'entrée, une couche de sortie et une ou plusieurs couches cachées."
+        },
+        {
+          "en": "Each connection between neurons has an associated weight that scales incoming signals and a bias value that makes the neuron more or less likely to activate.",
+          "fr": "Chaque connexion entre neurones est associée à un poids qui met à l'échelle les signaux entrants et à une valeur de biais qui rend le neurone plus ou moins susceptible de s'activer."
+        },
+        {
+          "en": "Activation functions are nonlinear mathematical functions applied to the processed input signals to determine the final output of a neuron.",
+          "fr": "Les fonctions d'activation sont des fonctions mathématiques non linéaires appliquées aux signaux d'entrée traités pour déterminer la sortie finale d'un neurone."
+        }
+      ]
+    },
+    {
+      "id": "perceptrons_and_training",
+      "name_en": "Perceptrons and Training",
+      "name_fr": "Perceptrons et entraînement",
+      "chapter": 7,
+      "section": "7.1 Introduction to Neural Networks",
+      "pages": [
+        347,
+        348,
+        349,
+        350
+      ],
+      "key_ideas": [
+        {
+          "en": "A perceptron is a type of single-layer neural network designed for binary classification tasks.",
+          "fr": "Un perceptron est un type de réseau de neurones à une seule couche conçu pour des tâches de classification binaire."
+        },
+        {
+          "en": "The perceptron learning rule updates weights and biases iteratively based on the prediction error and a learning rate.",
+          "fr": "La règle d'apprentissage du perceptron met à jour les poids et les biais de manière itérative en fonction de l'erreur de prédiction et d'un taux d'apprentissage."
+        },
+        {
+          "en": "Python libraries like scikit-learn can be used to load datasets, split them into training and testing subsets, standardize features, and train a perceptron model.",
+          "fr": "Les bibliothèques Python comme scikit-learn peuvent être utilisées pour charger des jeux de données, les diviser en sous-ensembles d'entraînement et de test, normaliser les caractéristiques et entraîner un modèle de perceptron."
+        }
+      ]
+    },
+    {
+      "id": "static_backpropagation_and_gradient_descent",
+      "name_en": "Static Backpropagation and Gradient Descent",
+      "name_fr": "Rétropropagation statique et descente de gradient",
+      "chapter": 7,
+      "section": "7.2 Backpropagation",
+      "pages": [
+        351,
+        352,
+        353,
+        354,
+        355,
+        356
+      ],
+      "key_ideas": [
+        {
+          "en": "Static backpropagation iteratively adjusts the weights and biases of a neural network to minimize the difference between predicted outputs and actual target values.",
+          "fr": "La rétropropagation statique ajuste de manière itérative les poids et les biais d'un réseau de neurones afin de minimiser la différence entre les sorties prédites et les valeurs cibles réelles."
+        },
+        {
+          "en": "Loss functions such as mean squared error and binary cross entropy quantitatively measure the prediction error across the dataset.",
+          "fr": "Les fonctions de perte telles que l'erreur quadratique moyenne et l'entropie croisée binaire mesurent quantitativement l'erreur de prédiction sur l'ensemble de données."
+        },
+        {
+          "en": "Gradient descent uses the derivative of the loss function with respect to network parameters to find the direction of steepest decrease for optimization.",
+          "fr": "La descente de gradient utilise la dérivée de la fonction de perte par rapport aux paramètres du réseau pour trouver la direction de décroissance la plus rapide en vue de l'optimisation."
+        }
+      ]
+    },
+    {
+      "id": "recurrent_neural_networks",
+      "name_en": "Recurrent Neural Networks",
+      "name_fr": "Réseaux de neurones récurrents",
+      "chapter": 7,
+      "section": "7.2 Backpropagation",
+      "pages": [
+        357,
+        358,
+        359,
+        360,
+        361,
+        362
+      ],
+      "key_ideas": [
+        {
+          "en": "Recurrent neural networks incorporate internal feedback loops that feed a neuron's output back as input to provide a rudimentary memory for sequential data.",
+          "fr": "Les réseaux de neurones récurrents incorporent des boucles de rétroaction internes qui renvoient la sortie d'un neurone en tant qu'entrée pour fournir une mémoire rudimentaire pour les données séquentielles."
+        },
+        {
+          "en": "Unrolling an RNN visualizes the effect of feedback loops by connecting copies of the network with identical parameters to process sequential inputs over time.",
+          "fr": "Le déroulement d'un RNN visualise l'effet des boucles de rétroaction en connectant des copies du réseau ayant des paramètres identiques pour traiter des entrées séquentielles au fil du temps."
+        },
+        {
+          "en": "Vanishing and exploding gradient problems occur during training when feedback loops cause weights to compound toward zero or grow excessively large.",
+          "fr": "Les problèmes de gradient disparu et explosif surviennent lors de l'entraînement lorsque les boucles de rétroaction font en sorte que les poids convergent vers zéro ou augmentent de manière excessive."
+        }
+      ]
+    },
+    {
+      "id": "introduction_to_deep_learning",
+      "name_en": "Introduction to Deep Learning",
+      "name_fr": "Introduction à l'apprentissage profond",
+      "chapter": 7,
+      "section": "7.3 Introduction to Deep Learning",
+      "pages": [
+        363,
+        364,
+        365,
+        366
+      ],
+      "key_ideas": [
+        {
+          "en": "Deep learning uses neural networks with multiple hidden layers to automatically extract hierarchical representations from raw data.",
+          "fr": "L'apprentissage profond utilise des réseaux de neurones dotés de plusieurs couches cachées pour extraire automatiquement des représentations hiérarchiques à partir de données brutes."
+        },
+        {
+          "en": "Mean squared error penalizes larger errors heavily and is sensitive to outliers when predicting continuous values.",
+          "fr": "L'erreur quadratique moyenne pénalise lourdement les erreurs plus importantes et se montre sensible aux valeurs aberrantes lors de la prédiction de valeurs continues."
+        },
+        {
+          "en": "Binary cross entropy is suitable for binary classification tasks because it heavily penalizes misclassification and handles probability outputs effectively.",
+          "fr": "L'entropie croisée binaire convient aux tâches de classification binaire car elle pénalise lourdement les erreurs de classification et gère efficacement les sorties de probabilité."
+        },
+        {
+          "en": "Hinge loss maximizes the margin between classes to achieve better separation of data points in classification problems.",
+          "fr": "La perte charnière maximise la marge entre les classes pour obtenir une meilleure séparation des points de données dans les problèmes de classification."
+        },
+        {
+          "en": "Sparse categorical cross entropy generalizes binary cross entropy for multi-class classification tasks and pairs with softmax activation.",
+          "fr": "L'entropie croisée catégorielle parcimonieuse généralise l'entropie croisée binaire pour les tâches de classification multiclasse et s'associe à l'activation softmax."
+        }
+      ]
+    },
+    {
+      "id": "convolutional_neural_networks",
+      "name_en": "Convolutional Neural Networks",
+      "name_fr": "Réseaux de neurones convolutifs",
+      "chapter": 7,
+      "section": "7.4 Convolutional Neural Networks",
+      "pages": [
+        367,
+        368
+      ],
+      "key_ideas": [
+        {
+          "en": "Convolutional neural networks are designed to process structured, grid-like data such as images by using filters to capture spatial relationships and patterns.",
+          "fr": "Les réseaux de neurones convolutifs sont conçus pour traiter des données structurées de type grille comme des images en utilisant des filtres pour capturer des relations spatiales et des motifs."
+        },
+        {
+          "en": "Convolutional layers apply filters to input data to pick up distinct structural features and produce feature maps as output.",
+          "fr": "Les couches de convolution appliquent des filtres aux données d'entrée pour détecter des caractéristiques structurelles distinctes et produire des cartes de caractéristiques en sortie."
+        },
+        {
+          "en": "Pooling layers down-sample feature maps to reduce the spatial dimensions of the data while retaining important information.",
+          "fr": "Les couches de regroupement sous-échantillonnent les cartes de caractéristiques pour réduire les dimensions spatiales des données tout en conservant les informations importantes."
+        },
+        {
+          "en": "Feature maps capture hierarchical features at different levels of abstraction, ranging from low-level edges and textures in early layers to complex object parts in deeper layers.",
+          "fr": "Les cartes de caractéristiques capturent des caractéristiques hiérarchiques à différents niveaux d'abstraction, allant des bords et textures de bas niveau dans les premières couches aux parties d'objets complexes dans les couches plus profondes."
+        }
+      ]
+    },
+    {
+      "id": "evolution_and_applications_of_nlp",
+      "name_en": "Evolution and Applications of Natural Language Processing",
+      "name_fr": "Évolution et applications du traitement automatique des langues",
+      "chapter": 7,
+      "section": "7.5 Natural Language Processing",
+      "pages": [
+        369,
+        370,
+        371,
+        372,
+        373,
+        374,
+        375
+      ],
+      "key_ideas": [
+        {
+          "en": "Natural language processing is an area of artificial intelligence focused on recognizing written or spoken language and generating new language content.",
+          "fr": "Le traitement automatique des langues est un domaine de l'intelligence artificielle concentré sur la reconnaissance du langage écrit ou parlé et la génération de nouveau contenu linguistique."
+        },
+        {
+          "en": "Transformer models utilize a sophisticated internal memory system and self-attention mechanisms to capture long-range dependencies in input data.",
+          "fr": "Les modèles de type transformateur utilisent un système de mémoire interne sophistiqué et des mécanismes d'auto-attention pour capturer les dépendances à long terme dans les données d'entrée."
+        },
+        {
+          "en": "Speech recognition converts spoken language into text through acoustic analysis, language modeling, and decoding algorithms.",
+          "fr": "La reconnaissance vocale convertit le langage parlé en texte grâce à l'analyse acoustique, la modélisation du langage et des algorithmes de décodage."
+        }
+      ]
+    },
+    {
+      "id": "ethical_considerations_and_limitations_of_nlp",
+      "name_en": "Ethical Considerations and Limitations of Natural Language Processing",
+      "name_fr": "Considérations éthiques et limites du traitement automatique des langues",
+      "chapter": 7,
+      "section": "7.5 Natural Language Processing",
+      "pages": [
+        376,
+        377,
+        378,
+        379
+      ],
+      "key_ideas": [
+        {
+          "en": "Training advanced language models on internet data raises serious concerns regarding copyright infringement, intellectual property rights, and fair compensation for human artists.",
+          "fr": "L'entraînement de modèles linguistiques avancés sur des données d'Internet soulève de graves préoccupations concernant la contrefaçon, les droits de propriété intellectuelle et la juste rémunération des artistes humains."
+        },
+        {
+          "en": "AI hallucinations are generated responses that have no basis in fact and appear plausible while being entirely incorrect or misleading.",
+          "fr": "Les hallucinations de l'intelligence artificielle sont des réponses générées qui n'ont aucun fondement factuel et qui semblent plausibles tout en étant entièrement incorrectes ou trompeuses."
+        },
+        {
+          "en": "Responsible AI encompasses principles and practices designed to ensure that artificial intelligence technologies are developed and deployed fairly, transparently, and safely.",
+          "fr": "L'intelligence artificielle responsable englobe des principes et des pratiques conçus pour garantir que les technologies d'intelligence artificielle sont développées et déployées de manière équitable, transparente et sûre."
+        }
+      ]
+    }
+  ]
+}
