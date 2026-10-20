@@ -126,7 +126,7 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S4-3 Réglages comparés sur dev, puis test lancé une fois
 - `all-pages` = `no-end-matter` (identiques sur dev) → on garde toutes les pages : pas de filtre.
-- `no-query-prefix` : EN MRR 1,000 → 0,950, FR 0,775 → 0,833. Écart = 1 question sur 10 : dans le bruit. On garde le préfixe (fiche du modèle, CLAUDE.md, cohérence avec le fine-tuning).
+- `no-query-prefix` : EN MRR 1,000 → 0,950, FR 0,775 → 0,833. Écart = 1 question sur 10 : dans le bruit. On garde le préfixe (fiche du modèle, règle du projet, cohérence avec le fine-tuning).
 - Limite reconnue : dev (questions directes) est trop facile (EN 1,000) pour départager ; test (paraphrases) est plus dur.
 
 ### S4-4 Pas de seuil de score pour les questions hors cours
