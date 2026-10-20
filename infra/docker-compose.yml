@@ -1,0 +1,61 @@
+# Whole stack: docker compose -f infra/docker-compose.yml up --build
+# The book PDF and the index come from the host: run scripts.download_book first, then
+#   docker compose -f infra/docker-compose.yml run --rm --user root api python -m rag.ingest
+# (root for this one-off job only: the mounted data/ may not be writable by the API user)
+name: studymate
+
+services:
+  db:
+    image: pgvector/pgvector:0.8.2-pg17
+    environment:
+      POSTGRES_USER: studymate
+      POSTGRES_PASSWORD: studymate
+      POSTGRES_DB: studymate
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U studymate"]
+      interval: 5s
+      retries: 20
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: ..
+      dockerfile: api/Dockerfile
+    environment:
+      DATABASE_URL: postgresql+asyncpg://studymate:studymate@db:5432/studymate
+      SPRING_URL: http://core:8080
+      LLM_PROVIDER: gemini
+      LLM_MODEL: gemini-3.5-flash-lite
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+    volumes:
+      - ../data:/app/data
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  core:
+    build: ../core
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/studymate
+      SPRING_DATASOURCE_USERNAME: studymate
+      SPRING_DATASOURCE_PASSWORD: studymate
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build: ../frontend
+    environment:
+      API_URL: http://api:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+volumes:
+  dbdata:

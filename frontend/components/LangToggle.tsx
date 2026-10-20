@@ -15,7 +15,8 @@ export default function LangToggle({ lang, text, label }: { lang: Lang; text: st
   }
 
   return (
-    <button type="button" className="secondary" onClick={switchLang} aria-label={label}>
+    // Accessible name = visible text (WCAG 2.5.3); the longer label is a description.
+    <button type="button" className="secondary" onClick={switchLang} title={label} lang={next}>
       {text}
     </button>
   );

@@ -11,6 +11,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
 from sqlalchemy import text
+from sqlalchemy.exc import ProgrammingError
 
 from agent.feynman import evaluate_explanation
 from agent.graph import build_graph, to_response
@@ -34,6 +35,7 @@ from rag.store import get_engine
 from scripts.download_book import BOOK_PATH
 
 logging.basicConfig(level=logging.INFO)
+INDEX_HINT = "Database query failed: is the book indexed? Run python -m rag.ingest."
 
 
 @asynccontextmanager
@@ -56,6 +58,13 @@ app = FastAPI(title="StudyMate API", version="1.0.0", lifespan=lifespan)
 async def llm_unavailable(request: Request, error: RuntimeError) -> JSONResponse:
     """LLM down twice in a row (quota or overload): a clear 503, not a crash."""
     return JSONResponse(status_code=503, content={"detail": str(error)})
+
+
+@app.exception_handler(ProgrammingError)
+async def index_missing(request: Request, error: ProgrammingError) -> JSONResponse:
+    """Missing table (book not indexed yet): a 503 with the fix, not a bare 500."""
+    logging.error("SQL error: %s", error.orig)
+    return JSONResponse(status_code=503, content={"detail": INDEX_HINT})
 
 
 def find_notion(catalog: Catalog, notion_id: str) -> Notion:

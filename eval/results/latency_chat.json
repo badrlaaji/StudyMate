@@ -1,0 +1,150 @@
+{
+  "calls": 20,
+  "median_s": 2.73,
+  "p90_s": 3.17,
+  "min_s": 2.33,
+  "max_s": 5.55,
+  "dev_correct": 19,
+  "rows": [
+    {
+      "id": "dev01",
+      "lang": "en",
+      "seconds": 3.17,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev01",
+      "lang": "fr",
+      "seconds": 2.54,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev02",
+      "lang": "en",
+      "seconds": 2.33,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev02",
+      "lang": "fr",
+      "seconds": 2.84,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev03",
+      "lang": "en",
+      "seconds": 2.69,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev03",
+      "lang": "fr",
+      "seconds": 2.81,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev04",
+      "lang": "en",
+      "seconds": 2.59,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev04",
+      "lang": "fr",
+      "seconds": 3.06,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev05",
+      "lang": "en",
+      "seconds": 2.65,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev05",
+      "lang": "fr",
+      "seconds": 2.89,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev06",
+      "lang": "en",
+      "seconds": 2.73,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev06",
+      "lang": "fr",
+      "seconds": 2.82,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev07",
+      "lang": "en",
+      "seconds": 2.63,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev07",
+      "lang": "fr",
+      "seconds": 3.26,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev08",
+      "lang": "en",
+      "seconds": 2.72,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev08",
+      "lang": "fr",
+      "seconds": 2.9,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev09",
+      "lang": "en",
+      "seconds": 5.55,
+      "status": "ok",
+      "correct": false
+    },
+    {
+      "id": "dev09",
+      "lang": "fr",
+      "seconds": 2.34,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev10",
+      "lang": "en",
+      "seconds": 2.52,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev10",
+      "lang": "fr",
+      "seconds": 2.68,
+      "status": "ok",
+      "correct": true
+    }
+  ]
+}

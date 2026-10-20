@@ -52,6 +52,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : rien. `dev.ps1` écrit pour Windows, non exécuté ici (environnement Linux).
 - **Chiffres** : 11 tests Spring (5 règles + 6 endpoints) ; démarrage 3,4 s ; boucle : Feynman CNN 2/5 enregistré → plan [k-means 1,5 ; CNN 2,0] → quiz sur k-means, CNN + 1 notion au hasard → k-means (5+2+1)/3 = 2,67, CNN (0+2)/2 = 1,0 ; 2 bugs trouvés en vrai (constructeur double, 500 au lieu de 400) ; 0 erreur JS.
 
+## Étape 10 — CI, Docker, mesures (2026-10-20)
+- **Fait** : GitHub Actions (python, java, web, compose avec `/health`) ; 3 images non-root (api, core, web) construites et lancées ensemble en compose : base vide → `/chat` 503 avec la commande (bug 500 corrigé) → indexation dans le conteneur → recherche OK ; latence `/chat` et Lighthouse mesurés ; README final.
+- **Bloqué** : tag `v1.0` (validations humaines, notes Feynman, vidéo) ; quota AI Studio à relever ; `dev.ps1` non testé sous Windows.
+- **Chiffres** : `/chat` médiane 2,73 s, p90 3,17 s (min 2,33, max 5,55 ; 20 appels, dev 19/20 corrects) ; Lighthouse 13.5 : 98-100 en performance, 100 ailleurs (4 mesures) ; images api 2,97 Go, core 557 Mo, web 336 Mo ; indexation en conteneur 284 morceaux en 23 s ; 123 tests Python (122 passés, 1 ignoré), 11 tests Spring.
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |

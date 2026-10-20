@@ -237,3 +237,25 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S9-6 Interface : couleurs non seules, pas d'animation
 - Quiz : ✓/✗ écrits en plus de la couleur ; options répondues sans opacité réduite (contraste). Graphique Recharts sans animation (mesuré : une capture prise pendant l'animation montrait des barres fausses).
+
+## Étape 10 — CI, Docker, mesures
+
+### S10-1 CI en 4 tâches
+- `python` (ruff + pytest, avec un service pgvector : le test de base tourne aussi), `java` (`mvnw test`), `web` (typecheck + build), puis `compose` : les 3 images sont construites et la pile démarre ; `/health` doit renvoyer `database: true` **et** `spring: true`.
+- Le dernier contrôle est le test de démarrage réel qui manquait aux tests Spring (S9-3).
+
+### S10-2 Trois images
+- api : torch CPU + modèle intégré (2,97 Go, mesuré) ; core : build Maven puis JRE 21 seul (557 Mo) ; web : sortie `standalone` de Next.js (336 Mo). Les trois tournent sans root.
+
+### S10-3 Base vide au premier démarrage du compose
+- Le livre n'est jamais dans une image : `scripts.download_book` puis `docker compose … run --rm --user root api python -m rag.ingest` remplissent la base. La CI ne teste que le démarrage et `/health`.
+- `--user root` pour cette tâche ponctuelle seulement : testé, l'utilisateur non-root ne pouvait pas écrire dans `data/` monté (dossier appartenant à root sur l'hôte). L'API elle-même reste non-root.
+
+### S10-4 Latence mesurée sur des questions jamais posées
+- Les 20 questions dev (EN + FR) n'étaient pas dans le cache LLM : la latence de `/chat` mesurée est celle d'appels Gemini réels (routeur + réponse), pause de quota exclue.
+
+### S10-5 Tag v1.0 après les validations humaines
+- Le tag `v1.0` attend : validation de `notions.json` et des questions d'éval (`validated: true`), notes Feynman à l'aveugle, vidéo. Tout le reste est livré et mesuré.
+
+### S10-6 Index absent : 503 avec la commande, pas 500
+- Testé en compose sur une base vide : `/chat` renvoyait 500 (`relation "chunks" does not exist`). Options : créer la table au démarrage (réponse « introuvable » trompeuse, 2 appels LLM perdus) ou un 503 explicite. Choix : gestionnaire `ProgrammingError` → 503 « Run python -m rag.ingest », l'erreur SQL complète va dans les logs.

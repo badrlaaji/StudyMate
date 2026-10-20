@@ -6,6 +6,7 @@ from types import SimpleNamespace
 import httpx
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy.exc import ProgrammingError
 
 import api.main as main
 from agent.feynman import IdeaVerdict, Judgement, feynman_score, grade, round_half_up
@@ -132,6 +133,16 @@ def test_chat_returns_the_contract(client):
     body = response.json()
     assert body["route"] == "answer" and body["status"] == "ok"
     assert body["citations"][0]["page"] == 290
+
+
+def test_chat_without_index_is_a_clear_503(client):
+    async def ainvoke(state):
+        raise ProgrammingError("SELECT ...", {}, Exception('"chunks" does not exist'))
+
+    main.app.state.graph = SimpleNamespace(ainvoke=ainvoke)
+    response = client.post("/chat", json={"message": "What is k-means?"})
+    assert response.status_code == 503
+    assert "rag.ingest" in response.json()["detail"]
 
 
 def test_chat_rejects_an_empty_message(client):
