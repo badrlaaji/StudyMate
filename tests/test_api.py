@@ -1,6 +1,7 @@
 """One test per endpoint, plus the Feynman formula (fakes only, no network)."""
 
 import asyncio
+import json
 import time
 from contextlib import asynccontextmanager
 from types import SimpleNamespace
@@ -30,6 +31,7 @@ CATALOG = Catalog.model_construct(
     source="b", license="c", validated=False, notions=[NOTION]
 )
 SCORES: list[dict] = []
+QUIZ_LOGS: list[dict] = []
 
 
 def make_course(course_id: str) -> Course:
@@ -57,6 +59,9 @@ def spring_handler(request: httpx.Request) -> httpx.Response:
     """Fake Spring: weak notions, mastery, history and score recording."""
     if request.url.path == "/api/scores" and request.method == "POST":
         SCORES.append(request.content)
+        return httpx.Response(201)
+    if request.url.path == "/api/quiz-answers":
+        QUIZ_LOGS.append(json.loads(request.content))
         return httpx.Response(201)
     assert request.url.params["course"] in {"data-science", "statistics"}
     if request.url.path == "/api/scores":  # history: one score on 1 January 2026
@@ -89,6 +94,7 @@ def fake_engine(ok: bool = True):
 def client():
     """TestClient without lifespan: the app state is filled with fakes."""
     SCORES.clear()
+    QUIZ_LOGS.clear()
 
     async def ainvoke(state):
         return {
@@ -268,7 +274,9 @@ def test_quiz_result_grades_by_code_and_records(client):
         {"notion_id": "k_means", "answer_index": 1, "chosen_index": 2},
     ]
     body = client.post("/quiz/result", json={"answers": answers}).json()
-    assert body == {"scores": {"k_means": 3}, "recorded": True}
+    assert body == {"scores": {"k_means": 3}, "recorded": True, "skipped": 0}
+    statuses = [a["status"] for a in QUIZ_LOGS[0]["answers"]]
+    assert statuses == ["CORRECT", "INCORRECT"]
 
 
 def test_mastery_relays_spring(client):

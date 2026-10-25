@@ -8,7 +8,7 @@ import httpx
 import pytest
 from fsrs import Rating, State
 
-from agent.quiz import build_quiz, quiz_order
+from agent.quiz import answer_status, build_quiz, quiz_order
 from agent.review import (
     due_ids,
     group_reviews,
@@ -19,6 +19,7 @@ from agent.review import (
 from agent.spring import fetch_history
 from tests.test_agent import CATALOG, spring, spring_down
 from tests.test_api import (
+    QUIZ_LOGS,
     SCORES,
     client,  # noqa: F401 (fixture)
 )
@@ -106,8 +107,9 @@ def test_review_endpoint_gives_a_date_per_notion(client):  # noqa: F811
 def test_a_skipped_question_creates_no_review(client):  # noqa: F811
     skipped = [{"notion_id": "k_means", "answer_index": 1, "chosen_index": None}]
     body = client.post("/quiz/result", json={"answers": skipped}).json()
-    assert body == {"scores": {}, "recorded": True}
-    assert SCORES == []  # nothing sent to Spring: the review date cannot move
+    assert body == {"scores": {}, "recorded": True, "skipped": 1}
+    assert SCORES == []  # no score sent to Spring: neither mastery nor FSRS moves
+    assert QUIZ_LOGS[0]["answers"] == [{"notionId": "k_means", "status": "SKIPPED"}]
 
 
 def test_only_answered_questions_are_graded(client):  # noqa: F811
@@ -143,3 +145,10 @@ def test_build_quiz_asks_due_notions_before_weak_ones(monkeypatch):
     )
     assert asked[:2] == ["k_means", "overfitting"] and len(asked) == 3
     assert questions == [] and degraded is False
+
+
+@pytest.mark.parametrize(
+    ("chosen", "status"), [(None, "SKIPPED"), (2, "CORRECT"), (0, "INCORRECT")]
+)
+def test_answer_status(chosen, status):
+    assert answer_status(chosen, 2) == status

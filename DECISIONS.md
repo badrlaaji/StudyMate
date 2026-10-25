@@ -348,3 +348,17 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S15-4 Le quiz commence par les notions dues
 - Ordre : notions dues aujourd'hui ou en retard (FSRS), puis notions faibles (Spring), puis hasard. Démo publique : pas de FSRS (le cookie ne garde ni dates ni historique complet), la carte est masquée.
+
+## Étape 16 — Quiz aux gestes et « Passer » (plan v2, S6)
+
+### S16-1 Règle géométrique, indices vérifiés
+- Indices pris dans l'énumération officielle `HandLandmark` du code source de MediaPipe (poignet 0, pointes 8/12/16/20, articulations du milieu 6/10/14/18) ; la page ai.google.dev n'est pas joignable d'ici. Doigt levé = pointe plus loin du poignet que l'articulation du milieu ; pouce ignoré. Testé sur les points produits par le vrai modèle sur 4 images d'exemple de Google (rapports 1,3-1,5 levé contre 0,34-0,81 plié) ; 3 et 4 doigts : mains synthétiques dérivées de « victoire », marquées comme telles.
+
+### S16-2 Stabilisation : maintien, réarmement, annulation
+- Même valeur 1 s (poing 1,5 s) ; un geste ne se déclenche qu'une fois puis doit changer (sinon une main immobile répondrait à toutes les questions) ; main retirée ou Échap = annulation. Après la correction, main ouverte = question suivante. Le geste appelle les mêmes fonctions que le clavier (`choose`, `skip`, `next`).
+
+### S16-3 Fichiers de MediaPipe : WASM chez nous, modèle chez Google, télémétrie bloquée
+- WASM copié depuis `node_modules` dans `public/mediapipe` avant `dev` et `build` (pas de CDN, version alignée sur le JS, hors Git) ; le modèle (7,8 Mo) vient de l'URL versionnée officielle, téléchargé seulement si la caméra est activée (pas de modèle dans Git). Test réel : MediaPipe 1.1.0 envoie des statistiques d'usage à `odml.pa.googleapis.com` sans option pour les couper. Choix : en-tête CSP `connect-src 'self' https://storage.googleapis.com` sur tout le site ; vérifié : requête refusée par le navigateur, gestes, PDF et démo intacts.
+
+### S16-4 Question passée : statut dans Spring, aucune note
+- Table `quiz_answer` (statut CORRECT / INCORRECT / SKIPPED) alimentée par FastAPI à chaque quiz ; les notes restent dans `scores`. Une question passée n'est pas notée : ni maîtrise ni FSRS ne bougent ; le résumé la liste avec la page à relire. Ce journal servira au trophée « Sans faute » (étape 18).

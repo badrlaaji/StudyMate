@@ -131,6 +131,14 @@ describe("demo routes, without network", () => {
     expect(quiz.questions[0].notion_id).toBe(question.notion_id);
   });
 
+  it("does not grade a skipped question", async () => {
+    const question = course.quiz.en[0];
+    const answers = [{ notion_id: question.notion_id, answer_index: question.answer_index, chosen_index: null }];
+    const result = await call(POST, "POST", "quiz/result", { body: { answers, course: "data-science" } });
+    expect(await result.json()).toEqual({ scores: {}, recorded: true, skipped: 1 });
+    expect(readScores(readCookie(cookieFrom(result), SCORES_COOKIE))).toEqual({}); // no score, mastery unchanged
+  });
+
   it("feeds the server pages through the same data", async () => {
     expect((await getCourses("en")).length).toBe(data.courses.length);
     expect((await getNotions("en", "statistics")).length).toBe(findCourse("statistics")!.notions.length);

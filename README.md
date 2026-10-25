@@ -34,7 +34,12 @@ honest feedback on what they have actually understood.
   (FSRS, replayed from the dated scores), all computed without any LLM.
 - **Quiz** (`/quiz`): multiple-choice questions on the notions due for review first, then the
   weakest ones (keys 1-4, Enter), graded by code, with the source page of each answer. A
-  skipped question is not graded: it changes neither the mastery nor the review date.
+  skipped question (key P, Skip button or a fist) is not graded: it changes neither the
+  mastery nor the review date, and the summary lists it with the pages to re-read.
+- **Answer with your hand** (`/quiz`, camera off by default): MediaPipe Hand Landmarker runs
+  in the browser; 1 to 4 raised fingers answer 1 to 4, a fist held 1.5 s skips, an open hand
+  goes on. A gesture must stay the same for 1 s (progress ring, spoken by screen readers);
+  removing the hand or Escape cancels. No image is sent or stored.
 - **Library** (`/library`): one card per course (PDF, indexed passages, notions); **upload
   a textbook PDF** and choose its chapters; switch course from the sidebar. Each course has
   its own index, notions and scores.
@@ -209,6 +214,10 @@ contrast. The progress chart uses one hue with threshold lines at 3 (review) and
   catalogue still is a draft; its lab sections gave weak notions).
 - **Formulas are lost**: they are drawn as vector graphics in the PDF, so they are absent from
   the extracted text; the PDF panel still shows them.
+- **Gesture rules are geometric**: a finger counts as raised when its tip is farther from the
+  wrist than its middle joint. Tested on landmarks from Google's sample images (1, 2 and 0
+  fingers) and on two synthetic hands (3, 4); bent wrists or partial hands can miscount, so
+  each gesture must be held 1 s and the keyboard always works.
 - **The regression gate replays recorded answers**: it guards the code around the LLM, not
   the model itself (a new Gemini version would need a new recording, about 112 calls).
 - **A verified citation is not always the best page**: the check proves the page was retrieved
@@ -267,6 +276,10 @@ measured progress in [JOURNAL.md](JOURNAL.md).
   [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). Access for free at
   [openstax.org](https://openstax.org/details/books/introductory-statistics-2e).
 - Fonts: Bricolage Grotesque and Literata, SIL Open Font License 1.1 (`frontend/app/fonts`).
+- Hand detection: [MediaPipe Tasks](https://github.com/google-ai-edge/mediapipe) (Apache 2.0);
+  the WASM runtime is served by the app, the model is downloaded from Google's model host. A
+  Content-Security-Policy (`connect-src 'self' https://storage.googleapis.com`) blocks the
+  usage statistics MediaPipe 1.1.0 sends to Google, found while testing.
 
 The book PDFs are downloaded locally and never stored in this repository.
 

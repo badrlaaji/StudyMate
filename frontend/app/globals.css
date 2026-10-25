@@ -641,3 +641,24 @@ details > summary { cursor: pointer; }
 @media (max-width: 720px) {
   .review-row { grid-template-columns: 1fr; justify-items: start; }
 }
+
+/* Gesture quiz: camera panel, progress ring, live badge */
+.gesture-title { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-lg); }
+.badge-live { color: var(--weak-ink); border-color: color-mix(in oklab, var(--weak) 40%, transparent); }
+.badge-live svg { fill: currentColor; }
+.gesture-live { display: grid; grid-template-columns: 220px 1fr; gap: var(--space-4); align-items: start; }
+.gesture-view { position: relative; width: 220px; aspect-ratio: 4 / 3; border-radius: var(--radius-md); overflow: hidden; background: var(--surface-2); }
+.gesture-view video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+.gesture-ring { position: absolute; right: 6px; bottom: 6px; width: 64px; height: 64px; }
+.gesture-ring .ring-track { fill: color-mix(in oklab, var(--surface) 85%, transparent); stroke: var(--line); stroke-width: 5; }
+.gesture-ring .ring-value { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 80ms linear; }
+.gesture-ring text { font-size: 20px; font-weight: 750; fill: var(--ink); }
+.gesture-message { font-weight: 650; min-height: 1.5em; }
+.skipped-row { grid-template-columns: 1fr auto; }
+@media (max-width: 720px) {
+  .gesture-live { grid-template-columns: 1fr; }
+  .gesture-view { width: 100%; max-width: 320px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gesture-ring .ring-value { transition: none; }
+}

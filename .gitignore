@@ -18,6 +18,7 @@ models/
 node_modules/
 .next/
 frontend/out/
+frontend/public/mediapipe/
 *.tsbuildinfo
 next-env.d.ts
 

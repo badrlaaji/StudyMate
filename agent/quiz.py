@@ -85,6 +85,13 @@ def make_quiz(
     return keep_valid(draft, notions)
 
 
+def answer_status(chosen_index: int | None, answer_index: int) -> str:
+    """CORRECT, INCORRECT, or SKIPPED when no option was chosen."""
+    if chosen_index is None:
+        return "SKIPPED"
+    return "CORRECT" if chosen_index == answer_index else "INCORRECT"
+
+
 def notion_scores(results: list[tuple[str, bool]]) -> dict[str, int]:
     """Grade by code: per notion, score 0-5 = round half up of 5 x correct / asked."""
     asked: dict[str, int] = {}

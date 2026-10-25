@@ -82,6 +82,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : rien. Démo publique sans FSRS (pas de dates dans le cookie).
 - **Chiffres** : 1re note « bonne » le 1er janvier 9 h → révision le 3 ; 2e le 3 → le 14 ; échec le 14 → le 16 (tests à dates fixes) ; base locale : 12 notes du 20 octobre → 4 notions en retard de 3 à 4 jours ; question passée : 12 notes avant, 12 après ; axe-core 0 violation (FR bureau, EN mobile sombre) ; tests : 190 Python (+ 1 base), 16 Spring, 20 Vitest ; porte de régression : 0 miss.
 
+## Étape 16 — Quiz aux gestes et « Passer » (2026-10-25)
+- **Fait** : `lib/gestures.ts` (comptage des doigts, stabilisation) ; `GestureCam` (MediaPipe dans le navigateur, caméra désactivée par défaut, anneau de progression, annonces `aria-live`) ; Passer (touche P, bouton, poing 1,5 s) ; résumé des questions passées ; journal `quiz_answer` dans Spring ; CSP qui bloque la télémétrie de MediaPipe ; démo compatible.
+- **Bloqué** : pas de vraie main devant une vraie caméra ici : test avec une fausse caméra (vidéo d'une image d'exemple) ; à refaire devant une webcam sous Windows.
+- **Chiffres** : fausse caméra « victoire » → réponse 2 en 0,9 s ; poing → question passée en 1,4-1,6 s ; axe-core 0 violation (/quiz caméra active) ; question passée en vrai : 12 → 13 notes (seule la notion répondue), statut SKIPPED en base ; WASM 13 Mo (+ 12 Mo de secours sans SIMD) servis par le site, modèle 7,8 Mo ; tests : 193 Python (+ 1 base), 22 Spring, 34 Vitest.
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |

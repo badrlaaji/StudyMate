@@ -20,7 +20,7 @@ const READ_ONLY = "The public demo is read-only: install StudyMate locally to ad
 type Lang = "en" | "fr";
 type DemoCourse = (typeof data)["courses"][number];
 type QuizQuestion = DemoCourse["quiz"]["en"][number];
-type Answer = { notion_id: string; answer_index: number; chosen_index: number };
+type Answer = { notion_id: string; answer_index: number; chosen_index: number | null }; // null = skipped
 // course -> notion -> last scores, newest first
 export type Scores = Record<string, Record<string, number[]>>;
 export type Mastery = { notionId: string; average: number; count: number; level: string };
@@ -110,6 +110,7 @@ export function notionScores(answers: Answer[]): Record<string, number> {
   const asked: Record<string, number> = {};
   const correct: Record<string, number> = {};
   for (const answer of answers) {
+    if (answer.chosen_index === null || answer.chosen_index === undefined) continue; // skipped: not graded
     asked[answer.notion_id] = (asked[answer.notion_id] ?? 0) + 1;
     correct[answer.notion_id] = (correct[answer.notion_id] ?? 0) + Number(answer.chosen_index === answer.answer_index);
   }
@@ -207,7 +208,8 @@ export function demoReply(method: string, path: string, query: URLSearchParams, 
   if (path === "quiz/result" && Array.isArray(body?.answers)) {
     const results = notionScores(body.answers.filter((a: Answer) => known.has(a.notion_id)));
     const saved = Object.entries(results).reduce((acc, [id, score]) => addScore(acc, course.id, id, score), scores);
-    return json({ scores: results, recorded: true }, 200, saved);
+    const skipped = body.answers.filter((a: Answer) => a.chosen_index === null || a.chosen_index === undefined).length;
+    return json({ scores: results, recorded: true, skipped }, 200, saved);
   }
   if (path === "feynman" && typeof body?.explanation === "string") {
     const example = course.feynman.find(

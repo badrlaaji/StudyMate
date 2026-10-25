@@ -118,11 +118,11 @@
   },
   "quiz": {
     "title": "Quiz",
-    "lede": "3 questions on your weakest notions, written from the book's pages and graded by code.",
+    "lede": "Questions on the notions due for review, then your weakest ones, written from the book's pages and graded by code.",
     "start": "Start the quiz",
     "loading": "Writing your questions…",
     "question": "Question {index} of {total}",
-    "keys": "Keys 1–4 to answer, Enter for the next question",
+    "keys": "Keys 1–4 to answer, P to skip, Enter for the next question",
     "correct": "Correct!",
     "wrong": "Not quite.",
     "source": "Source",
@@ -133,7 +133,11 @@
     "notRecorded": "Scores not saved: the mastery service is offline.",
     "again": "New quiz",
     "empty": "No questions could be written this time. Try again.",
-    "degraded": "The mastery service is offline: notions were picked at random."
+    "degraded": "The mastery service is offline: notions were picked at random.",
+    "skip": "Skip",
+    "skippedTitle": "Skipped ({count})",
+    "skippedHint": "Not graded: your progress does not change. Re-read these pages.",
+    "noneAnswered": "No question answered: nothing was recorded."
   },
   "library": {
     "title": "Library",
@@ -230,5 +234,24 @@
     "count": "{count} reviews",
     "countOne": "1 review",
     "start": "Review now"
+  },
+  "gesture": {
+    "title": "Answer with your hand",
+    "enable": "Turn on the camera",
+    "disable": "Turn off the camera",
+    "on": "Camera on",
+    "loading": "Starting the camera…",
+    "error": "Camera unavailable: use the keys 1–4 and P.",
+    "privacy": "Off by default. When on, your hand is detected in this browser: no image is sent or stored. The detection model is downloaded once from Google.",
+    "help": "1 to 4 raised fingers = answer 1 to 4 (thumb ignored) · fist for 1.5 s = skip · hold still 1 s · remove your hand or press Escape to cancel.",
+    "nextHelp": "Change or remove your hand, then show your open hand to go on.",
+    "hold": "Hold: answer {n}",
+    "holdSkip": "Hold the fist: skip",
+    "holdNext": "Hold: next question",
+    "answered": "Answer {n} chosen",
+    "skipped": "Question skipped",
+    "cancelled": "Cancelled",
+    "noHand": "No hand",
+    "preview": "Camera preview (mirror)"
   }
 }

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
+import GestureCam from "@/components/GestureCam";
 import Icon from "@/components/Icon";
 import { fmt, type Dict, type Lang } from "@/lib/i18n";
 
@@ -14,7 +15,7 @@ type Question = {
   page: number;
   explanation: string;
 };
-type Answer = { notion_id: string; answer_index: number; chosen_index: number };
+type Answer = { notion_id: string; answer_index: number; chosen_index: number | null }; // null = skipped
 type Result = { scores: Record<string, number>; recorded: boolean };
 const QUIZ_SIZE = 3;
 
@@ -66,6 +67,19 @@ export default function QuizRunner({ lang, t, course, names }: Props) {
     [questions, index, chosen],
   );
 
+  // Grade by code on the server (skipped questions are not graded), then show the results.
+  const finish = useCallback(
+    async (all: Answer[]) => {
+      const response = await fetch("/api/quiz/result", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ answers: all, course }),
+      });
+      setResult(response.ok ? await response.json() : { scores: {}, recorded: false });
+    },
+    [course],
+  );
+
   const next = useCallback(async () => {
     if (!questions || chosen === null) return;
     if (index + 1 < questions.length) {
@@ -73,25 +87,31 @@ export default function QuizRunner({ lang, t, course, names }: Props) {
       setChosen(null);
       return;
     }
-    const response = await fetch("/api/quiz/result", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ answers, course }),
-    });
-    setResult(response.ok ? await response.json() : { scores: {}, recorded: false });
-  }, [questions, chosen, index, answers, course]);
+    await finish(answers);
+  }, [questions, chosen, index, answers, finish]);
 
-  // Keys 1 to 4 answer the current question; Enter goes to the next one.
+  // Skip ("Passer"): no answer, no score, straight to the next question.
+  const skip = useCallback(async () => {
+    if (!questions || chosen !== null || result || index >= questions.length) return;
+    const question = questions[index];
+    const all = [...answers, { notion_id: question.notion_id, answer_index: question.answer_index, chosen_index: null }];
+    setAnswers(all);
+    if (index + 1 < questions.length) setIndex(index + 1);
+    else await finish(all);
+  }, [questions, chosen, result, index, answers, finish]);
+
+  // Keys 1 to 4 answer, P skips, Enter goes to the next question.
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
       if (event.target instanceof HTMLButtonElement && event.key === "Enter") return; // native click
       const option = Number(event.key) - 1;
       if (option >= 0 && option <= 3) choose(option);
+      if (event.key === "p" || event.key === "P") skip();
       if (event.key === "Enter") next();
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [choose, next]);
+  }, [choose, next, skip]);
 
   if (!questions) {
     return (
@@ -102,6 +122,7 @@ export default function QuizRunner({ lang, t, course, names }: Props) {
           <kbd>2</kbd>
           <kbd>3</kbd>
           <kbd>4</kbd>
+          <kbd>P</kbd>
           <kbd>↵</kbd>
         </div>
         <button type="button" className="btn btn-primary btn-lg" onClick={start} disabled={busy}>
@@ -129,9 +150,11 @@ export default function QuizRunner({ lang, t, course, names }: Props) {
     );
   }
   if (result) {
+    const skipped = questions.filter((_, i) => answers[i]?.chosen_index === null);
     return (
       <section className="card quiz stack" aria-live="polite">
         <h2>{t.quiz.resultTitle}</h2>
+        {Object.keys(result.scores).length === 0 && <p className="muted">{t.quiz.noneAnswered}</p>}
         <ul className="result-list">
           {Object.entries(result.scores).map(([notion, score]) => (
             <li key={notion} className="result-row">
@@ -143,7 +166,26 @@ export default function QuizRunner({ lang, t, course, names }: Props) {
             </li>
           ))}
         </ul>
-        <p className="hint">{result.recorded ? t.quiz.recorded : t.quiz.notRecorded}</p>
+        {skipped.length > 0 && (
+          <div className="stack" style={{ gap: "var(--space-2)" }}>
+            <h3>{fmt(t.quiz.skippedTitle, { count: skipped.length })}</h3>
+            <p className="hint">{t.quiz.skippedHint}</p>
+            <ul className="result-list">
+              {skipped.map((question) => (
+                <li key={question.question} className="result-row skipped-row">
+                  <span>{question.question}</span>
+                  <Link className="chip" href={`/study?page=${question.page}`} title={fmt(t.study.openPage, { page: question.page })}>
+                    <Icon name="book" />
+                    p. {question.page}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {Object.keys(result.scores).length > 0 && (
+          <p className="hint">{result.recorded ? t.quiz.recorded : t.quiz.notRecorded}</p>
+        )}
         <div className="row">
           <button type="button" className="btn btn-primary" onClick={start}>
             <Icon name="refresh" />
@@ -161,62 +203,72 @@ export default function QuizRunner({ lang, t, course, names }: Props) {
   const question = questions[index];
   const isCorrect = chosen === question.answer_index;
   return (
-    <section className="card quiz stack" aria-labelledby="quiz-question">
-      {degraded && (
-        <p className="callout callout-warn">
-          <Icon name="alert" />
-          {t.quiz.degraded}
-        </p>
-      )}
-      <div className="stack" style={{ gap: "var(--space-2)" }}>
-        <span className="eyebrow">
-          {fmt(t.quiz.question, { index: index + 1, total: questions.length })} · {names[question.notion_id] ?? ""}
-        </span>
-        <div className="progress" aria-hidden="true">
-          <span style={{ width: `${((index + (chosen === null ? 0 : 1)) / questions.length) * 100}%` }} />
-        </div>
-      </div>
-      <h2 id="quiz-question" className="quiz-question">
-        {question.question}
-      </h2>
-      <ol className="options">
-        {question.options.map((option, i) => (
-          <li key={i}>
-            <button
-              type="button"
-              className={`option ${optionClass(i, chosen, question.answer_index)}`}
-              onClick={() => choose(i)}
-              disabled={chosen !== null}
-            >
-              <kbd>{i + 1}</kbd>
-              <span>{option}</span>
-              <OptionMark i={i} chosen={chosen} answer={question.answer_index} t={t} />
-            </button>
-          </li>
-        ))}
-      </ol>
-      <div aria-live="polite">
-        {chosen !== null && (
-          <div className="feedback">
-            <p>
-              <strong>{isCorrect ? t.quiz.correct : t.quiz.wrong}</strong> {question.explanation}
-            </p>
-            <div className="row">
-              <span className="hint">{t.quiz.source}</span>
-              <Link className="chip" href={`/study?page=${question.page}`} title={fmt(t.study.openPage, { page: question.page })}>
-                <Icon name="book" />
-                p. {question.page}
-              </Link>
-              <span className="spacer" />
-              <button type="button" className="btn btn-primary" onClick={next} autoFocus>
-                {index + 1 < questions.length ? t.quiz.next : t.quiz.finish}
-                <Icon name="arrow" />
-              </button>
-            </div>
-          </div>
+    <div className="quiz stack">
+      <section className="card stack" aria-labelledby="quiz-question">
+        {degraded && (
+          <p className="callout callout-warn">
+            <Icon name="alert" />
+            {t.quiz.degraded}
+          </p>
         )}
-      </div>
-    </section>
+        <div className="stack" style={{ gap: "var(--space-2)" }}>
+          <span className="eyebrow">
+            {fmt(t.quiz.question, { index: index + 1, total: questions.length })} · {names[question.notion_id] ?? ""}
+          </span>
+          <div className="progress" aria-hidden="true">
+            <span style={{ width: `${((index + (chosen === null ? 0 : 1)) / questions.length) * 100}%` }} />
+          </div>
+        </div>
+        <h2 id="quiz-question" className="quiz-question">
+          {question.question}
+        </h2>
+        <ol className="options">
+          {question.options.map((option, i) => (
+            <li key={i}>
+              <button
+                type="button"
+                className={`option ${optionClass(i, chosen, question.answer_index)}`}
+                onClick={() => choose(i)}
+                disabled={chosen !== null}
+              >
+                <kbd>{i + 1}</kbd>
+                <span>{option}</span>
+                <OptionMark i={i} chosen={chosen} answer={question.answer_index} t={t} />
+              </button>
+            </li>
+          ))}
+        </ol>
+        {chosen === null && (
+          <button type="button" className="btn btn-ghost btn-sm" onClick={skip} style={{ justifySelf: "start" }}>
+            <Icon name="arrow" />
+            {t.quiz.skip}
+            <kbd>P</kbd>
+          </button>
+        )}
+        <div aria-live="polite">
+          {chosen !== null && (
+            <div className="feedback">
+              <p>
+                <strong>{isCorrect ? t.quiz.correct : t.quiz.wrong}</strong> {question.explanation}
+              </p>
+              <div className="row">
+                <span className="hint">{t.quiz.source}</span>
+                <Link className="chip" href={`/study?page=${question.page}`} title={fmt(t.study.openPage, { page: question.page })}>
+                  <Icon name="book" />
+                  p. {question.page}
+                </Link>
+                <span className="spacer" />
+                <button type="button" className="btn btn-primary" onClick={next} autoFocus>
+                  {index + 1 < questions.length ? t.quiz.next : t.quiz.finish}
+                  <Icon name="arrow" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+      <GestureCam mode={chosen === null ? "answer" : "next"} onAnswer={(n) => choose(n - 1)} onSkip={skip} onNext={next} t={t} />
+    </div>
   );
 }
 

@@ -3,7 +3,8 @@
 Contract: GET /api/notions/weak?course=C&limit=N and GET /api/mastery?course=C return
 [{"notionId": str, "average": float, "count": int, ...}]; GET /api/scores?course=C
 returns [{"notionId", "source", "score", "createdAt"}] oldest first; POST /api/scores
-takes {"courseId", "notionId", "source": "FEYNMAN" | "QUIZ", "score": 0-5}.
+takes {"courseId", "notionId", "source": "FEYNMAN" | "QUIZ", "score": 0-5}; POST
+/api/quiz-answers takes {"courseId", "quizId", "answers": [{"notionId", "status"}]}.
 """
 
 import logging
@@ -62,4 +63,18 @@ async def post_score(
         return True
     except httpx.HTTPError as error:
         logger.warning("score not recorded (degraded mode): %s %s", body, error)
+        return False
+
+
+async def post_quiz_answers(
+    http: httpx.AsyncClient, course: str, quiz_id: str, answers: list[dict]
+) -> bool:
+    """Log every question of a quiz (CORRECT, INCORRECT or SKIPPED); False if down."""
+    body = {"courseId": course, "quizId": quiz_id, "answers": answers}
+    try:
+        response = await http.post("/api/quiz-answers", json=body)
+        response.raise_for_status()
+        return True
+    except httpx.HTTPError as error:
+        logger.warning("quiz log not recorded (degraded mode): %s", error)
         return False

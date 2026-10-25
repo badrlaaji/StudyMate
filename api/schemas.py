@@ -134,3 +134,4 @@ class QuizResultResponse(BaseModel):
 
     scores: dict[str, int]
     recorded: bool
+    skipped: int = 0  # questions passed without an answer (not graded)

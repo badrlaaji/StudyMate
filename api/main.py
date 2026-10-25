@@ -7,6 +7,7 @@ Every endpoint takes an optional course id (course/courses.json); none = default
 
 import asyncio
 import logging
+import uuid
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 from typing import Annotated
@@ -19,13 +20,14 @@ from sqlalchemy.exc import ProgrammingError
 from agent.feynman import evaluate_explanation
 from agent.graph import build_graph, to_response
 from agent.plan import PLAN_SIZE, build_plan
-from agent.quiz import build_quiz, notion_scores
+from agent.quiz import answer_status, build_quiz, notion_scores
 from agent.review import review_schedule
 from agent.spring import (
     fetch_history,
     fetch_mastery,
     fetch_weak_notions,
     make_client,
+    post_quiz_answers,
     post_score,
 )
 from api.schemas import (
@@ -249,8 +251,9 @@ async def quiz(body: QuizRequest, request: Request) -> dict:
 
 @app.post("/quiz/result", response_model=QuizResultResponse)
 async def quiz_result(body: QuizResultRequest, request: Request) -> dict:
-    """Grade by code (no LLM) and record one score per notion in Spring."""
+    """Grade by code (no LLM); record the scores per notion and the quiz log."""
     course = find_course(request, body.course)
+    http = request.app.state.http
     results = [
         (a.notion_id, a.chosen_index == a.answer_index)
         for a in body.answers
@@ -258,10 +261,20 @@ async def quiz_result(body: QuizResultRequest, request: Request) -> dict:
     ]
     scores = notion_scores(results)
     recorded = [
-        await post_score(request.app.state.http, course.id, notion_id, "QUIZ", score)
+        await post_score(http, course.id, notion_id, "QUIZ", score)
         for notion_id, score in scores.items()
     ]
-    return {"scores": scores, "recorded": all(recorded)}
+    log = [
+        {
+            "notionId": a.notion_id,
+            "status": answer_status(a.chosen_index, a.answer_index),
+        }
+        for a in body.answers
+    ]
+    quiz_id = str(uuid.uuid4())
+    recorded.append(await post_quiz_answers(http, course.id, quiz_id, log))
+    skipped = sum(row["status"] == "SKIPPED" for row in log)
+    return {"scores": scores, "recorded": all(recorded), "skipped": skipped}
 
 
 @app.get("/mastery")

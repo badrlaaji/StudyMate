@@ -118,11 +118,11 @@
   },
   "quiz": {
     "title": "Quiz",
-    "lede": "3 questions sur tes notions les plus faibles, écrites à partir des pages du livre et corrigées par le code.",
+    "lede": "Des questions sur les notions à réviser, puis sur tes points faibles, rédigées à partir des pages du livre et corrigées par le code.",
     "start": "Commencer le quiz",
     "loading": "Préparation des questions…",
     "question": "Question {index} sur {total}",
-    "keys": "Touches 1 à 4 pour répondre, Entrée pour la question suivante",
+    "keys": "Touches 1 à 4 pour répondre, P pour passer, Entrée pour la question suivante",
     "correct": "Bonne réponse !",
     "wrong": "Pas tout à fait.",
     "source": "Source",
@@ -133,7 +133,11 @@
     "notRecorded": "Notes non enregistrées : le service de maîtrise est hors ligne.",
     "again": "Nouveau quiz",
     "empty": "Aucune question n'a pu être écrite cette fois. Réessaie.",
-    "degraded": "Le service de maîtrise est hors ligne : les notions ont été choisies au hasard."
+    "degraded": "Le service de maîtrise est hors ligne : les notions ont été choisies au hasard.",
+    "skip": "Passer",
+    "skippedTitle": "Passées ({count})",
+    "skippedHint": "Non notées : ta progression ne change pas. Relis ces pages.",
+    "noneAnswered": "Aucune réponse : rien n'a été enregistré."
   },
   "library": {
     "title": "Bibliothèque",
@@ -230,5 +234,24 @@
     "count": "{count} révisions",
     "countOne": "1 révision",
     "start": "Réviser maintenant"
+  },
+  "gesture": {
+    "title": "Répondre avec la main",
+    "enable": "Activer la caméra",
+    "disable": "Couper la caméra",
+    "on": "Caméra active",
+    "loading": "Démarrage de la caméra…",
+    "error": "Caméra indisponible : utilise les touches 1 à 4 et P.",
+    "privacy": "Désactivée par défaut. Activée, ta main est détectée dans ce navigateur : aucune image n'est envoyée ni enregistrée. Le modèle de détection est téléchargé une fois depuis Google.",
+    "help": "1 à 4 doigts levés = réponse 1 à 4 (pouce ignoré) · poing 1,5 s = passer · reste immobile 1 s · retire la main ou appuie sur Échap pour annuler.",
+    "nextHelp": "Change ou retire ta main, puis montre ta main ouverte pour continuer.",
+    "hold": "Maintiens : réponse {n}",
+    "holdSkip": "Maintiens le poing : passer",
+    "holdNext": "Maintiens : question suivante",
+    "answered": "Réponse {n} choisie",
+    "skipped": "Question passée",
+    "cancelled": "Annulé",
+    "noHand": "Pas de main",
+    "preview": "Aperçu de la caméra (miroir)"
   }
 }
