@@ -8,6 +8,8 @@ The **files derived from the textbooks** are under the
 
 - `course/notions/*.json` (catalogue of course notions, key ideas in English and French)
 - `eval/*.json` (evaluation questions and expected pages, *Principles of Data Science* only)
+- `frontend/demo/data.json` (public demo: notions, answers with quoted passages, quiz questions
+  and Feynman feedback, from both books)
 
 ## Attribution
 
@@ -19,10 +21,13 @@ The **files derived from the textbooks** are under the
   Illowsky and Susan Dean (senior contributing authors), OpenStax, Rice University, 2023.
   Access for free at
   [openstax.org/details/books/introductory-statistics-2e](https://openstax.org/details/books/introductory-statistics-2e).
+- `frontend/demo/data.json` is derived from both books above.
 
 **Changes made:** notions and key ideas were extracted from the studied chapters (6-7 and 12),
 summarized and translated into French (first draft generated with the Gemini API; the data
 science catalogue was then reviewed by hand, the statistics catalogue is still a draft).
+The demo answers, quiz questions and Feynman feedback were generated once with the Gemini API
+from the book pages (`scripts/build_demo.py`); the answers quote short passages of the books.
 The books themselves (PDF) are not redistributed here: they are downloaded from OpenStax by
 `scripts/download_book.py`, using the links in `course/courses.json`.
 

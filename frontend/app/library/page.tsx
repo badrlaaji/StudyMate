@@ -3,6 +3,7 @@ import Icon from "@/components/Icon";
 import OpenCourse from "@/components/OpenCourse";
 import UploadCourse from "@/components/UploadCourse";
 import type { Course } from "@/lib/api";
+import { isDemo } from "@/lib/demo";
 import { fmt, type Dict } from "@/lib/i18n";
 import { getSession } from "@/lib/lang";
 
@@ -64,14 +65,21 @@ export default async function LibraryPage() {
         ))}
       </ul>
 
-      <section className="card stack" aria-labelledby="add-title">
-        <div className="card-title" style={{ marginBottom: 0 }}>
-          <Icon name="plus" />
-          <h2 id="add-title">{t.library.upload}</h2>
-        </div>
-        <p className="muted">{t.library.uploadIntro}</p>
-        <UploadCourse t={t} />
-      </section>
+      {isDemo() ? (
+        <p className="callout">
+          <Icon name="info" />
+          {t.demo.library}
+        </p>
+      ) : (
+        <section className="card stack" aria-labelledby="add-title">
+          <div className="card-title" style={{ marginBottom: 0 }}>
+            <Icon name="plus" />
+            <h2 id="add-title">{t.library.upload}</h2>
+          </div>
+          <p className="muted">{t.library.uploadIntro}</p>
+          <UploadCourse t={t} />
+        </section>
+      )}
 
       <details className="card stack">
         <summary className="field-label">{t.library.cli}</summary>
@@ -112,7 +120,9 @@ function Readiness({ course, t }: { course: Course; t: Dict }) {
       ? `${fmt(t.library.notions, { count: course.notions })} (${course.validated ? t.library.validated : t.library.draft})`
       : t.library.noNotions;
   const items: [boolean, string][] = [
-    [course.pdf, course.pdf ? t.library.pdf : t.library.noPdf],
+    course.pdf_url && !course.pdf
+      ? [true, t.demo.pdfOnline] // demo: the book is read on openstax.org
+      : [course.pdf, course.pdf ? t.library.pdf : t.library.noPdf],
     [(course.chunks ?? 0) > 0, indexed],
     [course.notions > 0, notions],
   ];

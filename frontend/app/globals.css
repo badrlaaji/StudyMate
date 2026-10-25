@@ -624,3 +624,8 @@ kbd, .kbd {
   background: color-mix(in oklab, var(--accent-ink) 22%, transparent);
 }
 details > summary { cursor: pointer; }
+
+/* Public demo notice, above every page */
+.demo-banner { max-width: 1180px; margin: 0 auto var(--space-5); background: var(--accent-soft); border-color: color-mix(in oklab, var(--accent) 40%, transparent); }
+.demo-banner svg { color: var(--accent-strong); }
+.demo-banner a { color: var(--accent-strong); font-weight: 600; }

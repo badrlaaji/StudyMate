@@ -206,5 +206,16 @@
   "footer": {
     "content": "Contenu",
     "license": "Code : MIT. Contenu des cours : voir la licence de chaque livre."
+  },
+  "demo": {
+    "banner": "Démo publique : ces réponses ont été calculées à l'avance par le vrai pipeline. Aucun appel à une IA n'a lieu ici, et tes notes restent dans ce navigateur.",
+    "repo": "Lancer la version complète en local",
+    "onlyExamples": "La démo publique ne répond qu'à ses questions d'exemple : choisis-en une ci-dessous, ou demande un quiz ou un plan de révision. Installe StudyMate en local pour poser n'importe quelle question.",
+    "badge": "Démo : questions d'exemple seulement",
+    "examples": "Explications d'exemple",
+    "feynmanOnly": "La démo publique ne note que ses explications d'exemple : choisis-en une ci-dessus. Installe StudyMate en local pour faire noter n'importe quelle explication.",
+    "reader": "La démo n'a pas de copie locale du livre : ouvre cette page sur openstax.org avec le bouton ci-dessus. Le passage cité est recopié ici.",
+    "library": "La démo publique est en lecture seule : installe StudyMate en local pour importer un manuel.",
+    "pdfOnline": "PDF lu en ligne (openstax.org)"
   }
 }

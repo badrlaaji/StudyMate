@@ -1,6 +1,7 @@
 import FeynmanForm from "@/components/FeynmanForm";
 import Icon from "@/components/Icon";
 import { getNotions } from "@/lib/api";
+import { demoExplanations, isDemo } from "@/lib/demo";
 import { getSession } from "@/lib/lang";
 
 export default async function FeynmanPage({ searchParams }: { searchParams: Promise<{ notion?: string }> }) {
@@ -15,7 +16,15 @@ export default async function FeynmanPage({ searchParams }: { searchParams: Prom
         <p className="lede">{t.feynman.lede}</p>
       </header>
       {course && notions.length > 0 ? (
-        <FeynmanForm key={course.id} notions={notions} lang={lang} t={t} course={course.id} initialNotion={notion} />
+        <FeynmanForm
+          key={course.id}
+          notions={notions}
+          lang={lang}
+          t={t}
+          course={course.id}
+          initialNotion={notion}
+          examples={isDemo() ? demoExplanations(course.id) : undefined}
+        />
       ) : (
         <p className="callout">
           <Icon name="info" />

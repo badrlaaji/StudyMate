@@ -47,7 +47,7 @@
         },
         {
           "en": "Underfitting occurs when a model is too rigid or trained on data that is too small, failing to capture essential features of the data.",
-          "fr": "Le sous-apprentissage se produit lorsqu'un modèle est trop rigide ou entraîné sur des données trop restreintes, ne parvurant pas à capturer les caractéristiques essentielles des données."
+          "fr": "Le sous-apprentissage se produit lorsqu'un modèle est trop rigide ou entraîné sur des données trop restreintes, ne parvenant pas à capturer les caractéristiques essentielles des données."
         },
         {
           "en": "The bias-variance trade-off describes the balance where reducing a model's bias often increases its variance and vice versa.",

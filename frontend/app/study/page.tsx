@@ -1,5 +1,6 @@
 import StudyDesk from "@/components/StudyDesk";
 import { getNotions } from "@/lib/api";
+import { demoPrompts, isDemo } from "@/lib/demo";
 import { getSession } from "@/lib/lang";
 
 export default async function StudyPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
@@ -20,6 +21,8 @@ export default async function StudyPage({ searchParams }: { searchParams: Promis
           .filter(Boolean)
           .map((notion) => notion.name)}
         initialPage={Number.isInteger(page) && page > 0 ? page : undefined}
+        prompts={isDemo() ? demoPrompts(course.id, lang) : undefined}
+        onlinePdf={isDemo() ? course.pdf_url : undefined}
       />
     </div>
   );

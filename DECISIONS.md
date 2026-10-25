@@ -301,3 +301,19 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 ### S12-5 Deux défauts trouvés en vrai
 - Le dernier chapitre du sommaire ne gardait qu'une page (fin = début) : il va maintenant jusqu'à la fin du livre. Les sections numérotées de résumé (« 5.6 Chapter summary ») donnaient une fausse notion : elles sont ignorées au brouillon (6 → 5 notions).
 
+## Étape 13 — Démo publique sans appel LLM (plan v2, S1)
+
+### S13-1 Réponses pré-calculées, servies par Next.js seul
+- Options : héberger l'API avec Gemini (interdit en offre gratuite pour des utilisateurs EEE/UK, et la clé serait exposée au quota public), rejouer le cache LLM côté API (il faut encore FastAPI, la base et le modèle e5), ou figer des réponses. Choix : `scripts/build_demo.py` fait tourner le **vrai** agent une fois (11 questions, 3 quiz par langue et par cours, 3 explications Feynman) → `frontend/demo/data.json` (85 Ko). Avec `DEMO_MODE=1`, les routes `/api/*` et les pages serveur lisent ce fichier : aucun FastAPI, aucune base, aucune clé.
+
+### S13-2 Notes dans un cookie, mêmes règles que Spring
+- Les notes de la démo doivent rester chez le visiteur (rien à stocker côté serveur, pas de compte). Cookie `demo_scores` HttpOnly : cours → notion → 3 dernières notes (tout ce que la règle de maîtrise lit). Pire cas mesuré : 1 765 octets pour les 32 notions (limite des navigateurs : 4 096). Maîtrise, plan et notation du quiz portés en TypeScript avec les mêmes seuils (faible < 3, maîtrisé ≥ 4, arrondi au demi supérieur), testés.
+
+### S13-3 « Aucune requête sortante » prouvé par un test qui peut échouer
+- Vitest piège `fetch` et `net.Socket.prototype.connect` : toute connexion est notée et fait échouer le test. Un test témoin enlève `DEMO_MODE` et vérifie que le piège attrape bien l'appel du proxy vers l'API. Vérifié aussi en vrai : serveur Next lancé avec un mouchard de sockets, parcours complet dans Chromium → 0 connexion sortante, 0 requête du navigateur hors du site.
+
+### S13-4 Vitest 5.0.3 + Vite 7.3.7, installés avec npm 11
+- Vitest 5 exige Vite en pair. npm 10 plante (`Cannot read properties of null (reading 'edgesOut')`) en résolvant les pairs optionnels de Vite 8 (`@vitejs/devtools` → `vitest@*`). Choix : Vite 7.3.7 (sans ce pair), versions publiées depuis plus de 2 semaines, lockfile écrit par npm 11.20.0 ; `npm ci` de npm 10 l'accepte (vérifié), aucune version existante modifiée.
+
+### S13-5 Lecteur de la démo : lien vers openstax.org
+- Pas de PDF local dans la démo, et le PDF d'OpenStax n'autorise pas la lecture depuis un autre site (pas d'en-tête CORS, vérifié à l'étape 11) : react-pdf ne peut pas l'afficher. Plan B prévu à l’étape 8 : le passage cité est recopié, et un lien ouvre `pdf_url#page=N` dans un nouvel onglet.

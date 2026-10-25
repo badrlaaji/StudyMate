@@ -67,6 +67,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : rien de nouveau ; l'upload fait confiance à l'utilisateur pour les droits et les données personnelles (case à cocher).
 - **Chiffres** : Introduction to Python Programming : 9,96 Mo, 397 pages, 15 chapitres détectés ; chapitre 5 → 22 pages, 33 passages, 5 notions (6 avant la règle des résumés) ; réponse vérifiée p. 125 et 143 ; axe-core 0 violation (formulaire, traitement, 6 pages × 4 variantes) ; Lighthouse Bibliothèque 97/100/100/100 mobile, 100 partout ordinateur ; 158 tests Python (+ 1 base), 13 Spring.
 
+## Étape 13 — Démo publique sans appel LLM (2026-10-25)
+- **Fait** : `scripts/build_demo.py` (vrai agent, une fois) → `frontend/demo/data.json` ; `DEMO_MODE=1` : routes `/api/*` et pages servies par Next.js seul, notes dans un cookie, bannière démo, questions et explications d'exemple, lecteur vers openstax.org, Bibliothèque en lecture seule ; Vitest + test « aucune requête sortante » ; `npm test` en CI ; README (héberger la démo).
+- **Bloqué** : déploiement public à faire avec le compte de Badr (Vercel ou autre) : lien [X].
+- **Chiffres** : démo : 11 réponses (10 vérifiées, 1 refus), 36 questions de quiz, 3 explications notées 3/5, 85 Ko ; cookie au pire 1 765 octets ; parcours Chromium : 0 connexion sortante du serveur, 0 requête externe du navigateur, axe-core 0 violation (8 états) ; tests : 18 Vitest, 164 Python (+ 1 base), 13 Spring.
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |

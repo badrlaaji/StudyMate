@@ -4,8 +4,10 @@ import Link from "next/link";
 
 import BrandMark from "@/components/BrandMark";
 import CourseSwitcher from "@/components/CourseSwitcher";
+import Icon from "@/components/Icon";
 import LangToggle from "@/components/LangToggle";
 import NavLinks from "@/components/NavLinks";
+import { isDemo } from "@/lib/demo";
 import { getSession } from "@/lib/lang";
 
 import "./globals.css";
@@ -70,6 +72,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </header>
 
           <main id="content" className="main">
+            {isDemo() && (
+              <p className="callout demo-banner" role="note">
+                <Icon name="info" />
+                <span>
+                  {t.demo.banner}{" "}
+                  <a href="https://github.com/badrlaaji/StudyMate">{t.demo.repo}</a>
+                </span>
+              </p>
+            )}
             {children}
           </main>
           <NavLinks t={t} variant="tabbar" />

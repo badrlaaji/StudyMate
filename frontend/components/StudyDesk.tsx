@@ -37,9 +37,11 @@ type Props = {
   scope: string;
   examples: string[];
   initialPage?: number;
+  prompts?: string[]; // demo: the questions with a stored answer
+  onlinePdf?: string | null; // demo: no local PDF, link to the book online
 };
 
-export default function StudyDesk({ lang, t, course, scope, examples, initialPage }: Props) {
+export default function StudyDesk({ lang, t, course, scope, examples, initialPage, prompts, onlinePdf }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [question, setQuestion] = useState("");
   const [busy, setBusy] = useState(false);
@@ -107,7 +109,7 @@ export default function StudyDesk({ lang, t, course, scope, examples, initialPag
   }
 
   const suggestions = [
-    ...examples.slice(0, 2).map((name) => fmt(t.study.explainNotion, { name })),
+    ...(prompts ?? examples.slice(0, 2).map((name) => fmt(t.study.explainNotion, { name }))),
     t.study.quizMe,
     t.study.whatToReview,
   ];
@@ -148,6 +150,19 @@ export default function StudyDesk({ lang, t, course, scope, examples, initialPag
                 <span className="sr-only">{t.study.assistant}</span>
                 {message.reply && <Badges reply={message.reply} t={t} />}
                 {message.text && <p className="msg-text">{message.text}</p>}
+                {message.reply?.status === "demo_only" && (
+                  <>
+                    <p className="msg-text">{t.demo.onlyExamples}</p>
+                    <div className="suggestions">
+                      {suggestions.map((text) => (
+                        <button key={text} type="button" className="suggestion" onClick={() => ask(text)}>
+                          <Icon name="spark" />
+                          {text}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
                 {message.reply?.route === "quiz" && message.reply.status !== "no_notions" && (
                   <Link className="btn btn-primary btn-sm" href="/quiz" style={{ justifySelf: "start" }}>
                     <Icon name="quiz" />
@@ -233,7 +248,12 @@ export default function StudyDesk({ lang, t, course, scope, examples, initialPag
               <span className="eyebrow">{t.reader.title}</span>
               <h2 style={{ fontSize: "var(--text-lg)" }}>{fmt(t.reader.page, { page: opened.page })}</h2>
               <span className="spacer" />
-              <a className="btn btn-sm btn-ghost" href={pdfUrl(course, opened.page)} target="_blank" rel="noreferrer">
+              <a
+                className="btn btn-sm btn-ghost"
+                href={onlinePdf ? `${onlinePdf}#page=${opened.page}` : pdfUrl(course, opened.page)}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <Icon name="external" />
                 {t.reader.newTab}
               </a>
@@ -242,15 +262,22 @@ export default function StudyDesk({ lang, t, course, scope, examples, initialPag
               </button>
             </div>
             {opened.excerpt && <blockquote className="excerpt">{opened.excerpt}…</blockquote>}
-            <div className="pdf-frame">
-              <PdfViewer
-                course={course}
-                page={opened.page}
-                excerpt={opened.excerpt}
-                loadingText={t.reader.loading}
-                errorText={t.reader.error}
-              />
-            </div>
+            {onlinePdf ? (
+              <p className="callout">
+                <Icon name="info" />
+                {t.demo.reader}
+              </p>
+            ) : (
+              <div className="pdf-frame">
+                <PdfViewer
+                  course={course}
+                  page={opened.page}
+                  excerpt={opened.excerpt}
+                  loadingText={t.reader.loading}
+                  errorText={t.reader.error}
+                />
+              </div>
+            )}
           </>
         ) : (
           <div className="reader-empty">
@@ -288,6 +315,12 @@ function Badges({ reply, t }: { reply: Reply; t: Dict }) {
         <span className="badge">
           <Icon name="info" />
           {t.study.noNotions}
+        </span>
+      )}
+      {reply.status === "demo_only" && (
+        <span className="badge">
+          <Icon name="info" />
+          {t.demo.badge}
         </span>
       )}
       {reply.status === "degraded" && (

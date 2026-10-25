@@ -206,5 +206,16 @@
   "footer": {
     "content": "Content",
     "license": "Code: MIT. Course content: see each book's license."
+  },
+  "demo": {
+    "banner": "Public demo: these answers were computed in advance with the real pipeline. No AI call is made here, and your scores stay in this browser.",
+    "repo": "Run the full version locally",
+    "onlyExamples": "The public demo only answers its example questions: pick one below, or ask for a quiz or a revision plan. Install StudyMate locally to ask anything.",
+    "badge": "Demo: example questions only",
+    "examples": "Example explanations",
+    "feynmanOnly": "The public demo only grades its example explanations: choose one above. Install StudyMate locally to have any explanation graded.",
+    "reader": "The demo has no local copy of the book: open this page on openstax.org with the button above. The cited passage is quoted here.",
+    "library": "The public demo is read-only: install StudyMate locally to upload a textbook.",
+    "pdfOnline": "PDF read online (openstax.org)"
   }
 }

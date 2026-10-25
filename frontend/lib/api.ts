@@ -1,4 +1,9 @@
 // Server-side calls to FastAPI (API_URL is never sent to the browser).
+// Public demo (DEMO_MODE=1): the same answers come from the demo data, without network.
+import { cookies } from "next/headers";
+
+import { demoReply, isDemo, SCORES_COOKIE } from "@/lib/demo";
+
 const API_URL = process.env.API_URL ?? "http://localhost:8000";
 
 export type Course = {
@@ -17,6 +22,7 @@ export type Course = {
   uploaded: boolean;
   job: string | null; // uploaded course: queued, indexing, drafting, ready or failed
   job_detail: string;
+  pdf_url?: string | null; // demo: the book PDF online (no local copy)
 };
 
 export type Notion = {
@@ -33,12 +39,20 @@ export type PlanRow = { notion_id: string; name: string; score: number; pages: n
 
 // GET a JSON body; the fallback keeps the page rendering when the API is down.
 async function getJson<T>(path: string, fallback: T): Promise<T> {
+  if (isDemo()) return getDemo(path, fallback);
   try {
     const response = await fetch(`${API_URL}${path}`, { cache: "no-store" });
     return response.ok ? await response.json() : fallback;
   } catch {
     return fallback;
   }
+}
+
+async function getDemo<T>(path: string, fallback: T): Promise<T> {
+  const url = new URL(path, "http://demo");
+  const cookie = (await cookies()).get(SCORES_COOKIE)?.value;
+  const reply = demoReply("GET", url.pathname.slice(1), url.searchParams, null, cookie);
+  return reply.status === 200 ? (reply.body as T) : fallback;
 }
 
 export function getCourses(lang: string): Promise<Course[]> {

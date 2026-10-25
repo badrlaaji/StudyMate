@@ -11,7 +11,8 @@ It ships with two courses — *Principles of Data Science* (chapters 6-7, machin
 deep learning; the fully evaluated reference course) and *Introductory Statistics 2e*
 (chapter 12, regression and correlation) — and **a new course is added with one command**.
 
-> Demo video (2 min): coming soon.
+> Demo video (2 min): coming soon. A **public demo without any AI call** can be hosted from
+> this repository: see [Public demo](#public-demo-no-ai-call).
 
 ![Ask the book: a verified answer, page 327 opened with the cited passage highlighted](docs/img/study-desk.png)
 
@@ -39,6 +40,28 @@ honest feedback on what they have actually understood.
   the interface switches between English and French. Light and dark themes.
 
 ![Progress: share of notions mastered, notions to review first, average per practised notion](docs/img/mastery-map.png)
+
+## Public demo (no AI call)
+
+The web app has a read-only **demo mode** (`DEMO_MODE=1`) meant for public hosting:
+
+- The answers to a few example questions, three quizzes per language and the Feynman grades of
+  example explanations were computed **once** by the real pipeline
+  (`uv run python -m scripts.build_demo`) and saved in `frontend/demo/data.json`.
+- Next.js answers every `/api/*` route itself: no FastAPI, no database, **no Gemini call and no
+  key**. A Vitest test traps `fetch` and every socket: it fails if a demo route opens any
+  outgoing connection.
+- Feynman and quiz scores stay in a cookie of the visitor's browser; the progress map and the
+  revision plan use the same rules as Spring (average of the last 3 scores).
+- Any other question gets "example questions only"; a cited page opens on openstax.org.
+
+Run it locally (PowerShell): `cd frontend; npm ci; npm run build; $env:DEMO_MODE="1"; npm run start`,
+or with Docker: `docker build -t studymate-web frontend` then
+`docker run -e DEMO_MODE=1 -p 3000:3000 studymate-web`.
+
+Host it, for example on Vercel (Hobby plan, personal non-commercial use): import the GitHub
+repository, set the root directory to `frontend`, add the environment variable `DEMO_MODE=1`,
+deploy. Nothing else is needed: no secret, no database. Live link: [X] (not deployed yet).
 
 ## Add your own course
 
@@ -165,7 +188,10 @@ contrast. The progress chart uses one hue with threshold lines at 3 (review) and
 - **A verified citation is not always the best page**: the check proves the page was retrieved
   and cited, not that it is the most relevant one.
 - **Free tier**: rate limits and occasional 503 errors from Gemini; the code waits and retries
-  once. No public deployment (the free tier does not allow it for EU/UK users): local demo only.
+  once. The full app is not deployed publicly (the free tier does not allow it for EU/UK users):
+  only the demo mode, which never calls Gemini, is meant to be public.
+- **The public demo is frozen**: it only answers its example questions and grades its example
+  explanations; scores live in one browser and are lost with its cookies.
 
 ## Run it
 
@@ -190,7 +216,8 @@ then index each course once with
 user). Until a course is indexed, `/chat` answers 503 with that command. The image embeds the
 base e5 model; pass `--build-arg EMBEDDING_MODEL=<Hub id>` to use the fine-tuned one.
 
-Tests: `uv run pytest -q` (no network), `cd core; .\mvnw.cmd test`, `cd frontend; npm run build`.
+Tests: `uv run pytest -q` (no network), `cd core; .\mvnw.cmd test`,
+`cd frontend; npm test; npm run build`.
 
 ## Stack
 
@@ -216,5 +243,6 @@ The book PDFs are downloaded locally and never stored in this repository.
 
 ## License
 
-Code: [MIT](LICENSE). Files derived from the books (`course/notions/*.json`, `eval/*.json`):
+Code: [MIT](LICENSE). Files derived from the books (`course/notions/*.json`, `eval/*.json`,
+`frontend/demo/data.json`):
 CC BY-NC-SA 4.0, see [LICENSE-CONTENT.md](LICENSE-CONTENT.md).

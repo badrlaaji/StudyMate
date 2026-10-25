@@ -20,9 +20,17 @@ type Result = {
 const MIN_CHARS = 20;
 const MAX_SCORE = 5;
 
-type Props = { notions: Notion[]; lang: Lang; t: Dict; course: string; initialNotion?: string };
+type Example = { notion_id: string; lang: string; explanation: string };
+type Props = {
+  notions: Notion[];
+  lang: Lang;
+  t: Dict;
+  course: string;
+  initialNotion?: string;
+  examples?: Example[]; // demo: explanations judged in advance
+};
 
-export default function FeynmanForm({ notions, lang, t, course, initialNotion }: Props) {
+export default function FeynmanForm({ notions, lang, t, course, initialNotion, examples }: Props) {
   const known = notions.some((n) => n.id === initialNotion);
   const [notionId, setNotionId] = useState(known ? initialNotion! : (notions[0]?.id ?? ""));
   const [explanation, setExplanation] = useState("");
@@ -42,6 +50,10 @@ export default function FeynmanForm({ notions, lang, t, course, initialNotion }:
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ notion_id: notionId, explanation, lang, course }),
       });
+      if (response.status === 400 && examples) {
+        setError(t.demo.feynmanOnly);
+        return;
+      }
       if (!response.ok) throw new Error(String(response.status));
       setResult(await response.json());
     } catch {
@@ -54,6 +66,27 @@ export default function FeynmanForm({ notions, lang, t, course, initialNotion }:
   return (
     <div className="feynman">
       <form onSubmit={submit} className="card stack">
+        {examples && examples.length > 0 && (
+          <div className="suggestions">
+            <span className="eyebrow">{t.demo.examples}</span>
+            {examples.map((example) => (
+              <button
+                key={example.notion_id}
+                type="button"
+                className="suggestion"
+                onClick={() => {
+                  setNotionId(example.notion_id);
+                  setExplanation(example.explanation);
+                  setResult(null);
+                  setError("");
+                }}
+              >
+                <Icon name="spark" />
+                {notions.find((n) => n.id === example.notion_id)?.name ?? example.notion_id} ({example.lang.toUpperCase()})
+              </button>
+            ))}
+          </div>
+        )}
         <div className="field">
           <label className="field-label" htmlFor="notion">
             {t.feynman.notion}

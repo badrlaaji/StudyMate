@@ -1,0 +1,1721 @@
+{
+ "default": "data-science",
+ "courses": [
+  {
+   "id": "data-science",
+   "title": "Principles of Data Science",
+   "scope_en": "Chapters 6-7: machine learning, deep learning and AI",
+   "scope_fr": "Chapitres 6-7 : machine learning, deep learning et IA",
+   "book_lang": "en",
+   "license": "CC BY-NC-SA 4.0",
+   "attribution": "Shaun V. Ault, Soohyun Nam Liao and Larry Musolino (senior contributing authors), OpenStax, Rice University, 2025",
+   "book_url": "https://openstax.org/details/books/principles-data-science",
+   "pdf_url": "https://assets.openstax.org/oscms-prodcms/media/documents/Principles-of-Data-Science-WEB.pdf",
+   "chunks": 284,
+   "notions": [
+    {
+     "id": "supervised_unsupervised_learning",
+     "name_en": "Supervised and Unsupervised Learning",
+     "name_fr": "Apprentissage supervisé et non supervisé",
+     "chapter": 6,
+     "section": "6.1 What Is Machine Learning?",
+     "pages": [
+      276,
+      277,
+      278
+     ],
+     "key_ideas": [
+      {
+       "en": "Supervised learning uses labeled data in its training and testing sets to map input features to output values or labels.",
+       "fr": "L'apprentissage supervisé utilise des données étiquetées dans ses ensembles d'entraînement et de test pour associer des caractéristiques d'entrée à des valeurs de sortie ou des étiquettes."
+      },
+      {
+       "en": "Unsupervised learning trains on unlabeled data to discover inherent structures, clusters, or patterns within the dataset.",
+       "fr": "L'apprentissage non supervisé s'entraîne sur des données non étiquetées pour découvrir des structures inhérentes, des groupes ou des motifs au sein du jeu de données."
+      },
+      {
+       "en": "The machine learning life cycle includes problem formulation, data collection, feature engineering, model training, validation, and implementation.",
+       "fr": "Le cycle de vie de l'apprentissage automatique comprend la formulation du problème, la collecte de données, l'ingénierie des caractéristiques, l'entraînement du modèle, la validation et la mise en œuvre."
+      }
+     ]
+    },
+    {
+     "id": "overfitting_and_underfitting",
+     "name_en": "Overfitting and Underfitting",
+     "name_fr": "Surapprentissage et sous-apprentissage",
+     "chapter": 6,
+     "section": "6.1 What Is Machine Learning?",
+     "pages": [
+      281,
+      282,
+      283
+     ],
+     "key_ideas": [
+      {
+       "en": "Overfitting happens when a model fits the training data too closely, resulting in high variance and poor performance on new data.",
+       "fr": "Le surapprentissage se produit lorsqu'un modèle s'ajuste trop étroitement aux données d'entraînement, ce qui entraîne une variance élevée et de piètres performances sur de nouvelles données."
+      },
+      {
+       "en": "Underfitting occurs when a model is too rigid or trained on data that is too small, failing to capture essential features of the data.",
+       "fr": "Le sous-apprentissage se produit lorsqu'un modèle est trop rigide ou entraîné sur des données trop restreintes, ne parvenant pas à capturer les caractéristiques essentielles des données."
+      },
+      {
+       "en": "The bias-variance trade-off describes the balance where reducing a model's bias often increases its variance and vice versa.",
+       "fr": "Le compromis biais-variance décrit l'équilibre selon lequel la réduction du biais d'un modèle augmente souvent sa variance et vice versa."
+      }
+     ]
+    },
+    {
+     "id": "logistic_regression",
+     "name_en": "Logistic Regression",
+     "name_fr": "Régression logistique",
+     "chapter": 6,
+     "section": "6.2 Classification Using Machine Learning",
+     "pages": [
+      284,
+      285,
+      286,
+      287,
+      288,
+      289
+     ],
+     "key_ideas": [
+      {
+       "en": "Logistic regression uses a sigmoid function to map arbitrary input features to a value between 0 and 1, representing the probability of a binary outcome.",
+       "fr": "La régression logistique utilise une fonction sigmoïde pour associer des caractéristiques d'entrée arbitraires à une valeur comprise entre 0 et 1, représentant la probabilité d'un résultat binaire."
+      },
+      {
+       "en": "The logit function acts as the inverse of the sigmoid function, linearizing the model so that standard linear regression techniques can be applied to log-odds.",
+       "fr": "La fonction logit agit comme l'inverse de la fonction sigmoïde, linéarisant le modèle afin que des techniques de régression linéaire standard puissent être appliquées aux logarithmes des cotes."
+      },
+      {
+       "en": "Maximum likelihood estimation is employed to find the optimal parameters of the sigmoid function that produce the most accurate classification results for a given dataset.",
+       "fr": "L'estimation du maximum de vraisemblance est employée pour trouver les paramètres optimaux de la fonction sigmoïde qui produisent les résultats de classification les plus précis pour un jeu de données donné."
+      }
+     ]
+    },
+    {
+     "id": "k_means_clustering",
+     "name_en": "K-Means Clustering",
+     "name_fr": "Clustering k-means",
+     "chapter": 6,
+     "section": "6.2 Classification Using Machine Learning",
+     "pages": [
+      289,
+      290,
+      291,
+      292,
+      293,
+      294,
+      295,
+      296
+     ],
+     "key_ideas": [
+      {
+       "en": "K-means clustering is an unsupervised machine learning algorithm that groups similar data points into a predefined number of clusters denoted by k.",
+       "fr": "Le clustering k-means est un algorithme d'apprentissage automatique non supervisé qui regroupe des points de données similaires en un nombre prédéfini de clusters désigné par k."
+      },
+      {
+       "en": "The algorithm iteratively calculates distances from data points to cluster centers, reassigns points to the closest centroid, and updates the centroids until stability is reached.",
+       "fr": "L'algorithme calcule de manière itérative les distances entre les points de données et les centres des clusters, réassigne les points au centroïde le plus proche et met à jour les centroïdes jusqu'à ce que la stabilité soit atteinte."
+      },
+      {
+       "en": "The silhouette score measures how well-separated the resulting clusters are, with values near 1 indicating distinct separation and values near 0 indicating ambiguity.",
+       "fr": "Le score de silhouette mesure dans quelle mesure les clusters résultants sont bien séparés, des valeurs proches de 1 indiquant une séparation nette et des valeurs proches de 0 indiquant une ambigüité."
+      }
+     ]
+    },
+    {
+     "id": "dbscan_clustering",
+     "name_en": "Density-Based Spatial Clustering of Applications with Noise",
+     "name_fr": "Clustering par densité (DBSCAN)",
+     "chapter": 6,
+     "section": "6.2 Classification Using Machine Learning",
+     "pages": [
+      297,
+      298,
+      299,
+      300
+     ],
+     "key_ideas": [
+      {
+       "en": "DBScan identifies core data points within dense regions of a dataset and expands clusters by incorporating neighboring points that satisfy specific distance and density criteria.",
+       "fr": "DBScan identifie les points de données centraux dans les régions denses d'un jeu de données et étend les clusters en incorporant les points voisins qui satisfont à des critères spécifiques de distance et de densité."
+      },
+      {
+       "en": "Points that fail to meet the core point criteria or lack sufficient proximity to any core cluster are classified as outliers or noise rather than being forced into a group.",
+       "fr": "Les points qui ne satisfont pas aux critères de point central ou qui manquent de proximité suffisante avec un cluster central sont classés comme des valeurs aberrantes ou du bruit plutôt que d'être forcés dans un groupe."
+      },
+      {
+       "en": "Inappropriate tuning of the algorithm parameters epsilon and minimum samples can result in models suffering from either underfitting or overfitting.",
+       "fr": "Un réglage inapproprié des paramètres de l'algorithme epsilon et du nombre minimal d'échantillons peut entraîner des modèles souffrant soit de sous-apprentissage, soit de surapprentissage."
+      }
+     ]
+    },
+    {
+     "id": "confusion_matrix",
+     "name_en": "Confusion Matrix",
+     "name_fr": "Matrice de confusion",
+     "chapter": 6,
+     "section": "6.2 Classification Using Machine Learning",
+     "pages": [
+      300,
+      301,
+      302
+     ],
+     "key_ideas": [
+      {
+       "en": "A confusion matrix provides a detailed tabulation of correct and incorrect classification results, helping to identify specific patterns of misidentification across multiple categories.",
+       "fr": "Une matrice de confusion fournit un tableau détaillé des résultats de classification corrects et incorrects, aidant à identifier des schémas spécifiques de mauvaise identification à travers de multiples catégories."
+      },
+      {
+       "en": "For binary classification problems, the confusion matrix organizes outcomes into true positives, true negatives, false positives, and false negatives.",
+       "fr": "Pour les problèmes de classification binaire, la matrice de confusion organise les résultats en vrais positifs, vrais négatifs, faux positifs et faux négatifs."
+      },
+      {
+       "en": "Adjusting a classification model to reduce one type of classification error typically increases the rate of the alternative error type.",
+       "fr": "L'ajustement d'un modèle de classification pour réduire un type d'erreur de classification augmente typiquement le taux de l'autre type d'erreur."
+      }
+     ]
+    },
+    {
+     "id": "bootstrapping_linear_regression",
+     "name_en": "Bootstrapping in Linear Regression",
+     "name_fr": "Bootstrap pour la régression linéaire",
+     "chapter": 6,
+     "section": "6.3 Machine Learning in Regression Analysis",
+     "pages": [
+      303,
+      304,
+      305,
+      306,
+      307,
+      308
+     ],
+     "key_ideas": [
+      {
+       "en": "Bootstrapping involves repeatedly resampling a dataset with replacement to estimate parameter variations and calculate standard deviations.",
+       "fr": "Le rééchantillonnage consiste à prélever de manière répétée des échantillons dans un jeu de données avec remplacement pour estimer les variations des paramètres."
+      },
+      {
+       "en": "Resampling the original dataset provides distributions of possible slope and intercept values for the true linear fit.",
+       "fr": "Réchantillonner le jeu de données d'origine fournit des distributions de valeurs possibles pour la pente et l'ordonnée à l'origine."
+      },
+      {
+       "en": "Standard deviations obtained from bootstrapping allow the construction of confidence intervals for regression parameters.",
+       "fr": "Les écarts-types obtenus par rééchantillonnage permettent de construire des intervalles de confiance pour les paramètres de régression."
+      }
+     ]
+    },
+    {
+     "id": "multiple_linear_regression",
+     "name_en": "Multiple Linear Regression",
+     "name_fr": "Régression linéaire multiple",
+     "chapter": 6,
+     "section": "6.3 Machine Learning in Regression Analysis",
+     "pages": [
+      308,
+      309,
+      310,
+      311,
+      312,
+      313,
+      314
+     ],
+     "key_ideas": [
+      {
+       "en": "Multiple linear regression models the relationship between an output variable and several continuous input characteristics.",
+       "fr": "La régression linéaire multiple modélise la relation entre une variable de sortie et plusieurs caractéristiques d'entrée continues."
+      },
+      {
+       "en": "Assumptions for multiple linear regression include continuous data, linear relationships, and the absence of multicollinearity.",
+       "fr": "Les hypothèses de la régression linéaire multiple incluent des données continues, des relations linéaires et l'absence de multicolinéarité."
+      },
+      {
+       "en": "Adding more features increases the R-squared score but introduces complexity that can lead to surapprentissage.",
+       "fr": "L'ajout de caractéristiques augmente le score R-carré mais introduit une complexité pouvant mener au surapprentissage."
+      }
+     ]
+    },
+    {
+     "id": "multiple_logistic_regression",
+     "name_en": "Multiple Logistic Regression",
+     "name_fr": "Régression logistique multiple",
+     "chapter": 6,
+     "section": "6.3 Machine Learning in Regression Analysis",
+     "pages": [
+      314,
+      315
+     ],
+     "key_ideas": [
+      {
+       "en": "Multiple logistic regression extends single-variable logistic regression to estimate the probability of a categorical dependent variable using multiple inputs.",
+       "fr": "La régression logistique multiple étend la régression logistique à une seule variable pour estimer la probabilité d'une variable dépendante catégorielle."
+      },
+      {
+       "en": "The logit function transforms the data, a multiple linear regression is performed, and results are transformed back by a logistic function.",
+       "fr": "La fonction logit transforme les données, une régression linéaire multiple est effectuée, et les résultats sont transformés par une fonction logistique."
+      },
+      {
+       "en": "Features in multiple logistic regression can include continuous numerical data or discrete data such as Boolean values.",
+       "fr": "Les caractéristiques de la régression logistique multiple peuvent inclure des données numériques continues ou des données discrètes comme des valeurs booléennes."
+      }
+     ]
+    },
+    {
+     "id": "decision_tree_construction",
+     "name_en": "Decision Tree Construction",
+     "name_fr": "Construction d'arbres de décision",
+     "chapter": 6,
+     "section": "6.4 Decision Trees",
+     "pages": [
+      316,
+      317,
+      318,
+      319,
+      320,
+      321
+     ],
+     "key_ideas": [
+      {
+       "en": "Decision trees combine simplicity and flexibility in data analysis by breaking down decisions into a series of hierarchical choices.",
+       "fr": "Les arbres de décision combinent simplicité et flexibilité dans l'analyse de données en décomposant les décisions en une série de choix hiérarchiques."
+      },
+      {
+       "en": "Entropy measures the average amount of information, uncertainty, or randomness in a system or probability distribution.",
+       "fr": "L'entropie mesure la quantité moyenne d'information, d'incertitude ou de hasard dans un système ou une distribution de probabilité."
+      },
+      {
+       "en": "Information gain determines the best feature to split the data at each node by selecting the split that maximizes information and minimizes entropy.",
+       "fr": "Le gain d'information détermine la meilleure caractéristique pour diviser les données à chaque nœud en sélectionnant la division qui maximise l'information et minimise l'entropie."
+      }
+     ]
+    },
+    {
+     "id": "pruning_and_overfitting",
+     "name_en": "Pruning and Overfitting",
+     "name_fr": "Élagage et surapprentissage",
+     "chapter": 6,
+     "section": "6.4 Decision Trees",
+     "pages": [
+      321,
+      322,
+      323,
+      324,
+      325
+     ],
+     "key_ideas": [
+      {
+       "en": "Overfitting occurs when a decision tree grows too deep and makes overly complex decisions based on tiny differences or noise in the training dataset.",
+       "fr": "Le surapprentissage se produit lorsqu'un arbre de décision grandit trop et prend des décisions trop complexes basées sur des différences infimes ou du bruit dans le jeu de données d'entraînement."
+      },
+      {
+       "en": "Pruning is the process of reducing the size of a decision tree by removing branches that split the data too finely into singletons.",
+       "fr": "L'élagage est le processus de réduction de la taille d'un arbre de décision en supprimant les branches qui divisent les données trop finement en singletons."
+      },
+      {
+       "en": "Pre-pruning and post-pruning methods such as depth-limiting and leaf-limiting help balance model simplicity with predictive accuracy on unseen data.",
+       "fr": "Les méthodes de pré-élagage et de post-élagage telles que la limitation de profondeur et de feuilles aident à équilibrer la simplicité du modèle et la précision prédictive sur de nouvelles données."
+      }
+     ]
+    },
+    {
+     "id": "random_forest",
+     "name_en": "Random Forest",
+     "name_fr": "Forêt aléatoire",
+     "chapter": 6,
+     "section": "6.5 Other Machine Learning Techniques",
+     "pages": [
+      327,
+      328,
+      329,
+      330
+     ],
+     "key_ideas": [
+      {
+       "en": "A random forest is a classification algorithm that combines multiple decision trees using bootstrap aggregating.",
+       "fr": "Une forêt aléatoire est un algorithme de classification qui combine plusieurs arbres de décision en utilisant le bagging."
+      },
+      {
+       "en": "Random feature selection builds each tree using a randomly selected subset of feature variables to increase diversity among weak learners.",
+       "fr": "La sélection aléatoire de caractéristiques construit chaque arbre en utilisant un sous-ensemble de variables de caractéristiques choisi au hasard pour augmenter la diversité parmi les apprenants faibles."
+      },
+      {
+       "en": "The final prediction of a random forest model is determined by a majority vote among the individual decision trees.",
+       "fr": "La prédiction finale d'un modèle de forêt aléatoire est déterminée par un vote majoritaire parmi les arbres de décision individuels."
+      },
+      {
+       "en": "Feature importance in a random forest can be inferred by evaluating the accuracy of decision trees that utilize specific feature variables.",
+       "fr": "L'importance des caractéristiques dans une forêt aléatoire peut être déduite en évaluant la précision des arbres de décision qui utilisent des variables de caractéristiques spécifiques."
+      }
+     ]
+    },
+    {
+     "id": "naive_bayes_classifiers",
+     "name_en": "Naïve Bayes Classifiers",
+     "name_fr": "Classifieurs bayésiens naïfs",
+     "chapter": 6,
+     "section": "6.5 Other Machine Learning Techniques",
+     "pages": [
+      330,
+      331,
+      332,
+      333
+     ],
+     "key_ideas": [
+      {
+       "en": "Multinomial naïve Bayes classification relies on Bayes theorem and prior probabilities derived from training datasets to predict data classes.",
+       "fr": "La classification bayésienne naïve multinomiale repose sur le théorème de Bayes et sur les probabilités a priori tirées des jeux de données d'entraînement pour prédire les classes de données."
+      },
+      {
+       "en": "Naïve Bayes algorithms assume that all features of the dataset are independent, which still allows the model to perform effectively in real-world situations.",
+       "fr": "Les algorithmes bayésiens naïfs supposent que toutes les caractéristiques du jeu de données sont indépendantes, ce qui permet tout de même au modèle d'être performant dans des situations réelles."
+      },
+      {
+       "en": "Gaussian naïve Bayes is a specialized variant of the algorithm designed specifically for continuous numerical features that follow a normal distribution.",
+       "fr": "Le bayésien naïf gaussien est une variante spécialisée de l'algorithme conçue spécifiquement pour les caractéristiques numériques continues qui suivent une distribution normale."
+      },
+      {
+       "en": "Comparing numerators of Bayes formula provides proportional scores that allow simple classification decisions without computing exact probabilities.",
+       "fr": "La comparaison des numérateurs de la formule de Bayes fournit des scores proportionnels qui permettent des décisions de classification simples sans calculer de probabilités exactes."
+      }
+     ]
+    },
+    {
+     "id": "neural_network_structure_and_components",
+     "name_en": "Neural Network Structure and Components",
+     "name_fr": "Structure et composants des réseaux de neurones",
+     "chapter": 7,
+     "section": "7.1 Introduction to Neural Networks",
+     "pages": [
+      342,
+      343,
+      344,
+      345,
+      346
+     ],
+     "key_ideas": [
+      {
+       "en": "A neural network consists of layers of interconnected decision-making units called neurons, including an input layer, an output layer, and one or more hidden layers.",
+       "fr": "Un réseau de neurones est constitué de couches d'unités de décision interconnectées appelées neurones, comprenant une couche d'entrée, une couche de sortie et une ou plusieurs couches cachées."
+      },
+      {
+       "en": "Each connection between neurons has an associated weight that scales incoming signals and a bias value that makes the neuron more or less likely to activate.",
+       "fr": "Chaque connexion entre neurones est associée à un poids qui met à l'échelle les signaux entrants et à une valeur de biais qui rend le neurone plus ou moins susceptible de s'activer."
+      },
+      {
+       "en": "Activation functions are nonlinear mathematical functions applied to the processed input signals to determine the final output of a neuron.",
+       "fr": "Les fonctions d'activation sont des fonctions mathématiques non linéaires appliquées aux signaux d'entrée traités pour déterminer la sortie finale d'un neurone."
+      }
+     ]
+    },
+    {
+     "id": "perceptrons_and_training",
+     "name_en": "Perceptrons and Training",
+     "name_fr": "Perceptrons et entraînement",
+     "chapter": 7,
+     "section": "7.1 Introduction to Neural Networks",
+     "pages": [
+      347,
+      348,
+      349,
+      350
+     ],
+     "key_ideas": [
+      {
+       "en": "A perceptron is a type of single-layer neural network designed for binary classification tasks.",
+       "fr": "Un perceptron est un type de réseau de neurones à une seule couche conçu pour des tâches de classification binaire."
+      },
+      {
+       "en": "The perceptron learning rule updates weights and biases iteratively based on the prediction error and a learning rate.",
+       "fr": "La règle d'apprentissage du perceptron met à jour les poids et les biais de manière itérative en fonction de l'erreur de prédiction et d'un taux d'apprentissage."
+      },
+      {
+       "en": "Python libraries like scikit-learn can be used to load datasets, split them into training and testing subsets, standardize features, and train a perceptron model.",
+       "fr": "Les bibliothèques Python comme scikit-learn peuvent être utilisées pour charger des jeux de données, les diviser en sous-ensembles d'entraînement et de test, normaliser les caractéristiques et entraîner un modèle de perceptron."
+      }
+     ]
+    },
+    {
+     "id": "static_backpropagation_and_gradient_descent",
+     "name_en": "Static Backpropagation and Gradient Descent",
+     "name_fr": "Rétropropagation statique et descente de gradient",
+     "chapter": 7,
+     "section": "7.2 Backpropagation",
+     "pages": [
+      351,
+      352,
+      353,
+      354,
+      355,
+      356
+     ],
+     "key_ideas": [
+      {
+       "en": "Static backpropagation iteratively adjusts the weights and biases of a neural network to minimize the difference between predicted outputs and actual target values.",
+       "fr": "La rétropropagation statique ajuste de manière itérative les poids et les biais d'un réseau de neurones afin de minimiser la différence entre les sorties prédites et les valeurs cibles réelles."
+      },
+      {
+       "en": "Loss functions such as mean squared error and binary cross entropy quantitatively measure the prediction error across the dataset.",
+       "fr": "Les fonctions de perte telles que l'erreur quadratique moyenne et l'entropie croisée binaire mesurent quantitativement l'erreur de prédiction sur l'ensemble de données."
+      },
+      {
+       "en": "Gradient descent uses the derivative of the loss function with respect to network parameters to find the direction of steepest decrease for optimization.",
+       "fr": "La descente de gradient utilise la dérivée de la fonction de perte par rapport aux paramètres du réseau pour trouver la direction de décroissance la plus rapide en vue de l'optimisation."
+      }
+     ]
+    },
+    {
+     "id": "recurrent_neural_networks",
+     "name_en": "Recurrent Neural Networks",
+     "name_fr": "Réseaux de neurones récurrents",
+     "chapter": 7,
+     "section": "7.2 Backpropagation",
+     "pages": [
+      357,
+      358,
+      359,
+      360,
+      361,
+      362
+     ],
+     "key_ideas": [
+      {
+       "en": "Recurrent neural networks incorporate internal feedback loops that feed a neuron's output back as input to provide a rudimentary memory for sequential data.",
+       "fr": "Les réseaux de neurones récurrents incorporent des boucles de rétroaction internes qui renvoient la sortie d'un neurone en tant qu'entrée pour fournir une mémoire rudimentaire pour les données séquentielles."
+      },
+      {
+       "en": "Unrolling an RNN visualizes the effect of feedback loops by connecting copies of the network with identical parameters to process sequential inputs over time.",
+       "fr": "Le déroulement d'un RNN visualise l'effet des boucles de rétroaction en connectant des copies du réseau ayant des paramètres identiques pour traiter des entrées séquentielles au fil du temps."
+      },
+      {
+       "en": "Vanishing and exploding gradient problems occur during training when feedback loops cause weights to compound toward zero or grow excessively large.",
+       "fr": "Les problèmes de gradient disparu et explosif surviennent lors de l'entraînement lorsque les boucles de rétroaction font en sorte que les poids convergent vers zéro ou augmentent de manière excessive."
+      }
+     ]
+    },
+    {
+     "id": "introduction_to_deep_learning",
+     "name_en": "Introduction to Deep Learning",
+     "name_fr": "Introduction à l'apprentissage profond",
+     "chapter": 7,
+     "section": "7.3 Introduction to Deep Learning",
+     "pages": [
+      363,
+      364,
+      365,
+      366
+     ],
+     "key_ideas": [
+      {
+       "en": "Deep learning uses neural networks with multiple hidden layers to automatically extract hierarchical representations from raw data.",
+       "fr": "L'apprentissage profond utilise des réseaux de neurones dotés de plusieurs couches cachées pour extraire automatiquement des représentations hiérarchiques à partir de données brutes."
+      },
+      {
+       "en": "Mean squared error penalizes larger errors heavily and is sensitive to outliers when predicting continuous values.",
+       "fr": "L'erreur quadratique moyenne pénalise lourdement les erreurs plus importantes et se montre sensible aux valeurs aberrantes lors de la prédiction de valeurs continues."
+      },
+      {
+       "en": "Binary cross entropy is suitable for binary classification tasks because it heavily penalizes misclassification and handles probability outputs effectively.",
+       "fr": "L'entropie croisée binaire convient aux tâches de classification binaire car elle pénalise lourdement les erreurs de classification et gère efficacement les sorties de probabilité."
+      },
+      {
+       "en": "Hinge loss maximizes the margin between classes to achieve better separation of data points in classification problems.",
+       "fr": "La perte charnière maximise la marge entre les classes pour obtenir une meilleure séparation des points de données dans les problèmes de classification."
+      },
+      {
+       "en": "Sparse categorical cross entropy generalizes binary cross entropy for multi-class classification tasks and pairs with softmax activation.",
+       "fr": "L'entropie croisée catégorielle parcimonieuse généralise l'entropie croisée binaire pour les tâches de classification multiclasse et s'associe à l'activation softmax."
+      }
+     ]
+    },
+    {
+     "id": "convolutional_neural_networks",
+     "name_en": "Convolutional Neural Networks",
+     "name_fr": "Réseaux de neurones convolutifs",
+     "chapter": 7,
+     "section": "7.4 Convolutional Neural Networks",
+     "pages": [
+      367,
+      368
+     ],
+     "key_ideas": [
+      {
+       "en": "Convolutional neural networks are designed to process structured, grid-like data such as images by using filters to capture spatial relationships and patterns.",
+       "fr": "Les réseaux de neurones convolutifs sont conçus pour traiter des données structurées de type grille comme des images en utilisant des filtres pour capturer des relations spatiales et des motifs."
+      },
+      {
+       "en": "Convolutional layers apply filters to input data to pick up distinct structural features and produce feature maps as output.",
+       "fr": "Les couches de convolution appliquent des filtres aux données d'entrée pour détecter des caractéristiques structurelles distinctes et produire des cartes de caractéristiques en sortie."
+      },
+      {
+       "en": "Pooling layers down-sample feature maps to reduce the spatial dimensions of the data while retaining important information.",
+       "fr": "Les couches de regroupement sous-échantillonnent les cartes de caractéristiques pour réduire les dimensions spatiales des données tout en conservant les informations importantes."
+      },
+      {
+       "en": "Feature maps capture hierarchical features at different levels of abstraction, ranging from low-level edges and textures in early layers to complex object parts in deeper layers.",
+       "fr": "Les cartes de caractéristiques capturent des caractéristiques hiérarchiques à différents niveaux d'abstraction, allant des bords et textures de bas niveau dans les premières couches aux parties d'objets complexes dans les couches plus profondes."
+      }
+     ]
+    },
+    {
+     "id": "evolution_and_applications_of_nlp",
+     "name_en": "Evolution and Applications of Natural Language Processing",
+     "name_fr": "Évolution et applications du traitement automatique des langues",
+     "chapter": 7,
+     "section": "7.5 Natural Language Processing",
+     "pages": [
+      369,
+      370,
+      371,
+      372,
+      373,
+      374,
+      375
+     ],
+     "key_ideas": [
+      {
+       "en": "Natural language processing is an area of artificial intelligence focused on recognizing written or spoken language and generating new language content.",
+       "fr": "Le traitement automatique des langues est un domaine de l'intelligence artificielle concentré sur la reconnaissance du langage écrit ou parlé et la génération de nouveau contenu linguistique."
+      },
+      {
+       "en": "Transformer models utilize a sophisticated internal memory system and self-attention mechanisms to capture long-range dependencies in input data.",
+       "fr": "Les modèles de type transformateur utilisent un système de mémoire interne sophistiqué et des mécanismes d'auto-attention pour capturer les dépendances à long terme dans les données d'entrée."
+      },
+      {
+       "en": "Speech recognition converts spoken language into text through acoustic analysis, language modeling, and decoding algorithms.",
+       "fr": "La reconnaissance vocale convertit le langage parlé en texte grâce à l'analyse acoustique, la modélisation du langage et des algorithmes de décodage."
+      }
+     ]
+    },
+    {
+     "id": "ethical_considerations_and_limitations_of_nlp",
+     "name_en": "Ethical Considerations and Limitations of Natural Language Processing",
+     "name_fr": "Considérations éthiques et limites du traitement automatique des langues",
+     "chapter": 7,
+     "section": "7.5 Natural Language Processing",
+     "pages": [
+      376,
+      377,
+      378,
+      379
+     ],
+     "key_ideas": [
+      {
+       "en": "Training advanced language models on internet data raises serious concerns regarding copyright infringement, intellectual property rights, and fair compensation for human artists.",
+       "fr": "L'entraînement de modèles linguistiques avancés sur des données d'Internet soulève de graves préoccupations concernant la contrefaçon, les droits de propriété intellectuelle et la juste rémunération des artistes humains."
+      },
+      {
+       "en": "AI hallucinations are generated responses that have no basis in fact and appear plausible while being entirely incorrect or misleading.",
+       "fr": "Les hallucinations de l'intelligence artificielle sont des réponses générées qui n'ont aucun fondement factuel et qui semblent plausibles tout en étant entièrement incorrectes ou trompeuses."
+      },
+      {
+       "en": "Responsible AI encompasses principles and practices designed to ensure that artificial intelligence technologies are developed and deployed fairly, transparently, and safely.",
+       "fr": "L'intelligence artificielle responsable englobe des principes et des pratiques conçus pour garantir que les technologies d'intelligence artificielle sont développées et déployées de manière équitable, transparente et sûre."
+      }
+     ]
+    }
+   ],
+   "answers": [
+    {
+     "question": "How does a random forest combine many decision trees?",
+     "lang": "en",
+     "response": {
+      "course": "data-science",
+      "route": "answer",
+      "lang": "en",
+      "answer": "A random forest is a classification algorithm that employs bootstrap aggregating, which involves resampling from the same dataset multiple times to create a new decision tree each time. These individual decision trees, known as weak learners, use a randomly selected subset of feature variables to increase diversity. When classifying new data, the final prediction of the random forest is determined by a majority vote among the individual decision trees.",
+      "citations": [
+       {
+        "page": 327,
+        "excerpt": "So far, we have encountered a number of different machine learning algorithms suited to particular tasks.\nNaturally, the realm of machine learning extends well beyond this small survey of methods. This section\ndescribes several more machine learning techniques, though in less detail. Methods such as"
+       }
+      ],
+      "status": "ok",
+      "quiz": null,
+      "plan": null
+     }
+    },
+    {
+     "question": "What is the difference between overfitting and underfitting?",
+     "lang": "en",
+     "response": {
+      "course": "data-science",
+      "route": "answer",
+      "lang": "en",
+      "answer": "Overfitting happens when a model is adjusted too closely to the training data, creating a complex model that is too specific and performs worse on new data. In contrast, underfitting occurs when a model is not robust enough and fails to detect or capture essential features of the dataset.",
+      "citations": [
+       {
+        "page": 281,
+        "excerpt": "• , or 14.3%\n• MSE for cubic model:\n• RMSE for cubic model:\nThe MAE and RMSE both show that the model’s predictions are off by an average of about 6.2 points from\nactual values. The MAPE suggests that the model has an error of about 14.3% on average.\nOverfitting and Underfitting\nCan 100% accuracy be"
+       }
+      ],
+      "status": "ok",
+      "quiz": null,
+      "plan": null
+     }
+    },
+    {
+     "question": "How does the k-means algorithm assign points to clusters?",
+     "lang": "en",
+     "response": {
+      "course": "data-science",
+      "route": "answer",
+      "lang": "en",
+      "answer": "The k-means algorithm assigns data points to clusters by first computing the distances from each data point to each cluster center. Data points are then assigned to the specific cluster whose center is closest to them.",
+      "citations": [
+       {
+        "page": 290,
+        "excerpt": "k-Means Clustering Fundamentals\nThe basic idea behind k-means is quite intuitive: Each cluster must be centered around its centroid in such a\nway that minimizes distance from the data in the cluster to its centroid. The trick is in finding those centroids!\nBriefly, a centroid of a set of data points"
+       }
+      ],
+      "status": "ok",
+      "quiz": null,
+      "plan": null
+     }
+    },
+    {
+     "question": "What does a convolutional layer do in a CNN?",
+     "lang": "en",
+     "response": {
+      "course": "data-science",
+      "route": "answer",
+      "lang": "en",
+      "answer": "A convolutional layer applies filters to the input data to pick up on distinct structural features, such as vertical or horizontal lines and edges in an image. Within these layers, mathematical convolution operations are applied to produce feature maps that represent learned features of the input data.",
+      "citations": [
+       {
+        "page": 367,
+        "excerpt": "By the end of this section, you should see\nhow to train and test a CNN to classify image data using Python.\nThe Components of Convolutional Neural Networks\nCNNs consist of multiple hidden layers, including convolutional layers, pooling layers, and fully connected\nlayers. The key components of a CNN "
+       }
+      ],
+      "status": "ok",
+      "quiz": null,
+      "plan": null
+     }
+    },
+    {
+     "question": "What is the capital of Morocco?",
+     "lang": "en",
+     "response": {
+      "course": "data-science",
+      "route": "answer",
+      "lang": "en",
+      "answer": "I could not find the answer in this course.",
+      "citations": [],
+      "status": "not_found",
+      "quiz": null,
+      "plan": null
+     }
+    },
+    {
+     "question": "Qu'est-ce que le surapprentissage et comment le détecter ?",
+     "lang": "fr",
+     "response": {
+      "course": "data-science",
+      "route": "answer",
+      "lang": "fr",
+      "answer": "Le surapprentissage (ou overfitting) se produit lorsqu'un modèle est ajusté trop étroitement aux données d'entraînement, devenant ainsi trop complexe et spécifique à ces dernières. Lorsqu'un tel modèle reçoit des données provenant de l'extérieur de l'ensemble d'entraînement, il peut moins bien performer, un phénomène connu sous le nom de variance élevée. Les arbres de décision y sont particulièrement sujets lorsqu'ils possèdent un grand nombre de nœuds internes basés sur de très petites différences.",
+      "citations": [
+       {
+        "page": 281,
+        "excerpt": "• , or 14.3%\n• MSE for cubic model:\n• RMSE for cubic model:\nThe MAE and RMSE both show that the model’s predictions are off by an average of about 6.2 points from\nactual values. The MAPE suggests that the model has an error of about 14.3% on average.\nOverfitting and Underfitting\nCan 100% accuracy be"
+       },
+       {
+        "page": 323,
+        "excerpt": "X Y Label Predicted\nLabel\n9.9 2.5 Blue Blue\n15.1 12.6 Red Red\n3.5 10.2 Red Blue\nTable 6.8 Test Points\nSolution\nAccording to this table, M was correct 2 out of 3 times, so the accuracy is .\nPruning, Depth-Limiting, and Other Methods for Reducing Variance\nDecision trees often suffer from overfitting ("
+       }
+      ],
+      "status": "ok",
+      "quiz": null,
+      "plan": null
+     }
+    },
+    {
+     "question": "Comment fonctionne la rétropropagation du gradient ?",
+     "lang": "fr",
+     "response": {
+      "course": "data-science",
+      "route": "answer",
+      "lang": "fr",
+      "answer": "La rétropropagation est un algorithme d'apprentissage supervisé utilisé pour entraîner les réseaux de neurones. Son objectif principal est d'ajuster itérativement les poids des connexions et les biais de tous les neurones afin de minimiser la différence entre la sortie prédite et les valeurs cibles réelles. L'algorithme fonctionne en partant de la couche de sortie et en remontant récursivement à travers les couches pour déterminer l'impact des erreurs sur les paramètres. Durant la passe avant, les données d'entrée se propagent à travers le réseau couche par couche en utilisant les valeurs actuelles des poids, des biais et des fonctions d'activation.",
+      "citations": [
+       {
+        "page": 351,
+        "excerpt": "advantages.\nIn the previous section, we discussed the single-layer perceptron. Training the perceptron is straightforward as\nit only requires adjusting a set of weights and biases that directly affect the output. Neural networks that have\nmore than one layer, such as multilayer perceptrons (MLPs), o"
+       },
+       {
+        "page": 352,
+        "excerpt": "Static Backpropagation\nBackpropagation is a supervised learning algorithm, meaning that it trains on data that has already been\nclassified (see What Is Machine Learning? for more about supervised learning in general). The goal is to\niteratively adjust the weights of the connections between neurons i"
+       }
+      ],
+      "status": "ok",
+      "quiz": null,
+      "plan": null
+     }
+    }
+   ],
+   "quiz": {
+    "en": [
+     {
+      "notion_id": "ethical_considerations_and_limitations_of_nlp",
+      "question": "What is a major ethical concern regarding the training of advanced NLP models like ChatGPT?",
+      "options": [
+       "They only run on proprietary hardware.",
+       "They use any internet-available content, including copyrighted text, art, and music, raising intellectual property issues.",
+       "They require all training data to be manually translated into machine code.",
+       "They permanently delete all human-generated art from the internet."
+      ],
+      "answer_index": 1,
+      "page": 376,
+      "explanation": "Advanced NLP models may access and train on original content found on the internet, which risks devaluing human creators' work and violating copyright and intellectual property rights."
+     },
+     {
+      "notion_id": "k_means_clustering",
+      "question": "In the k-means clustering algorithm, what must the user provide as an initial guess before the algorithm runs?",
+      "options": [
+       "The exact silhouette score",
+       "The value of k, representing the number of clusters to expect, and initial guesses for centroid locations",
+       "The final accuracy percentage",
+       "The complete set of all future test labels"
+      ],
+      "answer_index": 1,
+      "page": 289,
+      "explanation": "The user must provide a guess for the value of k (the number of clusters) and initial guesses as to where the centroids would be located."
+     },
+     {
+      "notion_id": "supervised_unsupervised_learning",
+      "question": "What is the primary difference between supervised and unsupervised learning?",
+      "options": [
+       "Supervised learning uses labeled data, whereas unsupervised learning trains on unlabeled data.",
+       "Supervised learning is only used for images, while unsupervised learning is only used for text.",
+       "Supervised learning requires no testing dataset, whereas unsupervised learning requires only a testing dataset.",
+       "Supervised learning cannot use regression models."
+      ],
+      "answer_index": 0,
+      "page": 277,
+      "explanation": "Supervised learning uses labeled data with known classes to train and adjust parameters, while unsupervised learning trains on unlabeled data to find hidden patterns or groups."
+     },
+     {
+      "notion_id": "multiple_logistic_regression",
+      "question": "What is the primary function of a multiple logistic regression model?",
+      "options": [
+       "To predict a continuous numerical output using multiple features",
+       "To estimate the probability of the dependent variable taking on a particular category with multiple independent inputs",
+       "To cluster unsupervised data points into distinct geographic regions",
+       "To reduce the number of features in a dataset without losing variance"
+      ],
+      "answer_index": 1,
+      "page": 314,
+      "explanation": "Multiple logistic regression is an extension of single-variable logistic regression that acts as a binary classifier estimating the probability of a dependent variable taking a specific category based on multiple inputs."
+     },
+     {
+      "notion_id": "multiple_linear_regression",
+      "question": "What does multicollinearity mean in the context of multiple linear regression assumptions?",
+      "options": [
+       "The variance of the residuals is not uniform across the domain",
+       "The output variable is discrete rather than continuous",
+       "At least two of the input variables are highly correlated with one another",
+       "There is no linear relationship between the input and output variables"
+      ],
+      "answer_index": 2,
+      "page": 309,
+      "explanation": "Multicollinearity refers to a situation where at least two of the input variables are highly correlated with one another, meaning one or more can be dropped."
+     },
+     {
+      "notion_id": "evolution_and_applications_of_nlp",
+      "question": "What term is used to describe large language models like ChatGPT and Copilot that are trained on massive datasets?",
+      "options": [
+       "LLM",
+       "CNN",
+       "ELIZA",
+       "RGB"
+      ],
+      "answer_index": 0,
+      "page": 369,
+      "explanation": "ChatGPT and Copilot are also known as large language models, or LLMs, which are types of NLP models trained on massive datasets containing billions or trillions of words."
+     },
+     {
+      "notion_id": "dbscan_clustering",
+      "question": "What is the primary way a non-core point is handled during DBScan clustering?",
+      "options": [
+       "It is automatically used to start a new cluster.",
+       "It is checked to see if it is close to any core points to join their cluster, or otherwise regarded as noise.",
+       "It is always classified as an outlier without checking proximity.",
+       "It is merged with the nearest non-core point."
+      ],
+      "answer_index": 1,
+      "page": 297,
+      "explanation": "Non-core points are checked to see if they are close to any core points, and if not, they are regarded as outliers or noise."
+     },
+     {
+      "notion_id": "k_means_clustering",
+      "question": "What must a user provide to the k-means clustering algorithm before it begins?",
+      "options": [
+       "The exact silhouette score and error rate",
+       "A guess as to the value of k and initial guesses for centroid locations",
+       "The final stabilized centroids",
+       "The arithmetic mean of all vectors in the dataset"
+      ],
+      "answer_index": 1,
+      "page": 289,
+      "explanation": "The user must provide a guess for the number of clusters k and initial guesses as to where the centroids would be."
+     },
+     {
+      "notion_id": "introduction_to_deep_learning",
+      "question": "What defines the depth of a neural network in deep learning?",
+      "options": [
+       "The number of hidden layers it contains",
+       "The total number of input features",
+       "The specific choice of loss function",
+       "The amount of training data used"
+      ],
+      "answer_index": 0,
+      "page": 364,
+      "explanation": "The depth of a neural network is defined as the number of hidden layers it contains."
+     }
+    ],
+    "fr": [
+     {
+      "notion_id": "logistic_regression",
+      "question": "Quel type de fonction est utilisé dans la régression logistique à la place d'une ligne droite pour adapter les données ?",
+      "options": [
+       "Une fonction linéaire",
+       "Une fonction sigmoïde",
+       "Une fonction exponentielle pure",
+       "Une fonction logarithmique inverse"
+      ],
+      "answer_index": 1,
+      "page": 285,
+      "explanation": "La régression logistique utilise une fonction sigmoïde pour mapper les nombres réels à une valeur comprise entre 0 et 1."
+     },
+     {
+      "notion_id": "convolutional_neural_networks",
+      "question": "Quel est le rôle principal des couches de regroupement (pooling layers) dans un réseau de neurones convolutif ?",
+      "options": [
+       "Extraire les couleurs primaires des images",
+       "Sous-échantillonner les cartes de caractéristiques pour réduire les dimensions spatiales tout en conservant l'information importante",
+       "Connecter chaque neurone d'une couche à chaque neurone de la couche suivante",
+       "Classifier chaque pixel d'une image en une catégorie spécifique"
+      ],
+      "answer_index": 1,
+      "page": 367,
+      "explanation": "Les couches de regroupement réduisent les dimensions spatiales des données tout en conservant les informations importantes."
+     },
+     {
+      "notion_id": "neural_network_structure_and_components",
+      "question": "Quels sont les types de couches obligatoirement présents dans un réseau de neurones en plus des couches cachées ?",
+      "options": [
+       "La couche d'entrée et la couche de sortie",
+       "La couche de convolution et la couche de regroupement",
+       "La couche de classification et la couche de régression",
+       "La couche de pondération et la couche de biais"
+      ],
+      "answer_index": 0,
+      "page": 343,
+      "explanation": "Un réseau de neurones comporte toujours au moins deux couches : la couche d'entrée et la couche de sortie, en plus des couches cachées."
+     },
+     {
+      "notion_id": "overfitting_and_underfitting",
+      "question": "Qu'appelle-t-on le phénomène où un modèle s'ajuste trop étroitement aux données d'entraînement, ce qui le rend trop spécifique et nuit à ses performances sur de nouvelles données ?",
+      "options": [
+       "Le sous-apprentissage (underfitting)",
+       "Le surapprentissage (overfitting)",
+       "Le compromis biais-variance",
+       "La régression linéaire"
+      ],
+      "answer_index": 1,
+      "page": 281,
+      "explanation": "Le surapprentissage se produit lorsqu'un modèle est ajusté trop étroitement aux données d'entraînement, entraînant une forte variance sur les données externes."
+     },
+     {
+      "notion_id": "supervised_unsupervised_learning",
+      "question": "Quel type de données utilise l'apprentissage supervisé (supervised learning) dans ses ensembles d'entraînement et de test ?",
+      "options": [
+       "Des données non étiquetées",
+       "Uniquement des données aléatoires",
+       "Des données étiquetées",
+       "Des données incomplètes et bruyantes"
+      ],
+      "answer_index": 2,
+      "page": 277,
+      "explanation": "L'apprentissage supervisé utilise des données étiquetées, c'est-à-dire des données ayant des catégories ou des classes spécifiques associées à chaque point."
+     },
+     {
+      "notion_id": "logistic_regression",
+      "question": "Quel type de fonction est utilisé dans la régression logistique à la place d'une ligne droite pour mapper une valeur réelle entre 0 et 1 ?",
+      "options": [
+       "Une fonction sigmoïde",
+       "Une fonction cubique",
+       "Une fonction linéaire",
+       "Une fonction logarithmique inverse"
+      ],
+      "answer_index": 0,
+      "page": 285,
+      "explanation": "La régression logistique utilise une fonction sigmoïde pour mapper n'importe quel nombre réel à une valeur comprise entre 0 et 1."
+     },
+     {
+      "notion_id": "bootstrapping_linear_regression",
+      "question": "Quel est le nom de la technique de rééchantillonnage utilisée pour estimer la variation et construire un modèle de régression linéaire dans un intervalle de confiance ?",
+      "options": [
+       "La régression logistique",
+       "Le bootstrapping",
+       "La validation croisée",
+       "L'analyse en composantes principales"
+      ],
+      "answer_index": 1,
+      "page": 304,
+      "explanation": "Le bootstrapping consiste à prélever des échantillons répétés avec remplacement à partir de l'ensemble de données lui-même pour estimer la variation des paramètres."
+     },
+     {
+      "notion_id": "multiple_linear_regression",
+      "question": "Quelle est l'une des hypothèses fondamentales requises concernant les variables d'entrée dans une régression multiple ?",
+      "options": [
+       "Les variables d'entrée doivent être strictement discrètes.",
+       "Les variables d'entrée doivent être continues (ou avoir une plage de valeurs très large et régulière).",
+       "Les variables d'entrée doivent être parfaitement corrélées entre elles.",
+       "Il ne doit y avoir qu'une seule variable d'entrée."
+      ],
+      "answer_index": 1,
+      "page": 309,
+      "explanation": "Les variables d'entrée doivent généralement être continues, bien qu'une variable discrète avec une plage de valeurs très large et régulière puisse également convenir."
+     },
+     {
+      "notion_id": "recurrent_neural_networks",
+      "question": "Quelle caractéristique structurelle distingue les réseaux de neurones récurrents (RNN) et leur donne une mémoire rudimentaire ?",
+      "options": [
+       "Des boucles de rétroaction (feedback loops)",
+       "Une fonction d'activation par softmax uniquement",
+       "L'absence totale de poids de connexion",
+       "L'utilisation exclusive de données statiques"
+      ],
+      "answer_index": 0,
+      "page": 357,
+      "explanation": "Les réseaux de neurones récurrents intègrent des boucles de rétroaction qui connectent la sortie d'un neurone à lui-même ou à d'autres neurones en cycle, créant ainsi une mémoire."
+     }
+    ]
+   },
+   "feynman": [
+    {
+     "notion_id": "k_means_clustering",
+     "lang": "en",
+     "explanation": "K-means groups unlabeled points into k clusters chosen in advance. It places k centroids, assigns each point to the nearest centroid, then moves each centroid to the mean of its points, and repeats until nothing changes.",
+     "result": {
+      "covered": [
+       "K-means clustering is an unsupervised machine learning algorithm that groups similar data points into a predefined number of clusters denoted by k.",
+       "The algorithm iteratively calculates distances from data points to cluster centers, reassigns points to the closest centroid, and updates the centroids until stability is reached."
+      ],
+      "missing": [
+       "The silhouette score measures how well-separated the resulting clusters are, with values near 1 indicating distinct separation and values near 0 indicating ambiguity."
+      ],
+      "errors": [],
+      "score": 3,
+      "follow_up": "How can you mathematically evaluate whether the clusters you created are well-separated and distinct?",
+      "pages": [
+       289,
+       290,
+       291,
+       292,
+       293,
+       294,
+       295,
+       296
+      ]
+     }
+    },
+    {
+     "notion_id": "overfitting_and_underfitting",
+     "lang": "fr",
+     "explanation": "Le surapprentissage, c'est quand le modèle apprend par cœur les données d'entraînement, même le bruit : il est très bon sur ces données mais mauvais sur de nouvelles. Le sous-apprentissage, c'est l'inverse : le modèle est trop simple et rate même les données d'entraînement.",
+     "result": {
+      "covered": [
+       "Le surapprentissage se produit lorsqu'un modèle s'ajuste trop étroitement aux données d'entraînement, ce qui entraîne une variance élevée et de piètres performances sur de nouvelles données.",
+       "Le sous-apprentissage se produit lorsqu'un modèle est trop rigide ou entraîné sur des données trop restreintes, ne parvenant pas à capturer les caractéristiques essentielles des données."
+      ],
+      "missing": [
+       "Le compromis biais-variance décrit l'équilibre selon lequel la réduction du biais d'un modèle augmente souvent sa variance et vice versa."
+      ],
+      "errors": [],
+      "score": 3,
+      "follow_up": "Comment le compromis entre le biais et la variance influence-t-il la capacité d'un modèle à généraliser ?",
+      "pages": [
+       281,
+       282,
+       283
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "statistics",
+   "title": "Introductory Statistics 2e",
+   "scope_en": "Chapter 12: linear regression and correlation",
+   "scope_fr": "Chapitre 12 : régression linéaire et corrélation",
+   "book_lang": "en",
+   "license": "CC BY-NC-SA 4.0",
+   "attribution": "Barbara Illowsky and Susan Dean (senior contributing authors), OpenStax, Rice University, 2023",
+   "book_url": "https://openstax.org/details/books/introductory-statistics-2e",
+   "pdf_url": "https://assets.openstax.org/oscms-prodcms/media/documents/introductory-statistics-2e_-_WEB.pdf",
+   "chunks": 135,
+   "notions": [
+    {
+     "id": "linear_equations",
+     "name_en": "Linear equations",
+     "name_fr": "Équations linéaires",
+     "chapter": 12,
+     "section": "12.1 Linear Equations",
+     "pages": [
+      629,
+      630,
+      631
+     ],
+     "key_ideas": [
+      {
+       "en": "Linear regression with one independent variable relies on a linear equation where an independent variable determines a dependent variable through constant coefficients.",
+       "fr": "La régression linéaire avec une variable indépendante repose sur une équation linéaire où une variable indépendante détermine une variable dépendante par l'intermédiaire de coefficients constants."
+      },
+      {
+       "en": "The graph of any non-vertical linear equation forms a straight line in two dimensions.",
+       "fr": "Le graphique de toute équation linéaire non verticale forme une ligne droite en deux dimensions."
+      },
+      {
+       "en": "In a linear equation, the slope represents the steepness of the line and the y-intercept represents the point where the line crosses the y-axis.",
+       "fr": "Dans une équation linéaire, la pente représente l'inclinaison de la ligne et l'ordonnée à l'origine représente le point où la ligne coupe l'axe des ordonnées."
+      }
+     ]
+    },
+    {
+     "id": "scatter_plots",
+     "name_en": "Scatter Plots",
+     "name_fr": "Nuages de points",
+     "chapter": 12,
+     "section": "12.2 Scatter Plots",
+     "pages": [
+      632,
+      633,
+      634
+     ],
+     "key_ideas": [
+      {
+       "en": "A scatter plot displays the relationship between two variables by plotting data points on a coordinate system.",
+       "fr": "Un nuage de points affiche la relation entre deux variables en représentant des points de données sur un système de coordonnées."
+      },
+      {
+       "en": "Scatter plots reveal the direction of a relationship, showing whether variables increase together or if one increases as the other decreases.",
+       "fr": "Les nuages de points révèlent la direction d'une relation, montrant si les variables augmentent ensemble ou si l'une augmente pendant que l'autre diminue."
+      },
+      {
+       "en": "The strength of a relationship is determined by observing how closely the points on a scatter plot follow a specific type of function.",
+       "fr": "La force d'une relation est déterminée en observant à quel point les points d'un nuage de points suivent un type de fonction spécifique."
+      }
+     ]
+    },
+    {
+     "id": "least_squares_regression_line",
+     "name_en": "Least-Squares Regression Line",
+     "name_fr": "Droite de régression des moindres carrés",
+     "chapter": 12,
+     "section": "12.3 The Regression Equation",
+     "pages": [
+      635,
+      636,
+      637,
+      638,
+      639,
+      640
+     ],
+     "key_ideas": [
+      {
+       "en": "The least-squares regression line minimizes the sum of squared errors between the actual and predicted data points.",
+       "fr": "La droite de régression des moindres carrés minimise la somme des erreurs quadratiques entre les points de données réels et prédits."
+      },
+      {
+       "en": "Residuals measure the vertical distance between an observed data value and the estimated value on the regression line.",
+       "fr": "Les résidus mesurent la distance verticale entre une valeur de données observée et la valeur estimée sur la droite de régression."
+      },
+      {
+       "en": "The slope of the regression line indicates how much the dependent variable changes for every one-unit increase in the independent variable, on average.",
+       "fr": "La pente de la droite de régression indique de combien la variable dépendante change pour chaque augmentation d'une unité de la variable indépendante, en moyenne."
+      },
+      {
+       "en": "Predictions using the regression line should only be made within the domain of the x-values present in the sample data.",
+       "fr": "Les prédictions utilisant la droite de régression ne doivent être faites que dans le domaine des valeurs de x présentes dans le jeu de données d'échantillon."
+      }
+     ]
+    },
+    {
+     "id": "correlation_coefficient",
+     "name_en": "Correlation Coefficient",
+     "name_fr": "Coefficient de corrélation",
+     "chapter": 12,
+     "section": "12.3 The Regression Equation",
+     "pages": [
+      641,
+      642
+     ],
+     "key_ideas": [
+      {
+       "en": "The correlation coefficient provides a numerical measure of the strength and direction of the linear association between two variables.",
+       "fr": "Le coefficient de corrélation fournit une mesure numérique de la force et de la direction de l'association linéaire entre deux variables."
+      },
+      {
+       "en": "Values of the correlation coefficient always range between negative one and positive one inclusively.",
+       "fr": "Les valeurs du coefficient de corrélation se situent toujours entre moins un et plus un inclusivement."
+      },
+      {
+       "en": "Strong linear correlation does not imply causation between the independent and dependent variables.",
+       "fr": "Une forte corrélation linéaire n'implique pas de relation de cause à effet entre les variables indépendante et dépendante."
+      }
+     ]
+    },
+    {
+     "id": "significance_of_correlation_coefficient",
+     "name_en": "Testing the Significance of the Correlation Coefficient",
+     "name_fr": "Test de significativité du coefficient de corrélation",
+     "chapter": 12,
+     "section": "12.4 Testing the Significance of the Correlation Coefficient",
+     "pages": [
+      643,
+      644,
+      645,
+      646
+     ],
+     "key_ideas": [
+      {
+       "en": "The hypothesis test for the significance of the correlation coefficient determines whether the linear relationship found in the sample data is strong enough to model the relationship in the population.",
+       "fr": "Le test d'hypothèse pour la significativité du coefficient de corrélation détermine si la relation linéaire trouvée dans l'échantillon est assez forte pour modéliser la relation dans la population."
+      },
+      {
+       "en": "The null hypothesis states that the population correlation coefficient is equal to zero, while the alternative hypothesis states that it is different from zero.",
+       "fr": "L'hypothèse nulle indique que le coefficient de corrélation de la population est égal à zéro, tandis que l'hypothèse alternative indique qu'il en est différent."
+      },
+      {
+       "en": "The decision to reject or fail to reject the null hypothesis can be made using either the p-value method or a table of critical values at a given significance level.",
+       "fr": "La décision de rejeter ou de ne pas rejeter l'hypothèse nulle peut être prise en utilisant la méthode de la valeur p ou une table de valeurs critiques à un niveau de significativité donné."
+      },
+      {
+       "en": "A significant correlation coefficient indicates that the regression line can be used for predictions within the domain of observed values, provided the scatter plot shows a linear trend.",
+       "fr": "Un coefficient de corrélation significatif indique que la droite de régression peut être utilisée pour des prévisions dans le domaine des valeurs observées, à condition que le nuage de points montre une tendance linéaire."
+      }
+     ]
+    },
+    {
+     "id": "regression_line_prediction",
+     "name_en": "Regression line prediction",
+     "name_fr": "Prédiction par droite de régression",
+     "chapter": 12,
+     "section": "12.5 Prediction",
+     "pages": [
+      647
+     ],
+     "key_ideas": [
+      {
+       "en": "The least-squares regression line calculated from a sample is used as an estimate for the population regression line.",
+       "fr": "La droite de régression des moindres carrés calculée à partir d'un échantillon sert d'estimation pour la droite de régression de la population."
+      },
+      {
+       "en": "Making predictions requires substituting a specific value of the independent variable into the equation of the best-fit line.",
+       "fr": "Effectuer des prédictions nécessite de substituer une valeur spécifique de la variable indépendante dans l'équation de la droite d'ajustement."
+      },
+      {
+       "en": "Predictions are reliable when the given value falls within the range of observed data values used to construct the model.",
+       "fr": "Les prédictions sont fiables lorsque la valeur donnée se situe dans la plage des valeurs de données observées utilisées pour construire le modèle."
+      }
+     ]
+    },
+    {
+     "id": "outliers_and_residuals",
+     "name_en": "Outliers and Residuals",
+     "name_fr": "Valeurs aberrantes et résidus",
+     "chapter": 12,
+     "section": "12.6 Outliers",
+     "pages": [
+      648,
+      649,
+      650,
+      651,
+      652
+     ],
+     "key_ideas": [
+      {
+       "en": "Outliers are observed data points that lie far from the least squares line with large vertical errors.",
+       "fr": "Les valeurs aberrantes sont des points de données observés qui se trouvent loin de la droite des moindres carrés avec de grandes erreurs verticales."
+      },
+      {
+       "en": "A rough guideline flags any point located further than two standard deviations of the residuals above or below the best-fit line as an outlier.",
+       "fr": "Une règle empirique signale comme valeur aberrante tout point situé à plus de deux écarts-types des résidus au-dessus ou au-dessous de la droite de meilleur ajustement."
+      },
+      {
+       "en": "Removing an erroneous outlier from a dataset can significantly improve the correlation coefficient and the predictive accuracy of the regression line.",
+       "fr": "La suppression d'une valeur aberrante erronée d'un jeu de données peut améliorer considérablement le coefficient de corrélation et la précision prédictive de la droite de régression."
+      }
+     ]
+    },
+    {
+     "id": "influential_points",
+     "name_en": "Influential Points",
+     "name_fr": "Points influents",
+     "chapter": 12,
+     "section": "12.6 Outliers",
+     "pages": [
+      648
+     ],
+     "key_ideas": [
+      {
+       "en": "Influential points are observed data points that are located far from the other observed data points in the horizontal direction.",
+       "fr": "Les points influents sont des points de données observés qui sont situés loin des autres points de données observés dans la direction horizontale."
+      },
+      {
+       "en": "Influential points may have a substantial effect on the slope and position of the regression line.",
+       "fr": "Les points influents peuvent avoir un effet substantiel sur la pente et la position de la droite de régression."
+      },
+      {
+       "en": "The effect of an influential point can be identified by removing it from the dataset and observing the resulting change in the slope of the regression line.",
+       "fr": "L'effet d'un point influent peut être identifié en le supprimant du jeu de données et en observant le changement résultant dans la pente de la droite de régression."
+      }
+     ]
+    },
+    {
+     "id": "regression_distance_from_school",
+     "name_en": "Regression and line of best fit",
+     "name_fr": "Régression et droite de meilleur ajustement",
+     "chapter": 12,
+     "section": "12.7 Regression (Distance from School)",
+     "pages": [
+      656,
+      657
+     ],
+     "key_ideas": [
+      {
+       "en": "Bivariate data collection involves gathering paired measurements for two variables, such as distance from school and cost of supplies.",
+       "fr": "La collecte de données bivariées implique le rassemblement de mesures appariées pour deux variables, telles que la distance de l'école et le coût des fournitures."
+      },
+      {
+       "en": "The line of best fit models the linear relationship between an independent variable and a dependent variable.",
+       "fr": "La droite de meilleur ajustement modélise la relation linéaire entre une variable indépendante et une variable dépendante."
+      },
+      {
+       "en": "Evaluating the significance of the correlation helps determine whether the linear relationship between the two variables is meaningful.",
+       "fr": "L'évaluation de la signification de la corrélation aide à déterminer si la relation linéaire entre les deux variables est significative."
+      },
+      {
+       "en": "Regression equations are used to make predictions for the dependent variable based on given values of the independent variable.",
+       "fr": "Les équations de régression sont utilisées pour faire des prévisions pour la variable dépendante sur la base de valeurs données de la variable indépendante."
+      }
+     ]
+    },
+    {
+     "id": "regression_textbook_cost",
+     "name_en": "Regression and textbook cost",
+     "name_fr": "Régression et coût des manuels",
+     "chapter": 12,
+     "section": "12.8 Regression (Textbook Cost)",
+     "pages": [
+      658
+     ],
+     "key_ideas": [
+      {
+       "en": "Bivariate data analysis involves collecting and examining pairs of variables such as the number of pages in a textbook and its cost.",
+       "fr": "L'analyse de données bivariées implique la collecte et l'examen de paires de variables telles que le nombre de pages d'un manuel et son coût."
+      },
+      {
+       "en": "Determining dependent and independent variables is essential before constructing the line of best fit between two variables.",
+       "fr": "La détermination des variables dépendantes et indépendantes est essentielle avant de construire la droite de meilleur ajustement entre deux variables."
+      },
+      {
+       "en": "Evaluating the relationship between two variables helps determine if that relationship is statistically significant.",
+       "fr": "L'évaluation de la relation entre deux variables aide à déterminer si cette relation est statistiquement significative."
+      },
+      {
+       "en": "Identifying outliers and deciding whether they should be removed impacts the overall interpretation of the regression data.",
+       "fr": "L'identification des valeurs aberrantes et la décision de les supprimer ou non influencent l'interprétation globale des données de régression."
+      }
+     ]
+    },
+    {
+     "id": "regression_fuel_efficiency",
+     "name_en": "Regression and fuel efficiency",
+     "name_fr": "Régression et efficacité énergétique",
+     "chapter": 12,
+     "section": "12.9 Regression (Fuel Efficiency)",
+     "pages": [
+      659,
+      660,
+      661
+     ],
+     "key_ideas": [
+      {
+       "en": "The line of best fit describes the linear relationship between two variables such as car weight and fuel efficiency.",
+       "fr": "La droite de meilleur ajustement décrit la relation linéaire entre deux variables telles que le poids de la voiture et l'efficacité énergétique."
+      },
+      {
+       "en": "The correlation coefficient and its significance help determine if the linear relationship between the variables is meaningful.",
+       "fr": "Le coefficient de corrélation et sa signification aident à déterminer si la relation linéaire entre les variables est significative."
+      },
+      {
+       "en": "Outliers and data limits must be considered when evaluating the accuracy of predictions made from the regression model.",
+       "fr": "Les valeurs aberrantes et les limites des données doivent être prises en compte lors de l'évaluation de la précision des prévisions faites à partir du modèle de régression."
+      }
+     ]
+    }
+   ],
+   "answers": [
+    {
+     "question": "What does the correlation coefficient r measure?",
+     "lang": "en",
+     "response": {
+      "course": "statistics",
+      "route": "answer",
+      "lang": "en",
+      "answer": "The correlation coefficient, r, provides a numerical measure of both the strength and the direction of the linear association between an independent variable and a dependent variable. Values of r close to -1 or +1 indicate a stronger linear relationship, while values near 0 suggest little to no linear correlation. The sample correlation coefficient r also serves as an estimate of the unknown population correlation coefficient.",
+      "citations": [
+       {
+        "page": 642,
+        "excerpt": "The correlation coefficient, r, developed by Karl Pearson in the early 1900s, is numerical and provides a measure of\nstrength and direction of the linear association between the independent variable x and the dependent variable y.\nThe correlation coefficient is calculated as\nwhere n = the number of "
+       },
+       {
+        "page": 643,
+        "excerpt": "sis test of the \"significance of the correlation coefficient\" to decide whether the linear\nrelationship in the sample data is strong enough to use to model the relationship in the population.\nThe sample data are used to compute r, the correlation coefficient for the sample. If we had data for the en"
+       }
+      ],
+      "status": "ok",
+      "quiz": null,
+      "plan": null
+     }
+    },
+    {
+     "question": "What is the least-squares regression line?",
+     "lang": "en",
+     "response": {
+      "course": "statistics",
+      "route": "answer",
+      "lang": "en",
+      "answer": "The least-squares regression line is the line of best fit calculated so that the sum of the squared errors (SSE) is minimized. It is used to obtain the best fit for data points and make predictions about the data. Residuals, or errors, measure the vertical distance between actual y-values and the estimated y-values on this line.",
+      "citations": [
+       {
+        "page": 637,
+        "excerpt": "X (depth in feet) Y (maximum dive time)\n90 25\n100 22\nThe third exam score, x, is the independent variable and the final exam score, y, is the dependent variable. We will plot a\nregression line that best \"fits\" the data. If each of you were to fit a line \"by eye,\" you would draw different lines. We c"
+       },
+       {
+        "page": 639,
+        "excerpt": "Figure 12.11 Scatter plot of the data looks like a straight line.\nFigure 12.12 Residuals plot appears random.\nLeast Squares Criteria for Best Fit\nThe process of fitting the best-fit line is called linear regression. The idea behind finding the best-fit line is based on the\nassumption that the data a"
+       },
+       {
+        "page": 662,
+        "excerpt": "LinRegTTest).\n12.5 Prediction\nAfter determining the presence of a strong correlation coefficient and calculating the line of best fit, you can use the\nleast squares regression line to make predictions about your data."
+       }
+      ],
+      "status": "ok",
+      "quiz": null,
+      "plan": null
+     }
+    },
+    {
+     "question": "How do you predict a value with the regression line?",
+     "lang": "en",
+     "response": {
+      "course": "statistics",
+      "route": "answer",
+      "lang": "en",
+      "answer": "To predict values using a regression line, you first determine the presence of a strong correlation coefficient and calculate the line of best fit, such as the least-squares regression line. If x is the independent variable and y is the dependent variable, you can use this line to predict y for a given value of x. However, regression lines should only be used to predict values within the given set of data and not for values outside that set.",
+      "citations": [
+       {
+        "page": 635,
+        "excerpt": "Figure 12.8\nIn this chapter, we are interested in scatter plots that show a linear pattern. Linear patterns are quite common. The linear\nrelationship is strong if the points are close to a straight line, except in the case of a horizontal line where there is no\nrelationship. If we think that the poi"
+       },
+       {
+        "page": 662,
+        "excerpt": "slope tells us how the dependent variable (y) changes for every one unit increase in the independent (x) variable, on\naverage. The y-intercept is used to describe the dependent variable when the independent variable equals zero.\n12.2 Scatter Plots\nScatter plots are particularly helpful graphs when w"
+       }
+      ],
+      "status": "ok",
+      "quiz": null,
+      "plan": null
+     }
+    },
+    {
+     "question": "Comment repérer une valeur aberrante avec la droite de régression ?",
+     "lang": "fr",
+     "response": {
+      "course": "statistics",
+      "route": "answer",
+      "lang": "fr",
+      "answer": "Pour repérer une valeur aberrante, vous pouvez observer graphiquement si un point est situé à plus de deux écarts-types au-dessus ou en dessous de la droite de meilleur ajustement. De manière numérique, vous pouvez calculer chaque résidu et le comparer à deux fois l'écart-type des erreurs. Les points se trouvant en dehors de cette distance sont considérés comme des valeurs aberrantes potentielles.",
+      "citations": [
+       {
+        "page": 648,
+        "excerpt": "the slope of the regression line. To begin to identify an influential point, you can remove it from the data\nset and see if the slope of the regression line is changed significantly.\nComputers and many calculators can be used to identify outliers from the data. Computer output for regression analysi"
+       }
+      ],
+      "status": "ok",
+      "quiz": null,
+      "plan": null
+     }
+    }
+   ],
+   "quiz": {
+    "en": [
+     {
+      "notion_id": "regression_fuel_efficiency",
+      "question": "In the Stats Lab for Regression (Fuel Efficiency), how many cars are randomly selected from the list using a random number generator?",
+      "options": [
+       "10 cars",
+       "15 cars",
+       "20 cars",
+       "25 cars"
+      ],
+      "answer_index": 2,
+      "page": 660,
+      "explanation": "The lab instructions state to randomly select 20 cars from the list and record their weights and fuel efficiency."
+     },
+     {
+      "notion_id": "scatter_plots",
+      "question": "In Example 12.4, what is the y-intercept (a) for the linear equation expressing Svetlana's total earnings?",
+      "options": [
+       "15",
+       "25",
+       "40",
+       "50"
+      ],
+      "answer_index": 1,
+      "page": 632,
+      "explanation": "The y-intercept is given as 25, representing Svetlana's one-time fee of $25 at the start of the tutoring session."
+     },
+     {
+      "notion_id": "linear_equations",
+      "question": "What is the general form of a linear equation with one independent variable as described in Chapter 12.1?",
+      "options": [
+       "y = a + bx",
+       "y = mx + b",
+       "y = a - bx^2",
+       "y = ax + b^2"
+      ],
+      "answer_index": 0,
+      "page": 629,
+      "explanation": "Linear regression for two variables is based on a linear equation of the form y = a + bx where a and b are constant numbers."
+     },
+     {
+      "notion_id": "significance_of_correlation_coefficient",
+      "question": "What is the symbol used for the unknown population correlation coefficient?",
+      "options": [
+       "r",
+       "p",
+       "ρ",
+       "β"
+      ],
+      "answer_index": 2,
+      "page": 643,
+      "explanation": "The Greek letter rho (ρ) is the symbol for the unknown population correlation coefficient."
+     },
+     {
+      "notion_id": "correlation_coefficient",
+      "question": "What is the range of possible values for the correlation coefficient r?",
+      "options": [
+       "0 to 1",
+       "-1 to 1",
+       "0 to 100",
+       "-infinity to +infinity"
+      ],
+      "answer_index": 1,
+      "page": 642,
+      "explanation": "The value of r is always between -1 and +1 inclusive (-1 <= r <= 1)."
+     },
+     {
+      "notion_id": "regression_textbook_cost",
+      "question": "In the Stats Lab regarding Regression and Textbook Cost, how many textbooks are surveyed to collect bivariate data?",
+      "options": [
+       "five",
+       "ten",
+       "fifteen",
+       "twenty"
+      ],
+      "answer_index": 1,
+      "page": 658,
+      "explanation": "The lab instructions state to survey ten textbooks to collect bivariate data."
+     },
+     {
+      "notion_id": "least_squares_regression_line",
+      "question": "What is another common name for a Line of Best Fit when working with a set of data whose scatter plot appears to fit a straight line?",
+      "options": [
+       "Least-Squares Line",
+       "Horizontal Baseline",
+       "Independent Slope Line",
+       "Dependent Intercept Line"
+      ],
+      "answer_index": 0,
+      "page": 635,
+      "explanation": "A set of data whose scatter plot appears to fit a straight line is called a Line of Best Fit or Least-Squares Line."
+     },
+     {
+      "notion_id": "scatter_plots",
+      "question": "What is the most common and easiest way to examine and display the relationship between two variables x and y before discussing linear regression?",
+      "options": [
+       "A bar chart",
+       "A pie chart",
+       "A scatter plot",
+       "A Venn diagram"
+      ],
+      "answer_index": 2,
+      "page": 632,
+      "explanation": "Before taking up the discussion of linear regression and correlation, the most common and easiest way to display the relation between two variables x and y is a scatter plot."
+     },
+     {
+      "notion_id": "regression_distance_from_school",
+      "question": "In the Stats Lab activity on regression (Distance from School), how many members of the class are used for the sample to collect bivariate data?",
+      "options": [
+       "Five members",
+       "Eight members",
+       "Ten members",
+       "Twelve members"
+      ],
+      "answer_index": 1,
+      "page": 656,
+      "explanation": "The instructions for collecting data specify to use eight members of your class for the sample."
+     }
+    ],
+    "fr": [
+     {
+      "notion_id": "scatter_plots",
+      "question": "Quel est le terme le plus courant et le plus simple pour afficher la relation entre deux variables x et y selon le texte ?",
+      "options": [
+       "Un diagramme circulaire",
+       "Un nuage de points",
+       "Un graphique en bâtons",
+       "Un tableau statistique"
+      ],
+      "answer_index": 1,
+      "page": 632,
+      "explanation": "Le texte indique que le moyen le plus courant et le plus simple d'afficher la relation entre deux variables x et y est un nuage de points."
+     },
+     {
+      "notion_id": "regression_textbook_cost",
+      "question": "Quel ensemble de données bivariées est collecté dans le cadre du laboratoire de régression sur le coût des manuels ?",
+      "options": [
+       "Le nombre de pages et le coût du manuel",
+       "Le poids du livre et le nombre d'exemplaires vendus",
+       "L'année de parution et le nombre de pages",
+       "Le nom de l'auteur et le prix de vente"
+      ],
+      "answer_index": 0,
+      "page": 658,
+      "explanation": "Le laboratoire consiste à collecter des données bivariées sur le nombre de pages dans un manuel et le coût de ce manuel."
+     },
+     {
+      "notion_id": "outliers_and_residuals",
+      "question": "Comment appelle-t-on, selon le texte, la distance verticale entre la droite des moindres carrés et un point de données observé ?",
+      "options": [
+       "La pente",
+       "L'ordonnée à l'origine",
+       "Le résidu ou erreur",
+       "L'interpolation"
+      ],
+      "answer_index": 2,
+      "page": 648,
+      "explanation": "Le texte définit l'erreur ou résidu comme étant la distance verticale de la droite au point."
+     },
+     {
+      "notion_id": "linear_equations",
+      "question": "Dans le contexte des équations linéaires à une variable indépendante, quelle lettre désigne généralement la variable dépendante ?",
+      "options": [
+       "a",
+       "b",
+       "x",
+       "y"
+      ],
+      "answer_index": 3,
+      "page": 629,
+      "explanation": "La variable x est la variable indépendante et la variable y est la variable dépendante."
+     },
+     {
+      "notion_id": "regression_fuel_efficiency",
+      "question": "Dans le cadre du laboratoire statistique sur l'efficacité énergétique, quelles sont les deux variables principales étudiées en relation l'une avec l'autre ?",
+      "options": [
+       "L'efficacité énergétique et le poids",
+       "Le prix et le nombre de pages",
+       "L'âge et la taille du vocabulaire",
+       "Les heures de tutorat et les gains"
+      ],
+      "answer_index": 0,
+      "page": 660,
+      "explanation": "Le laboratoire cherche à déterminer la relation entre l'efficacité énergétique en milles par gallon et le poids des voitures."
+     },
+     {
+      "notion_id": "scatter_plots",
+      "question": "Quel est le moyen le plus courant et le plus simple d'afficher visuellement la relation entre deux variables x et y avant la régression linéaire ?",
+      "options": [
+       "Un diagramme circulaire",
+       "Un nuage de points (scatter plot)",
+       "Un histogramme",
+       "Un tableau croisé"
+      ],
+      "answer_index": 1,
+      "page": 632,
+      "explanation": "Le moyen le plus commun et le plus facile d'examiner la relation entre deux variables x et y est un nuage de points."
+     },
+     {
+      "notion_id": "correlation_coefficient",
+      "question": "Quelle est la valeur maximale que peut atteindre le coefficient de corrélation r ?",
+      "options": [
+       "0",
+       "0.5",
+       "1",
+       "10"
+      ],
+      "answer_index": 2,
+      "page": 642,
+      "explanation": "La valeur de r est toujours comprise entre -1 et +1 inclus."
+     },
+     {
+      "notion_id": "regression_fuel_efficiency",
+      "question": "Quel est l'un des objectifs d'apprentissage du laboratoire sur l'efficacité énergétique (Regression Fuel Efficiency) ?",
+      "options": [
+       "Calculer et construire la droite de meilleur ajustement entre deux variables.",
+       "Calculer uniquement la moyenne géométrique de la variable indépendante.",
+       "Tracer un diagramme circulaire des fréquences.",
+       "Mesurer la température des voitures automatiques."
+      ],
+      "answer_index": 0,
+      "page": 659,
+      "explanation": "L'un des objectifs est que l'étudiant calcule et construise la droite de meilleur ajustement entre deux variables."
+     },
+     {
+      "notion_id": "regression_distance_from_school",
+      "question": "Combien de membres de la classe sont utilisés pour l'échantillon dans le laboratoire sur la distance de l'école ?",
+      "options": [
+       "Quatre",
+       "Six",
+       "Huit",
+       "Dix"
+      ],
+      "answer_index": 2,
+      "page": 656,
+      "explanation": "Le texte indique d'utiliser huit membres de votre classe pour l'échantillon."
+     }
+    ]
+   },
+   "feynman": [
+    {
+     "notion_id": "correlation_coefficient",
+     "lang": "en",
+     "explanation": "The correlation coefficient r goes from -1 to 1. It tells how strong the straight-line relationship between x and y is, and its sign tells the direction: positive when y grows with x, negative otherwise.",
+     "result": {
+      "covered": [
+       "The correlation coefficient provides a numerical measure of the strength and direction of the linear association between two variables.",
+       "Values of the correlation coefficient always range between negative one and positive one inclusively."
+      ],
+      "missing": [
+       "Strong linear correlation does not imply causation between the independent and dependent variables."
+      ],
+      "errors": [],
+      "score": 3,
+      "follow_up": "If two variables have a strong positive correlation, does that mean one causes the other to change?",
+      "pages": [
+       641,
+       642
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}
