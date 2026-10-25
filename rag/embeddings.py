@@ -6,7 +6,7 @@ from sentence_transformers import SentenceTransformer
 
 from config import get_env
 
-BASE_MODEL = "intfloat/multilingual-e5-small"
+BASE_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 DIM = 384
 QUERY_PREFIX = "query: "
 PASSAGE_PREFIX = "passage: "
