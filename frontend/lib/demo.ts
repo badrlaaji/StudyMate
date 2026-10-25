@@ -201,6 +201,7 @@ export function demoReply(method: string, path: string, query: URLSearchParams, 
   if (path === "notions") return json(course.notions.map((n) => notionRow(n, lang)));
   if (path === "mastery") return json({ notions: mastery(scores, course.id), status: "ok" });
   if (path === "plan") return json({ plan: plan(scores, course, lang), status: "ok" });
+  if (path === "review") return json({ reviews: [], status: "demo" }); // FSRS needs dated scores
   if (path === "chat" && typeof body?.message === "string") return json(chat(scores, course, body.message, lang));
   if (path === "quiz") return json({ questions: pickQuiz(scores, course, Number(body?.n) || 3, lang), status: "ok" });
   if (path === "quiz/result" && Array.isArray(body?.answers)) {

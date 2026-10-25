@@ -90,6 +90,7 @@ describe("demo routes, without network", () => {
     expect(notions[0].name).toBe(course.notions[0].name_fr);
     expect((await call(GET, "GET", "mastery")).status).toBe(200);
     expect((await call(GET, "GET", "plan")).status).toBe(200);
+    expect((await (await call(GET, "GET", "review")).json()).status).toBe("demo"); // FSRS: full version
   });
 
   it("serves a stored answer with its verified citations", async () => {

@@ -4,7 +4,7 @@ import { demoReply, isDemo, readCookie, SCORES_COOKIE } from "@/lib/demo";
 
 const API_URL = process.env.API_URL ?? "http://localhost:8000";
 const ALLOWED = [
-  /^(health|courses|chat|notions|feynman|quiz|quiz\/result|mastery|plan|book\.pdf|uploads)$/,
+  /^(health|courses|chat|notions|feynman|quiz|quiz\/result|mastery|plan|review|book\.pdf|uploads)$/,
   /^courses\/[a-z0-9-]+(\/(status|retry))?$/, // status, retry and delete of a course
 ];
 

@@ -34,6 +34,13 @@ public class MasteryService {
         return summarizeAll(repository.findAllByCourseIdOrderByCreatedAtDescIdDesc(courseId));
     }
 
+    /** Every score of a course with its time, oldest first. */
+    public List<ScoreHistory> history(String courseId) {
+        return repository.findAllByCourseIdOrderByCreatedAtAscIdAsc(courseId).stream()
+                .map(ScoreHistory::of)
+                .toList();
+    }
+
     /** Weak notions of a course only, weakest first, at most {@code limit}. */
     public List<NotionMastery> weak(String courseId, int limit) {
         return mastery(courseId).stream().filter(m -> m.level().equals("WEAK")).limit(limit).toList();

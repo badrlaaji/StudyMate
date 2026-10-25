@@ -77,6 +77,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : rien. Le fine-tuné ne peut pas être évalué en CI tant qu'il n'est pas publié sur le Hub.
 - **Chiffres** : e5 de base, jeu test : hit@4 EN 0,85 / FR 0,75, MRR 0,703 / 0,604 (identiques à l'étape 4 : reproductible) ; réponses EN 16/20, FR 18/20, pièges 5/5 et 5/5 ; enregistrement 11 min (112 appels) ; rejeu hors ligne 21 s, 0 miss ; régression (MiniLM anglais) : FR hit@4 0,60, MRR 0,514, code de sortie 1, et en CI (run 40222183740 : python vert, eval rouge, 6 erreurs) ; CI sur main : mêmes chiffres qu'en local, 0 miss, job eval 103 s ; tests : 173 Python (+ 1 base), 18 Vitest.
 
+## Étape 15 — Répétition espacée FSRS (2026-10-25)
+- **Fait** : Spring `GET /api/scores` (historique daté) ; `agent/review.py` (py-fsrs 6.3.2, rejeu des notes) ; `GET /review` ; quiz : notions dues d'abord ; question passée non notée ; carte « Prochaines révisions » sur la page Progression (FR/EN, mobile, sombre).
+- **Bloqué** : rien. Démo publique sans FSRS (pas de dates dans le cookie).
+- **Chiffres** : 1re note « bonne » le 1er janvier 9 h → révision le 3 ; 2e le 3 → le 14 ; échec le 14 → le 16 (tests à dates fixes) ; base locale : 12 notes du 20 octobre → 4 notions en retard de 3 à 4 jours ; question passée : 12 notes avant, 12 après ; axe-core 0 violation (FR bureau, EN mobile sombre) ; tests : 190 Python (+ 1 base), 16 Spring, 20 Vitest ; porte de régression : 0 miss.
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |

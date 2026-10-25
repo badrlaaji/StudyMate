@@ -8,4 +8,7 @@ public interface ScoreRepository extends JpaRepository<Score, Long> {
 
     /** All scores of one course, newest first (id breaks ties between equal timestamps). */
     List<Score> findAllByCourseIdOrderByCreatedAtDescIdDesc(String courseId);
+
+    /** All scores of one course, oldest first: the review history. */
+    List<Score> findAllByCourseIdOrderByCreatedAtAscIdAsc(String courseId);
 }

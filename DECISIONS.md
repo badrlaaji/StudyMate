@@ -334,3 +334,17 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S14-5 Observation non adoptée : chevauchement 0
 - En cherchant une régression, `OVERLAP = 0` a donné EN 0,95 et FR 0,80 sur le jeu **test**. Non adopté : D3 réserve le jeu test à la mesure finale, un réglage se décide sur le jeu dev. À évaluer sur dev plus tard.
+
+## Étape 15 — Répétition espacée FSRS (plan v2, S3)
+
+### S15-1 FSRS calculé côté Python, rejoué depuis l'historique
+- py-fsrs 6.3.2 (MIT, roue pure Python, seule dépendance `typing-extensions`) est en Python ; Spring garde les notes. Options : stocker l'état FSRS dans Spring (porter l'algorithme en Java), ou rejouer l'historique daté à chaque demande. Choix : Spring expose `GET /api/scores` (notes datées), FastAPI rejoue les notes de chaque notion dans l'ordre. Rien de plus à stocker, et l'état ne peut pas diverger des notes.
+
+### S15-2 Réglages : jours, pas de hasard, pas de « Easy »
+- `learning_steps=()` et `relearning_steps=()` : une notion se révise sur des jours, pas à 1 ou 10 minutes (réglages par défaut pensés pour des cartes). `enable_fuzzing=False` : mêmes notes = mêmes dates, donc tests à dates fixes. Note → évaluation : 0-2 Again, 3 Hard, 4-5 Good. Jamais Easy : c'est une auto-évaluation, et une seule bonne réponse à un QCM ne la justifie pas.
+
+### S15-3 Question passée = aucune note
+- `chosen_index` absent → question non notée ; si toutes les questions d'une notion sont passées, aucune note n'est envoyée à Spring, donc ni la maîtrise ni la date de révision ne bougent. Vérifié en vrai : 12 notes avant, 12 après.
+
+### S15-4 Le quiz commence par les notions dues
+- Ordre : notions dues aujourd'hui ou en retard (FSRS), puis notions faibles (Spring), puis hasard. Démo publique : pas de FSRS (le cookie ne garde ni dates ni historique complet), la carte est masquée.

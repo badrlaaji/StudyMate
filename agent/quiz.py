@@ -2,6 +2,7 @@
 
 import asyncio
 import random
+from datetime import UTC, datetime
 
 import httpx
 from pydantic import BaseModel, Field
@@ -9,7 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 from agent.feynman import round_half_up
 from agent.llm import invoke_structured
-from agent.spring import fetch_weak_notions
+from agent.review import due_ids, review_schedule
+from agent.spring import fetch_history, fetch_weak_notions
 from course.notions import Catalog, Notion
 from rag.embeddings import model_name
 from rag.store import chunks_for_pages
@@ -52,6 +54,11 @@ def pick_notions(
     picked = [by_id[i] for i in weak_ids if i in by_id][:n]
     others = [notion for notion in catalog.notions if notion not in picked]
     return picked + rng.sample(others, max(0, n - len(picked)))
+
+
+def quiz_order(due: list[str], weak: list[str]) -> list[str]:
+    """Notions due for review first, then the other weak ones."""
+    return due + [notion_id for notion_id in weak if notion_id not in due]
 
 
 def quiz_prompt(notions: list[Notion], texts: dict[int, str], lang: str) -> str:
@@ -109,10 +116,13 @@ async def build_quiz(
     llm=None,
     rng: random.Random | None = None,
 ) -> tuple[list[QuizQuestion], bool]:
-    """Weak notions from Spring, then the quiz; also say if Spring was down."""
+    """Due (FSRS), then weak notions, then the quiz; and whether Spring was down."""
     weak = await fetch_weak_notions(http, course, n)
+    history = await fetch_history(http, course)
+    schedule = review_schedule(history or [], catalog, lang, datetime.now(UTC))
     weak_ids = [item["notionId"] for item in weak or []]
-    notions = pick_notions(weak_ids, catalog, n, rng or random.Random())
+    first = quiz_order(due_ids(schedule), weak_ids)
+    notions = pick_notions(first, catalog, n, rng or random.Random())
     texts = await page_texts(engine, course, notions)
     questions = await asyncio.to_thread(make_quiz, notions, texts, lang, llm)
     return questions, weak is None

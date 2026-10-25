@@ -2,17 +2,19 @@ import Link from "next/link";
 
 import Icon, { LEVEL_ICONS } from "@/components/Icon";
 import ScoreChart from "@/components/LazyScoreChart";
-import type { Mastery, Notion, PlanRow } from "@/lib/api";
+import NextReviews from "@/components/NextReviews";
+import type { Mastery, Notion, PlanRow, Review } from "@/lib/api";
 import { fmt, type Dict } from "@/lib/i18n";
 
 type Level = keyof Dict["levels"];
 const LEVELS: Level[] = ["MASTERED", "LEARNING", "WEAK", "NONE"];
 const RING_RADIUS = 70;
 
-type Props = { notions: Notion[]; mastery: Mastery[]; plan: PlanRow[]; t: Dict };
+// reviews: null when spaced repetition is unavailable (Spring down, public demo).
+type Props = { notions: Notion[]; mastery: Mastery[]; plan: PlanRow[]; reviews: Review[] | null; t: Dict };
 
 // Dashboard of one course: overall progress, what to review next, every notion.
-export default function MasteryMap({ notions, mastery, plan, t }: Props) {
+export default function MasteryMap({ notions, mastery, plan, reviews, t }: Props) {
   const byId = new Map(mastery.map((m) => [m.notionId, m]));
   const levelOf = (id: string): Level => (byId.get(id)?.level as Level) ?? "NONE";
   const counts = Object.fromEntries(LEVELS.map((l) => [l, notions.filter((n) => levelOf(n.id) === l).length]));
@@ -88,6 +90,8 @@ export default function MasteryMap({ notions, mastery, plan, t }: Props) {
           </ol>
         )}
       </section>
+
+      {reviews && <NextReviews reviews={reviews} t={t} />}
 
       {chart.length > 0 && (
         <section className="card" aria-labelledby="chart-title">

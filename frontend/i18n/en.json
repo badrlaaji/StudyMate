@@ -217,5 +217,18 @@
     "reader": "The demo has no local copy of the book: open this page on openstax.org with the button above. The cited passage is quoted here.",
     "library": "The public demo is read-only: install StudyMate locally to upload a textbook.",
     "pdfOnline": "PDF read online (openstax.org)"
+  },
+  "reviews": {
+    "title": "Next reviews",
+    "intro": "Spaced repetition (FSRS): each notion comes back just before you would forget it, based on your scores.",
+    "empty": "No review scheduled yet: explain a notion or take a quiz to start.",
+    "today": "Due today",
+    "late": "{days} days late",
+    "lateOne": "1 day late",
+    "tomorrow": "Tomorrow",
+    "inDays": "In {days} days",
+    "count": "{count} reviews",
+    "countOne": "1 review",
+    "start": "Review now"
   }
 }

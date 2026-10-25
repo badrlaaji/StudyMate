@@ -629,3 +629,15 @@ details > summary { cursor: pointer; }
 .demo-banner { max-width: 1180px; margin: 0 auto var(--space-5); background: var(--accent-soft); border-color: color-mix(in oklab, var(--accent) 40%, transparent); }
 .demo-banner svg { color: var(--accent-strong); }
 .demo-banner a { color: var(--accent-strong); font-weight: 600; }
+
+/* Spaced repetition: next review of each notion */
+.review-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-2); }
+.review-row {
+  display: grid; grid-template-columns: minmax(9rem, auto) 1fr auto auto; align-items: center; gap: var(--space-3);
+  padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface);
+}
+.review-row[data-due="true"] { border-color: color-mix(in oklab, var(--weak) 45%, var(--line)); }
+.badge-due { background: color-mix(in oklab, var(--weak) 13%, var(--surface)); color: var(--weak-ink); border-color: color-mix(in oklab, var(--weak) 40%, transparent); }
+@media (max-width: 720px) {
+  .review-row { grid-template-columns: 1fr; justify-items: start; }
+}

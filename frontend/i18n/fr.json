@@ -217,5 +217,18 @@
     "reader": "La démo n'a pas de copie locale du livre : ouvre cette page sur openstax.org avec le bouton ci-dessus. Le passage cité est recopié ici.",
     "library": "La démo publique est en lecture seule : installe StudyMate en local pour importer un manuel.",
     "pdfOnline": "PDF lu en ligne (openstax.org)"
+  },
+  "reviews": {
+    "title": "Prochaines révisions",
+    "intro": "Répétition espacée (FSRS) : chaque notion revient juste avant que tu l'oublies, d'après tes notes.",
+    "empty": "Aucune révision prévue : explique une notion ou fais un quiz pour commencer.",
+    "today": "À revoir aujourd'hui",
+    "late": "{days} jours de retard",
+    "lateOne": "1 jour de retard",
+    "tomorrow": "Demain",
+    "inDays": "Dans {days} jours",
+    "count": "{count} révisions",
+    "countOne": "1 révision",
+    "start": "Réviser maintenant"
   }
 }

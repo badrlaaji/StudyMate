@@ -1,8 +1,9 @@
 """HTTP client for the Spring Boot mastery service; None means "Spring is down".
 
 Contract: GET /api/notions/weak?course=C&limit=N and GET /api/mastery?course=C return
-[{"notionId": str, "average": float, "count": int, ...}]; POST /api/scores takes
-{"courseId", "notionId", "source": "FEYNMAN" | "QUIZ", "score": 0-5}.
+[{"notionId": str, "average": float, "count": int, ...}]; GET /api/scores?course=C
+returns [{"notionId", "source", "score", "createdAt"}] oldest first; POST /api/scores
+takes {"courseId", "notionId", "source": "FEYNMAN" | "QUIZ", "score": 0-5}.
 """
 
 import logging
@@ -43,6 +44,11 @@ async def fetch_weak_notions(
 async def fetch_mastery(http: httpx.AsyncClient, course: str) -> list[dict] | None:
     """Return the mastery of every scored notion of a course."""
     return await get_json(http, "/api/mastery", {"course": course})
+
+
+async def fetch_history(http: httpx.AsyncClient, course: str) -> list[dict] | None:
+    """Return every score of a course with its time, oldest first (for FSRS)."""
+    return await get_json(http, "/api/scores", {"course": course})
 
 
 async def post_score(

@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +87,23 @@ class ScoreControllerTest {
     void weakNotionsWithoutOrWithBadCourseIs400() throws Exception {
         mvc.perform(get("/api/notions/weak")).andExpect(status().isBadRequest());
         mvc.perform(get("/api/notions/weak").param("course", "Bad Course!")).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void historyListsScoresWithTheirTime() throws Exception {
+        ScoreHistory first = new ScoreHistory("k_means", Source.FEYNMAN, 3, Instant.parse("2026-01-01T09:00:00Z"));
+        ScoreHistory second = new ScoreHistory("k_means", Source.QUIZ, 5, Instant.parse("2026-01-03T09:00:00Z"));
+        when(service.history("data-science")).thenReturn(List.of(first, second));
+        mvc.perform(get("/api/scores").param("course", "data-science"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].source").value("FEYNMAN"))
+                .andExpect(jsonPath("$[0].createdAt").value("2026-01-01T09:00:00Z"))
+                .andExpect(jsonPath("$[1].score").value(5));
+    }
+
+    @Test
+    void historyWithBadCourseIs400() throws Exception {
+        mvc.perform(get("/api/scores").param("course", "Bad Course!")).andExpect(status().isBadRequest());
     }
 
     @Test

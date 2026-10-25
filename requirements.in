@@ -12,3 +12,4 @@ sentence-transformers
 torch
 pypdf
 httpx
+fsrs==6.3.2

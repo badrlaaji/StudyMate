@@ -54,11 +54,14 @@ REGISTRY = Registry(
 
 
 def spring_handler(request: httpx.Request) -> httpx.Response:
-    """Fake Spring: weak notions, mastery and score recording (course required)."""
-    if request.url.path == "/api/scores":
+    """Fake Spring: weak notions, mastery, history and score recording."""
+    if request.url.path == "/api/scores" and request.method == "POST":
         SCORES.append(request.content)
         return httpx.Response(201)
     assert request.url.params["course"] in {"data-science", "statistics"}
+    if request.url.path == "/api/scores":  # history: one score on 1 January 2026
+        row = {"notionId": "k_means", "source": "QUIZ", "score": 4}
+        return httpx.Response(200, json=[row | {"createdAt": "2026-01-01T09:00:00Z"}])
     if request.url.path == "/api/notions/weak":
         return httpx.Response(200, json=[{"notionId": "k_means", "average": 2.0}])
     return httpx.Response(

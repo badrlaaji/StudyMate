@@ -34,3 +34,12 @@ export function pdfUrl(course: string, page?: number): string {
   const url = `/api/book.pdf?course=${encodeURIComponent(course)}`;
   return page ? `${url}#page=${page}` : url;
 }
+
+// Next review as text: "Due today", "2 days late", "In 5 days" (never colour only).
+export function whenLabel(daysLeft: number, t: Dict): string {
+  if (daysLeft < -1) return fmt(t.reviews.late, { days: -daysLeft });
+  if (daysLeft === -1) return t.reviews.lateOne;
+  if (daysLeft === 0) return t.reviews.today;
+  if (daysLeft === 1) return t.reviews.tomorrow;
+  return fmt(t.reviews.inDays, { days: daysLeft });
+}

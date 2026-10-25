@@ -8,6 +8,7 @@ Every endpoint takes an optional course id (course/courses.json); none = default
 import asyncio
 import logging
 from contextlib import asynccontextmanager
+from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import FastAPI, HTTPException, Query, Request
@@ -19,7 +20,14 @@ from agent.feynman import evaluate_explanation
 from agent.graph import build_graph, to_response
 from agent.plan import PLAN_SIZE, build_plan
 from agent.quiz import build_quiz, notion_scores
-from agent.spring import fetch_mastery, fetch_weak_notions, make_client, post_score
+from agent.review import review_schedule
+from agent.spring import (
+    fetch_history,
+    fetch_mastery,
+    fetch_weak_notions,
+    make_client,
+    post_score,
+)
 from api.schemas import (
     ChatRequest,
     ChatResponse,
@@ -243,7 +251,11 @@ async def quiz(body: QuizRequest, request: Request) -> dict:
 async def quiz_result(body: QuizResultRequest, request: Request) -> dict:
     """Grade by code (no LLM) and record one score per notion in Spring."""
     course = find_course(request, body.course)
-    results = [(a.notion_id, a.chosen_index == a.answer_index) for a in body.answers]
+    results = [
+        (a.notion_id, a.chosen_index == a.answer_index)
+        for a in body.answers
+        if a.chosen_index is not None  # a skipped question is not graded
+    ]
     scores = notion_scores(results)
     recorded = [
         await post_score(request.app.state.http, course.id, notion_id, "QUIZ", score)
@@ -269,6 +281,20 @@ async def plan(request: Request, lang: Lang = "en", course: CourseQuery = None) 
     if weak is None:
         return {"plan": [], "status": "degraded"}
     return {"plan": build_plan(weak, catalog, lang), "status": "ok"}
+
+
+@app.get("/review")
+async def review(
+    request: Request, lang: Lang = "en", course: CourseQuery = None
+) -> dict:
+    """Next review date (FSRS) of every scored notion, the most urgent first."""
+    found = find_course(request, course)
+    catalog = find_catalog(request, found)
+    history = await fetch_history(request.app.state.http, found.id)
+    if history is None:
+        return {"reviews": [], "status": "degraded"}
+    now = datetime.now(UTC)
+    return {"reviews": review_schedule(history, catalog, lang, now), "status": "ok"}
 
 
 @app.get("/book.pdf")

@@ -54,4 +54,15 @@ class MasteryServiceTest {
         assertThat(service.weak("data-science", 1)).extracting(NotionMastery::notionId).containsExactly("a");
         assertThat(service.weak("statistics", 5)).isEmpty(); // another course: no scores
     }
+
+    @Test
+    void historyKeepsTheTimeAndTheSourceOfEachScore() {
+        ScoreRepository repository = mock(ScoreRepository.class);
+        Instant time = Instant.parse("2026-01-01T09:00:00Z");
+        when(repository.findAllByCourseIdOrderByCreatedAtAscIdAsc("data-science"))
+                .thenReturn(List.of(new Score("data-science", "a", Source.FEYNMAN, 4, time)));
+        MasteryService service = new MasteryService(repository);
+        assertThat(service.history("data-science"))
+                .containsExactly(new ScoreHistory("a", Source.FEYNMAN, 4, time));
+    }
 }

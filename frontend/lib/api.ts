@@ -36,6 +36,8 @@ export type Notion = {
 
 export type Mastery = { notionId: string; average: number; count: number; level: string };
 export type PlanRow = { notion_id: string; name: string; score: number; pages: number[]; action: string };
+// Spaced repetition (FSRS): next review of a notion; days_left <= 0 = due now.
+export type Review = { notion_id: string; name: string; due: string; days_left: number; reviews: number; pages: number[] };
 
 // GET a JSON body; the fallback keeps the page rendering when the API is down.
 async function getJson<T>(path: string, fallback: T): Promise<T> {
@@ -69,4 +71,8 @@ export function getMastery(course: string): Promise<{ notions: Mastery[]; status
 
 export function getPlan(lang: string, course: string): Promise<{ plan: PlanRow[]; status: string }> {
   return getJson(`/plan?lang=${lang}&course=${course}`, { plan: [], status: "degraded" });
+}
+
+export function getReviews(lang: string, course: string): Promise<{ reviews: Review[]; status: string }> {
+  return getJson(`/review?lang=${lang}&course=${course}`, { reviews: [], status: "degraded" });
 }

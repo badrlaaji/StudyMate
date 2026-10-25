@@ -118,7 +118,8 @@ class QuizAnswer(BaseModel):
 
     notion_id: str
     answer_index: int = Field(ge=0, le=3)
-    chosen_index: int = Field(ge=0, le=3)
+    # None = skipped ("passée"): no score, so no review date and no mastery change.
+    chosen_index: int | None = Field(default=None, ge=0, le=3)
 
 
 class QuizResultRequest(BaseModel):

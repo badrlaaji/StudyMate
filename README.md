@@ -30,9 +30,11 @@ honest feedback on what they have actually understood.
 - **Feynman mode** (`/feynman`): explain a notion; the LLM judges each key idea of the
   catalogue, and the **code** computes the 0-5 score.
 - **Progress** (`/`): mastery of every notion (average of the last 3 scores), what to review
-  next with the pages to re-read, computed without any LLM.
-- **Quiz** (`/quiz`): multiple-choice questions on the weakest notions (keys 1-4, Enter),
-  graded by code, with the source page of each answer.
+  next with the pages to re-read, and a **review date per notion** from spaced repetition
+  (FSRS, replayed from the dated scores), all computed without any LLM.
+- **Quiz** (`/quiz`): multiple-choice questions on the notions due for review first, then the
+  weakest ones (keys 1-4, Enter), graded by code, with the source page of each answer. A
+  skipped question is not graded: it changes neither the mastery nor the review date.
 - **Library** (`/library`): one card per course (PDF, indexed passages, notions); **upload
   a textbook PDF** and choose its chapters; switch course from the sidebar. Each course has
   its own index, notions and scores.
@@ -247,7 +249,8 @@ then `uv run python -m eval.regression`.
 
 ## Stack
 
-Python 3.13 (FastAPI, LangGraph, LangChain, sentence-transformers, PyTorch CPU, pypdf, asyncpg),
+Python 3.13 (FastAPI, LangGraph, LangChain, sentence-transformers, PyTorch CPU, pypdf, asyncpg,
+py-fsrs),
 Gemini `gemini-3.5-flash-lite` with Pydantic structured outputs, PostgreSQL + pgvector (Neon in
 development), Next.js 16 + React 19 + react-pdf + Recharts, Spring Boot 4.1 + Java 21, GitHub
 Actions, Docker Compose. Design decisions are logged in [DECISIONS.md](DECISIONS.md) and the

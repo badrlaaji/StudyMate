@@ -37,6 +37,12 @@ public class ScoreController {
                 .orElseThrow();
     }
 
+    /** Score history of a course, oldest first (FastAPI computes the FSRS review dates). */
+    @GetMapping("/scores")
+    public List<ScoreHistory> history(@RequestParam @Pattern(regexp = ScoreRequest.COURSE_ID) String course) {
+        return service.history(course);
+    }
+
     /** Weak notions of a course (average of the last 3 scores below 3), weakest first. */
     @GetMapping("/notions/weak")
     public List<NotionMastery> weak(

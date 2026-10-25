@@ -1,15 +1,16 @@
 import Icon from "@/components/Icon";
 import MasteryMap from "@/components/MasteryMap";
-import { getMastery, getNotions, getPlan } from "@/lib/api";
+import { getMastery, getNotions, getPlan, getReviews } from "@/lib/api";
 import { getSession } from "@/lib/lang";
 
 export default async function ProgressPage() {
   const { lang, t, course } = await getSession();
   if (!course) return <ApiDown text={t.study.error} />;
-  const [notions, mastery, plan] = await Promise.all([
+  const [notions, mastery, plan, review] = await Promise.all([
     getNotions(lang, course.id),
     getMastery(course.id),
     getPlan(lang, course.id),
+    getReviews(lang, course.id),
   ]);
   return (
     <div className="page">
@@ -35,7 +36,13 @@ export default async function ProgressPage() {
           </span>
         </p>
       ) : (
-        <MasteryMap notions={notions} mastery={mastery.notions} plan={plan.plan} t={t} />
+        <MasteryMap
+          notions={notions}
+          mastery={mastery.notions}
+          plan={plan.plan}
+          reviews={review.status === "ok" ? review.reviews : null}
+          t={t}
+        />
       )}
     </div>
   );
