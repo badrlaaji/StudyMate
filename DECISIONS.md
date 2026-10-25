@@ -393,3 +393,14 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S18-5 Démo : présence dans le navigateur
 - Le plan exige que S6 et S7 marchent dans la démo : sessions, objectif et trophées dans le cookie HttpOnly `demo_study` (60 derniers jours au plus), mêmes contrôles et mêmes règles (portées en TypeScript, testées).
+
+## Étape 19 — Traçabilité des appels LLM (plan v2, S5)
+
+### S19-1 MLflow plutôt que Langfuse
+- Langfuse v3 auto-hébergé demande PostgreSQL, ClickHouse, Redis et un stockage objet : trop lourd pour un poste de 8 Go. MLflow 3.17 (Apache 2.0) trace avec un serveur local et une base SQLite dans `data/`. Runtime : le SDK léger `mlflow-tracing` seulement ; dev : `mlflow` complet (serveur, interface, analyse). Seul effet sur l'existant : `pyarrow` 26.0.0 → 25.0.1 (MLflow exige < 26).
+
+### S19-2 Un seul point d'instrumentation, coupé par défaut
+- Tous les appels LLM passent par `invoke_structured` : un span par appel (latence, jetons lus avec `include_raw=True`, cache, erreurs 429 et 5xx, résultat), sous le span de la requête (`POST /chat`, `/feynman`, `/quiz`). Sans `MLFLOW_TRACKING_URI`, rien n'est importé ni tracé (tests, CI, démo). La télémétrie de MLflow (et ses messages « hint ») est coupée par `MLFLOW_DISABLE_TELEMETRY` / `DO_NOT_TRACK`. Vécu : MLflow écrit ses fichiers de traces dans `mlartifacts/` ou `mlruns/` à la racine ; ils sont maintenant dans `data/` (`--artifacts-destination`) et ignorés par Git, car ils contiennent les prompts.
+
+### S19-3 Mesurer avec un cache vide, à deux cadences
+- Les questions dev étaient déjà dans le cache : la mesure utilise un dossier de cache vide pour que chaque appel parte vraiment. Deux séries de 20 requêtes : pause de 6 s (0 % de 429) et rafale sans pause (7,5 % des appels, 15 % des requêtes). La rafale montre que le traçage voit les 429 et que la pause des scripts les évite.

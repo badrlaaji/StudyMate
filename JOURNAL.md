@@ -97,6 +97,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : pas de test avec de vraies personnes (à faire avec consentement, comme prévu par le plan) ; test caméra fait avec une fausse caméra.
 - **Chiffres** : fausse caméra : en étude → absent à 10 s (6 s comptées, les secondes sans visage retirées) → retour à 16 s, total 14 s, 2 envois acceptés ; 320×240 : 0 visage sur 20 images, 640×480 : 1 visage par image (défaut corrigé) ; 3 jours simulés à 30 min → Premier pas, Objectif atteint, Régulier attribués par Spring ; démo : 0 requête sortante ; axe-core 0 violation (/study session active) ; tests : 211 Python (+ 1 base), 51 Spring, 56 Vitest.
 
+## Étape 19 — Traçabilité des appels LLM (2026-10-25)
+- **Fait** : traçage MLflow (span par requête et par appel LLM : latence, jetons, cache, 429/5xx), coupé par défaut ; télémétrie MLflow coupée ; `eval/llm_traces.py` (rapport) ; mesure réelle à deux cadences ; latence `/chat` remesurée.
+- **Bloqué** : rien.
+- **Chiffres** : 20 requêtes, 40 appels réels par série ; pause 6 s : 0 % de 429, appel LLM médiane 1,22 s / p90 1,42 s, `/chat` médiane 2,74 s / p90 3,43 s, 19/20 corrects ; rafale : 4 erreurs 429, 7,5 % des appels, 15 % des requêtes, 1 appel en échec (routeur de secours), `/chat` max 60,91 s ; 25 226 jetons d'entrée et 2 850 de sortie (≈ 1 310 par requête) ; tests : 216 Python (+ 1 base), 51 Spring, 56 Vitest.
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |

@@ -1,148 +1,148 @@
 {
   "calls": 20,
-  "median_s": 2.73,
-  "p90_s": 3.17,
-  "min_s": 2.33,
-  "max_s": 5.55,
+  "median_s": 2.74,
+  "p90_s": 3.43,
+  "min_s": 2.19,
+  "max_s": 3.5,
   "dev_correct": 19,
   "rows": [
     {
       "id": "dev01",
       "lang": "en",
-      "seconds": 3.17,
+      "seconds": 3.12,
       "status": "ok",
       "correct": true
     },
     {
       "id": "dev01",
       "lang": "fr",
-      "seconds": 2.54,
+      "seconds": 2.5,
       "status": "ok",
       "correct": true
     },
     {
       "id": "dev02",
       "lang": "en",
-      "seconds": 2.33,
+      "seconds": 2.82,
       "status": "ok",
       "correct": true
     },
     {
       "id": "dev02",
       "lang": "fr",
-      "seconds": 2.84,
+      "seconds": 2.41,
       "status": "ok",
       "correct": true
     },
     {
       "id": "dev03",
       "lang": "en",
-      "seconds": 2.69,
+      "seconds": 3.43,
       "status": "ok",
       "correct": true
     },
     {
       "id": "dev03",
       "lang": "fr",
-      "seconds": 2.81,
+      "seconds": 3.45,
       "status": "ok",
       "correct": true
     },
     {
       "id": "dev04",
       "lang": "en",
-      "seconds": 2.59,
+      "seconds": 3.5,
       "status": "ok",
       "correct": true
     },
     {
       "id": "dev04",
       "lang": "fr",
-      "seconds": 3.06,
+      "seconds": 2.19,
       "status": "ok",
       "correct": true
     },
     {
       "id": "dev05",
       "lang": "en",
-      "seconds": 2.65,
+      "seconds": 3.24,
       "status": "ok",
       "correct": true
     },
     {
       "id": "dev05",
       "lang": "fr",
-      "seconds": 2.89,
+      "seconds": 2.5,
       "status": "ok",
       "correct": true
     },
     {
       "id": "dev06",
       "lang": "en",
-      "seconds": 2.73,
+      "seconds": 2.79,
       "status": "ok",
       "correct": true
     },
     {
       "id": "dev06",
+      "lang": "fr",
+      "seconds": 2.66,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev07",
+      "lang": "en",
+      "seconds": 3.1,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev07",
+      "lang": "fr",
+      "seconds": 2.49,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev08",
+      "lang": "en",
+      "seconds": 2.62,
+      "status": "ok",
+      "correct": true
+    },
+    {
+      "id": "dev08",
       "lang": "fr",
       "seconds": 2.82,
       "status": "ok",
       "correct": true
     },
     {
-      "id": "dev07",
-      "lang": "en",
-      "seconds": 2.63,
-      "status": "ok",
-      "correct": true
-    },
-    {
-      "id": "dev07",
-      "lang": "fr",
-      "seconds": 3.26,
-      "status": "ok",
-      "correct": true
-    },
-    {
-      "id": "dev08",
-      "lang": "en",
-      "seconds": 2.72,
-      "status": "ok",
-      "correct": true
-    },
-    {
-      "id": "dev08",
-      "lang": "fr",
-      "seconds": 2.9,
-      "status": "ok",
-      "correct": true
-    },
-    {
       "id": "dev09",
       "lang": "en",
-      "seconds": 5.55,
+      "seconds": 2.62,
       "status": "ok",
       "correct": false
     },
     {
       "id": "dev09",
       "lang": "fr",
-      "seconds": 2.34,
+      "seconds": 2.69,
       "status": "ok",
       "correct": true
     },
     {
       "id": "dev10",
       "lang": "en",
-      "seconds": 2.52,
+      "seconds": 3.19,
       "status": "ok",
       "correct": true
     },
     {
       "id": "dev10",
       "lang": "fr",
-      "seconds": 2.68,
+      "seconds": 2.57,
       "status": "ok",
       "correct": true
     }

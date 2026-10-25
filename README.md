@@ -186,7 +186,24 @@ Actions: [the failing run](https://github.com/badrlaaji/StudyMate/actions/runs/4
 [the same commit without it](https://github.com/badrlaaji/StudyMate/actions/runs/40222173735)
 (the CI runner reproduces the local numbers, 0 missing recordings).
 
-**Speed** — median `/chat` latency **2.73 s** (p90 3.17 s) on 20 questions never asked before (dev set, English and French), Gemini free tier, CPU only, measured before the multi-course change (same pipeline). When the free-tier quota is saturated, the code waits 60 s and retries: one call then took 2 min 30 s.
+**Speed** — median `/chat` latency **2.74 s** (p90 3.43 s) on 20 questions sent with an empty LLM cache (dev set, English and French), Gemini free tier, CPU only, measured again on 25 October 2026 (2.73 s at step 10). When the free-tier quota is saturated, the code waits 60 s and retries: see the burst row below.
+
+**LLM tracing** (MLflow 3.17, local server) — every request is a trace and every Gemini call
+a span with its latency, input and output tokens, cache hit and 429/5xx errors. The 10 dev
+questions in English and French through the real API, with an empty LLM cache (so every call
+reaches Gemini), measured on 25 October 2026 (`eval/results/llm_traces*.json`):
+
+| Pace | Live LLM calls | Calls with a 429 | Requests with a 429 | LLM call median / p90 | `/chat` median / max |
+| --- | --- | --- | --- | --- | --- |
+| 6 s between questions | 40 | 0.0 % | 0.0 % | 1.22 s / 1.42 s | 2.74 s / 3.50 s |
+| no pause (burst) | 40 | 7.5 % | 15.0 % | 1.32 s / 1.72 s | 2.62 s / 60.91 s |
+
+A request costs about 1,300 input tokens (router + answer, two calls). A 429 costs a 60 s
+wait before the single retry: the pause in the scripts avoids it. Run it: start
+`uv run mlflow server --backend-store-uri sqlite:///data/mlflow.db --artifacts-destination data/mlflow-artifacts --port 5000`, set
+`MLFLOW_TRACKING_URI=http://127.0.0.1:5000`, use the app, then
+`uv run python -m eval.llm_traces` (or open the MLflow UI). Without the variable, tracing
+is off and costs nothing. MLflow's own usage statistics are switched off.
 
 **Front end** — Lighthouse 13.5 on the production build, and axe-core (WCAG 2.2 AA rules):
 **0 violations** on the 6 pages × light/dark × desktop/mobile, and on the answered, Feynman
@@ -277,7 +294,7 @@ then `uv run python -m eval.regression`.
 ## Stack
 
 Python 3.13 (FastAPI, LangGraph, LangChain, sentence-transformers, PyTorch CPU, pypdf, asyncpg,
-py-fsrs),
+py-fsrs, MLflow tracing),
 Gemini `gemini-3.5-flash-lite` with Pydantic structured outputs, PostgreSQL + pgvector (Neon in
 development), Next.js 16 + React 19 + react-pdf + Recharts, Spring Boot 4.1 + Java 21, GitHub
 Actions, Docker Compose. Design decisions are logged in [DECISIONS.md](DECISIONS.md) and the

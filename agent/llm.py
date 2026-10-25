@@ -11,6 +11,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel
 
 from agent.cache import CACHE_DIR, cache_get, cache_key, cache_put
+from agent.tracing import set_attributes, span
 from config import ROOT, get_env
 
 # Lowest thinking level, for speed (values listed by langchain-google-genai 4.4.2).
@@ -63,6 +64,31 @@ def is_offline() -> bool:
     return get_env("LLM_OFFLINE", "0") == "1"
 
 
+def parse_output[T: BaseModel](output) -> tuple[T, dict]:
+    """Structured output read with include_raw: the object, and the token counts."""
+    if isinstance(output, BaseModel):  # test fakes return the object itself
+        return output, {}
+    if output.get("parsing_error") is not None or output.get("parsed") is None:
+        raise output.get("parsing_error") or ValueError("No structured output.")
+    usage = getattr(output.get("raw"), "usage_metadata", None) or {}
+    tokens = {
+        "input_tokens": usage.get("input_tokens", 0),
+        "output_tokens": usage.get("output_tokens", 0),
+    }
+    return output["parsed"], tokens
+
+
+def error_kind(error: Exception) -> str:
+    """ "429" when the quota is reached, "5xx" when the server is overloaded."""
+    return "429" if isinstance(error, ModelRateLimitError) else "5xx"
+
+
+def call_attributes(errors: list[str], outcome: str, tokens: dict) -> dict:
+    """What a trace keeps about one live LLM call (never the user's identity)."""
+    counts = {"errors_429": errors.count("429"), "errors_5xx": errors.count("5xx")}
+    return {"cached": False, "outcome": outcome, **counts, **tokens}
+
+
 def invoke_structured[T: BaseModel](
     schema: type[T],
     prompt: str,
@@ -70,22 +96,35 @@ def invoke_structured[T: BaseModel](
     cache_dir: Path | None = None,
     sleep: Callable[[float], None] = time.sleep,
 ) -> T:
-    """Ask the LLM for a `schema` object: disk cache, then one retry after 429/5xx."""
+    """Ask the LLM for a `schema` object: disk cache, then one retry after 429/5xx.
+
+    Traced when tracing is on: latency (span time), tokens, cache hit, 429/5xx errors.
+    """
     cache_dir = cache_dir or cache_folder()
-    key = cache_key(get_env("LLM_MODEL"), prompt)
-    cached = cache_get(key, cache_dir)
-    if cached is not None:
-        return schema.model_validate(cached)
-    if is_offline():
-        raise RuntimeError(OFFLINE_MESSAGE)
-    runnable = (llm or get_llm()).with_structured_output(schema)
-    try:
-        result = runnable.invoke(prompt)
-    except RETRYABLE as error:
-        sleep(retry_delay(error))
+    model = get_env("LLM_MODEL")
+    key = cache_key(model, prompt)
+    info = {"model": model, "prompt_chars": len(prompt)}
+    with span(schema.__name__, "CHAT_MODEL", info) as current:
+        cached = cache_get(key, cache_dir)
+        if cached is not None:
+            set_attributes(current, {"cached": True})
+            return schema.model_validate(cached)
+        if is_offline():
+            raise RuntimeError(OFFLINE_MESSAGE)
+        runnable = (llm or get_llm()).with_structured_output(schema, include_raw=True)
+        errors: list[str] = []
         try:
-            result = runnable.invoke(prompt)
-        except RETRYABLE as second_error:
-            raise RuntimeError(QUOTA_MESSAGE) from second_error
+            output = runnable.invoke(prompt)
+        except RETRYABLE as error:
+            errors.append(error_kind(error))
+            sleep(retry_delay(error))
+            try:
+                output = runnable.invoke(prompt)
+            except RETRYABLE as second_error:
+                errors.append(error_kind(second_error))
+                set_attributes(current, call_attributes(errors, "failed", {}))
+                raise RuntimeError(QUOTA_MESSAGE) from second_error
+        result, tokens = parse_output(output)
+        set_attributes(current, call_attributes(errors, "ok", tokens))
     cache_put(key, result.model_dump(), cache_dir)
     return result

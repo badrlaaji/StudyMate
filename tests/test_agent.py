@@ -55,7 +55,7 @@ PROMPTS: list[str] = []
 def fake_llm(answers: dict):
     """Fake chat model: answers[schema] is a list of results (or errors) to replay."""
 
-    def with_structured_output(schema):
+    def with_structured_output(schema, **_):
         def invoke(prompt):
             PROMPTS.append(prompt)
             outcome = answers[schema].pop(0)

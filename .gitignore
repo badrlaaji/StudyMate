@@ -12,6 +12,8 @@ __pycache__/
 data/
 models/
 .cache/
+mlruns/
+mlartifacts/
 *.pdf
 
 # Node / Next.js

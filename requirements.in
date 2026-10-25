@@ -13,3 +13,4 @@ torch
 pypdf
 httpx
 fsrs==6.3.2
+mlflow-tracing==3.17.0

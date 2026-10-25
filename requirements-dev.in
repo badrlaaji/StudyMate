@@ -4,3 +4,4 @@ ruff
 ragas>=0.4.3
 datasets>=5
 huggingface_hub
+mlflow==3.17.0  # local tracking server, trace UI and analysis (step 19)

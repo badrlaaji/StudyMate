@@ -1,0 +1,16 @@
+{
+  "requests": 20,
+  "llm_calls": 40,
+  "live_calls": 40,
+  "cached_calls": 0,
+  "errors_429": 0,
+  "errors_5xx": 0,
+  "calls_with_429_pct": 0.0,
+  "requests_with_429_pct": 0.0,
+  "failed_calls": 0,
+  "call_median_s": 1.22,
+  "call_p90_s": 1.42,
+  "input_tokens": 25226,
+  "output_tokens": 2850,
+  "input_tokens_per_request": 1310
+}

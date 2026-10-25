@@ -29,7 +29,7 @@ def fake_llm(outcomes: list):
         return outcome
 
     runnable = SimpleNamespace(invoke=invoke)
-    return SimpleNamespace(with_structured_output=lambda schema: runnable), calls
+    return SimpleNamespace(with_structured_output=lambda schema, **_: runnable), calls
 
 
 @pytest.fixture(autouse=True)

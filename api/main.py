@@ -32,6 +32,7 @@ from agent.spring import (
     relay,
     spring_alive,
 )
+from agent.tracing import set_attributes, setup, span
 from api.schemas import (
     AuthRequest,
     ChatRequest,
@@ -82,6 +83,7 @@ def load_catalogs(registry: Registry) -> dict[str, Catalog]:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Open the database pool and the Spring client, warm up the embedding model."""
+    app.state.tracing = setup()  # MLflow traces only when MLFLOW_TRACKING_URI is set
     app.state.engine = get_engine()
     app.state.http = make_client()
     app.state.registry = load_registry()
@@ -207,10 +209,13 @@ async def courses(request: Request, lang: Lang = "en") -> list[dict]:
 async def chat(body: ChatRequest, request: Request) -> dict:
     """Route the message, then answer with verified citations, a quiz or a plan."""
     course = find_course(request, body.course)
-    state = await request.app.state.graph.ainvoke(
-        {"message": body.message, "course": course.id, "token": bearer(request)}
-    )
-    return to_response(state)
+    with span("POST /chat", "CHAIN", {"course": course.id}) as root:
+        state = await request.app.state.graph.ainvoke(
+            {"message": body.message, "course": course.id, "token": bearer(request)}
+        )
+        response = to_response(state)
+        set_attributes(root, {"route": response["route"], "status": response["status"]})
+    return response
 
 
 @app.get("/notions", response_model=list[NotionOut])
@@ -237,9 +242,10 @@ async def feynman(body: FeynmanRequest, request: Request) -> dict:
     """Judge an explanation, compute the score by code, record it in Spring."""
     course = find_course(request, body.course)
     notion = find_notion(find_catalog(request, course), body.notion_id)
-    result = await asyncio.to_thread(
-        evaluate_explanation, notion, body.explanation, body.lang
-    )
+    with span("POST /feynman", "CHAIN", {"course": course.id, "notion": notion.id}):
+        result = await asyncio.to_thread(
+            evaluate_explanation, notion, body.explanation, body.lang
+        )
     token = bearer(request)
     recorded = token is not None and await post_score(
         request.app.state.http, course.id, notion.id, "FEYNMAN", result["score"], token
@@ -254,9 +260,10 @@ async def quiz(body: QuizRequest, request: Request) -> dict:
     catalog = find_catalog(request, course)
     state = request.app.state
     token = bearer(request)
-    questions, degraded = await build_quiz(
-        state.engine, state.http, course.id, catalog, body.n, body.lang, token=token
-    )
+    with span("POST /quiz", "CHAIN", {"course": course.id, "questions": body.n}):
+        questions, degraded = await build_quiz(
+            state.engine, state.http, course.id, catalog, body.n, body.lang, token=token
+        )
     status = "signed_out" if token is None else "degraded" if degraded else "ok"
     return {"questions": [q.model_dump() for q in questions], "status": status}
 
