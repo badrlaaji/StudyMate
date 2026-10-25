@@ -160,7 +160,11 @@ and pass again. Minimums in `eval/thresholds.json`: one question of margin, none
 
 Deliberate regression: making the English-only `all-MiniLM-L6-v2` the default embedding model
 passes every unit test but fails the gate: French hit@4 drops from 0.75 to 0.60, while
-English MRR even rises (0.703 → 0.793). Only the bilingual evaluation sees it.
+English MRR even rises (0.703 → 0.793). Only the bilingual evaluation sees it. In GitHub
+Actions: [the failing run](https://github.com/badrlaaji/StudyMate/actions/runs/40222183740)
+(unit tests green, `eval` red) and
+[the same commit without it](https://github.com/badrlaaji/StudyMate/actions/runs/40222173735)
+(the CI runner reproduces the local numbers, 0 missing recordings).
 
 **Speed** — median `/chat` latency **2.73 s** (p90 3.17 s) on 20 questions never asked before (dev set, English and French), Gemini free tier, CPU only, measured before the multi-course change (same pipeline). When the free-tier quota is saturated, the code waits 60 s and retries: one call then took 2 min 30 s.
 

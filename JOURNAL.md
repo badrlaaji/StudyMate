@@ -75,7 +75,7 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 ## Étape 14 — Évaluation de régression en CI (2026-10-25)
 - **Fait** : mode hors ligne du LLM (`LLM_OFFLINE`, `LLM_CACHE_DIR`) ; `eval/regression.py` (check / record) ; 112 réponses enregistrées dans `eval/replay/` ; seuils `eval/thresholds.json` ; job CI `eval` (base pgvector, téléchargement du livre, indexation, porte, tableau dans le résumé du job) ; régression volontaire démontrée.
 - **Bloqué** : rien. Le fine-tuné ne peut pas être évalué en CI tant qu'il n'est pas publié sur le Hub.
-- **Chiffres** : e5 de base, jeu test : hit@4 EN 0,85 / FR 0,75, MRR 0,703 / 0,604 (identiques à l'étape 4 : reproductible) ; réponses EN 16/20, FR 18/20, pièges 5/5 et 5/5 ; enregistrement 11 min (112 appels) ; rejeu hors ligne 21 s, 0 miss ; régression (MiniLM anglais) : FR hit@4 0,60, MRR 0,514, code de sortie 1 ; tests : 173 Python (+ 1 base), 18 Vitest.
+- **Chiffres** : e5 de base, jeu test : hit@4 EN 0,85 / FR 0,75, MRR 0,703 / 0,604 (identiques à l'étape 4 : reproductible) ; réponses EN 16/20, FR 18/20, pièges 5/5 et 5/5 ; enregistrement 11 min (112 appels) ; rejeu hors ligne 21 s, 0 miss ; régression (MiniLM anglais) : FR hit@4 0,60, MRR 0,514, code de sortie 1, et en CI (run 40222183740 : python vert, eval rouge, 6 erreurs) ; CI sur main : mêmes chiffres qu'en local, 0 miss, job eval 103 s ; tests : 173 Python (+ 1 base), 18 Vitest.
 
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
