@@ -44,6 +44,9 @@ from api.schemas import (
     QuizRequest,
     QuizResultRequest,
     QuizResultResponse,
+    StudyGoal,
+    StudyStart,
+    StudyUpdate,
 )
 from api.uploads import job_state
 from api.uploads import router as uploads_router
@@ -358,6 +361,53 @@ async def me(request: Request) -> JSONResponse:
         return JSONResponse(status_code=401, content={"detail": "Sign in first."})
     status, data = await relay(request.app.state.http, "GET", "/api/me", token=token)
     return JSONResponse(status_code=status, content=data)
+
+
+async def relay_as_user(
+    request: Request, method: str, path: str, body: dict | None = None
+) -> JSONResponse:
+    """Pass a presence, goal or trophy request to Spring with the user's token."""
+    token = bearer(request)
+    if token is None:
+        return JSONResponse(status_code=401, content={"detail": "Sign in first."})
+    status, data = await relay(request.app.state.http, method, path, body, token)
+    return JSONResponse(status_code=status, content=data)
+
+
+@app.post("/study/sessions")
+async def study_start(body: StudyStart, request: Request) -> JSONResponse:
+    """Start a study session (presence mode or manual timer)."""
+    course = find_course(request, body.course)
+    payload = {"courseId": course.id, "mode": body.mode}
+    return await relay_as_user(request, "POST", "/api/study/sessions", payload)
+
+
+@app.patch("/study/sessions/{session_id}")
+async def study_update(
+    session_id: int, body: StudyUpdate, request: Request
+) -> JSONResponse:
+    """Send the new total of active seconds; Spring refuses more than real time."""
+    payload = {"activeSeconds": body.active_seconds}
+    path = f"/api/study/sessions/{session_id}"
+    return await relay_as_user(request, "PATCH", path, payload)
+
+
+@app.put("/study/goal")
+async def study_goal(body: StudyGoal, request: Request) -> JSONResponse:
+    """Set the daily goal (5 to 480 minutes) and the time zone of "today"."""
+    return await relay_as_user(request, "PUT", "/api/study/goal", body.model_dump())
+
+
+@app.get("/study/summary")
+async def study_summary(request: Request) -> JSONResponse:
+    """Estimated study time today, goal, streak, total and the last 7 days."""
+    return await relay_as_user(request, "GET", "/api/study/summary")
+
+
+@app.get("/trophies")
+async def trophies(request: Request) -> JSONResponse:
+    """The 6 trophies, won or not; Spring computes them."""
+    return await relay_as_user(request, "GET", "/api/trophies")
 
 
 @app.get("/book.pdf")

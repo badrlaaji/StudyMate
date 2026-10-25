@@ -92,6 +92,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : rien. À faire de ton côté : ajouter `JWT_SECRET` (32 caractères ou plus) dans ton `.env` avant de lancer Spring.
 - **Chiffres** : en vrai : inscription 201, doublon 409, mauvais mot de passe 401, Spring sans jeton 401, jeton modifié 401, Ada lit Ada 200, Bob lit Ada 403 ; données isolées (Bob ne voit pas les notes d'Ada) ; hash `$2a$10$` en base ; cookie HttpOnly non lisible par la page ; axe-core 0 violation (/login) ; 1 défaut trouvé en vrai (colonne NOT NULL sur table non vide) ; tests : 204 Python (+ 1 base), 37 Spring, 41 Vitest.
 
+## Étape 18 — Présence, objectif et trophées (2026-10-25)
+- **Fait** : sessions d'étude (Spring, temps impossible refusé), objectif quotidien avec fuseau, résumé (aujourd'hui, série, 7 jours, total), 6 trophées ; `lib/presence.ts` + `PresencePanel` (caméra désactivée par défaut, Face Detector 1 image/s) ; carte objectif et trophées sur la page Progression ; quiz de 3 ou 5 questions ; même chose dans la démo (cookie).
+- **Bloqué** : pas de test avec de vraies personnes (à faire avec consentement, comme prévu par le plan) ; test caméra fait avec une fausse caméra.
+- **Chiffres** : fausse caméra : en étude → absent à 10 s (6 s comptées, les secondes sans visage retirées) → retour à 16 s, total 14 s, 2 envois acceptés ; 320×240 : 0 visage sur 20 images, 640×480 : 1 visage par image (défaut corrigé) ; 3 jours simulés à 30 min → Premier pas, Objectif atteint, Régulier attribués par Spring ; démo : 0 requête sortante ; axe-core 0 violation (/study session active) ; tests : 211 Python (+ 1 base), 51 Spring, 56 Vitest.
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |

@@ -142,3 +142,23 @@ class AuthRequest(BaseModel):
 
     email: str = Field(min_length=3, max_length=254, pattern=r"^[^@\s]+@[^@\s]+$")
     password: str = Field(min_length=8, max_length=72)  # BCrypt reads 72 bytes at most
+
+
+class StudyStart(BaseModel):
+    """POST /study/sessions: start measuring the estimated study time."""
+
+    course: CourseId = None
+    mode: Literal["CAMERA", "MANUAL"] = "MANUAL"
+
+
+class StudyUpdate(BaseModel):
+    """PATCH /study/sessions/{id}: the new total of active seconds (never an image)."""
+
+    active_seconds: int = Field(ge=0, le=86_400)
+
+
+class StudyGoal(BaseModel):
+    """PUT /study/goal: 5 to 480 minutes a day, in an IANA time zone."""
+
+    minutes: int = Field(ge=5, le=480)
+    timezone: str = Field(min_length=1, max_length=64)

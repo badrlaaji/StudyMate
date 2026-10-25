@@ -2,8 +2,12 @@
 // The answers were computed once by scripts/build_demo.py with the real pipeline.
 // No FastAPI, no database, no LLM call, no key: scores stay in a browser cookie.
 import data from "@/demo/data.json";
+import { addDays, CODES, currentStreak, earned, isFlawless, localDay, validZone, type Days } from "@/lib/trophies";
 
 export const SCORES_COOKIE = "demo_scores";
+export const STUDY_COOKIE = "demo_study";
+const SLACK_S = 2; // same tolerance as Spring between two updates
+const KEEP_DAYS = 60; // older days are dropped (cookie size)
 const ONE_YEAR_S = 31536000;
 // Same mastery rules as Spring (core/MasteryService.java).
 const LAST_SCORES = 3;
@@ -24,7 +28,16 @@ type Answer = { notion_id: string; answer_index: number; chosen_index: number | 
 // course -> notion -> last scores, newest first
 export type Scores = Record<string, Record<string, number[]>>;
 export type Mastery = { notionId: string; average: number; count: number; level: string };
-export type DemoReply = { status: number; body: unknown; cookie?: string };
+export type DemoReply = { status: number; body: unknown; cookies: string[] };
+// Presence mode in the demo: the estimated study time stays in this browser.
+export type Study = {
+  goal: { minutes: number; timezone: string };
+  days: Days;
+  session: { id: number; startedAt: number; endedAt: number; active: number } | null;
+  trophies: Record<string, string>; // code -> ISO date
+  flawless: boolean;
+};
+const NEW_STUDY: Study = { goal: { minutes: 30, timezone: "UTC" }, days: {}, session: null, trophies: {}, flawless: false };
 
 export function isDemo(): boolean {
   return process.env.DEMO_MODE === "1";
@@ -67,6 +80,87 @@ export function readScores(value: string | undefined): Scores {
 export function scoresCookie(scores: Scores): string {
   const value = encodeURIComponent(JSON.stringify(scores));
   return `${SCORES_COOKIE}=${value}; Path=/; Max-Age=${ONE_YEAR_S}; SameSite=Lax; HttpOnly`;
+}
+
+export function readStudy(value: string | undefined): Study {
+  try {
+    const study = JSON.parse(decodeURIComponent(value ?? ""));
+    return study && typeof study === "object" && study.goal && study.days ? { ...NEW_STUDY, ...study } : NEW_STUDY;
+  } catch {
+    return NEW_STUDY;
+  }
+}
+
+export function studyCookie(study: Study): string {
+  const days = Object.fromEntries(Object.entries(study.days).sort().slice(-KEEP_DAYS));
+  const value = encodeURIComponent(JSON.stringify({ ...study, days }));
+  return `${STUDY_COOKIE}=${value}; Path=/; Max-Age=${ONE_YEAR_S}; SameSite=Lax; HttpOnly`;
+}
+
+// Save the trophies newly deserved; return the study state and their codes.
+export function award(study: Study, now: number): { study: Study; fresh: string[] } {
+  const fresh = earned(study.days, study.goal.minutes, study.flawless).filter((code) => !study.trophies[code]);
+  const trophies = { ...study.trophies, ...Object.fromEntries(fresh.map((code) => [code, new Date(now).toISOString()])) };
+  return { study: { ...study, trophies }, fresh };
+}
+
+// Same answer as Spring's GET /api/study/summary.
+export function studySummary(study: Study, now: number) {
+  const { minutes, timezone } = study.goal;
+  const goalSeconds = minutes * 60;
+  const today = localDay(now, timezone);
+  const week = Array.from({ length: 7 }, (_, i) => addDays(today, i - 6)).map((date) => {
+    const seconds = study.days[date] ?? 0;
+    return { date, seconds, reached: seconds >= goalSeconds };
+  });
+  const todaySeconds = study.days[today] ?? 0;
+  return {
+    goalMinutes: minutes,
+    timezone,
+    todaySeconds,
+    goalReachedToday: todaySeconds >= goalSeconds,
+    streakDays: currentStreak(study.days, goalSeconds, today),
+    totalSeconds: Object.values(study.days).reduce((a, b) => a + b, 0),
+    week,
+  };
+}
+
+// PATCH a session: same checks as Spring (never down, never faster than real time).
+function updateSession(study: Study, id: number, total: number, now: number): DemoReply {
+  const session = study.session;
+  if (!session || session.id !== id) return json({ detail: "No such session." }, 404);
+  const added = total - session.active;
+  const elapsed = Math.floor((now - session.endedAt) / 1000);
+  if (!Number.isInteger(total) || added < 0) return json({ detail: "Active time cannot go down." }, 400);
+  if (added > elapsed + SLACK_S) return json({ detail: `Added ${added} s but only ${elapsed} s passed.` }, 400);
+  const day = localDay(session.startedAt, study.goal.timezone); // counted on the day it started
+  const days = { ...study.days, [day]: (study.days[day] ?? 0) + added };
+  const updated = { ...study, days, session: { ...session, active: total, endedAt: now } };
+  const { study: saved, fresh } = award(updated, now);
+  const view = { id, mode: "MANUAL", startedAt: new Date(session.startedAt).toISOString(), activeSeconds: total, newTrophies: fresh };
+  return json(view, 200, [studyCookie(saved)]);
+}
+
+function studyReply(method: string, path: string, body: any, study: Study, course: string, now: number): DemoReply | null {
+  if (path === "study/sessions" && method === "POST") {
+    const session = { id: now, startedAt: now, endedAt: now, active: 0 };
+    const view = { id: now, courseId: course, mode: body?.mode ?? "MANUAL", startedAt: new Date(now).toISOString(), activeSeconds: 0, newTrophies: [] };
+    return json(view, 201, [studyCookie({ ...study, session })]);
+  }
+  const match = path.match(/^study\/sessions\/(\d+)$/);
+  if (match && method === "PATCH") return updateSession(study, Number(match[1]), Number(body?.active_seconds), now);
+  if (path === "study/goal" && method === "PUT") {
+    const minutes = Number(body?.minutes);
+    const timezone = String(body?.timezone ?? "");
+    if (!Number.isInteger(minutes) || minutes < 5 || minutes > 480 || !validZone(timezone)) {
+      return json({ detail: "The goal is 5 to 480 minutes, in a known time zone." }, 400);
+    }
+    const { study: saved } = award({ ...study, goal: { minutes, timezone } }, now);
+    return json({ minutes, timezone }, 200, [studyCookie(saved)]);
+  }
+  if (path === "study/summary") return json(studySummary(study, now));
+  if (path === "trophies") return json(CODES.map((code) => ({ code, obtainedAt: study.trophies[code] ?? null })));
+  return null;
 }
 
 // Add a 0-5 score; only the last 3 are kept (all the mastery rule reads).
@@ -182,13 +276,23 @@ function notionRow(notion: DemoCourse["notions"][number], lang: Lang) {
   };
 }
 
-function json(body: unknown, status = 200, scores?: Scores): DemoReply {
-  return { status, body, cookie: scores ? scoresCookie(scores) : undefined };
+function json(body: unknown, status = 200, cookies: string[] = []): DemoReply {
+  return { status, body, cookies };
 }
 
+export type DemoCookies = { scores?: string; study?: string };
+
 // The whole /api/* contract, answered from the demo data (no network).
-export function demoReply(method: string, path: string, query: URLSearchParams, body: any, cookie?: string): DemoReply {
-  const scores = readScores(cookie);
+export function demoReply(
+  method: string,
+  path: string,
+  query: URLSearchParams,
+  body: any,
+  cookies: DemoCookies = {},
+  now = Date.now(),
+): DemoReply {
+  const scores = readScores(cookies.scores);
+  const study = readStudy(cookies.study);
   const lang = toLang(query.get("lang") ?? body?.lang);
   if (path === "health") return json({ status: "ok", database: false, spring: false, demo: true });
   if (path === "courses" && method === "GET") return json(data.courses.map((c) => courseRow(c, lang)));
@@ -200,6 +304,8 @@ export function demoReply(method: string, path: string, query: URLSearchParams, 
   const course = findCourse(query.get("course") ?? body?.course);
   if (!course) return json({ detail: "Unknown course" }, 404);
   const known = new Set(course.notions.map((notion) => notion.id));
+  const presence = studyReply(method, path, body, study, course.id, now);
+  if (presence) return presence;
 
   if (path === "notions") return json(course.notions.map((n) => notionRow(n, lang)));
   if (path === "mastery") return json({ notions: mastery(scores, course.id), status: "ok" });
@@ -211,7 +317,9 @@ export function demoReply(method: string, path: string, query: URLSearchParams, 
     const results = notionScores(body.answers.filter((a: Answer) => known.has(a.notion_id)));
     const saved = Object.entries(results).reduce((acc, [id, score]) => addScore(acc, course.id, id, score), scores);
     const skipped = body.answers.filter((a: Answer) => a.chosen_index === null || a.chosen_index === undefined).length;
-    return json({ scores: results, recorded: true, skipped }, 200, saved);
+    const cookies = [scoresCookie(saved)];
+    if (isFlawless(body.answers)) cookies.push(studyCookie(award({ ...study, flawless: true }, now).study));
+    return json({ scores: results, recorded: true, skipped }, 200, cookies);
   }
   if (path === "feynman" && typeof body?.explanation === "string") {
     const example = course.feynman.find(
@@ -219,7 +327,7 @@ export function demoReply(method: string, path: string, query: URLSearchParams, 
     );
     if (!example) return json({ detail: "demo_only" }, 400);
     const saved = addScore(scores, course.id, example.notion_id, example.result.score);
-    return json({ ...example.result, recorded: true }, 200, saved);
+    return json({ ...example.result, recorded: true }, 200, [scoresCookie(saved)]);
   }
   return json({ detail: "Bad request" }, 400);
 }

@@ -2,13 +2,14 @@
 // Public demo (DEMO_MODE=1): answered here from the demo data, nothing leaves the server.
 // Accounts: the "session" cookie (HttpOnly JWT) becomes an Authorization header for FastAPI.
 import { accountFromToken, bearer, clearSessionCookie, SESSION_COOKIE, sessionCookie } from "@/lib/account";
-import { demoReply, isDemo, readCookie, SCORES_COOKIE } from "@/lib/demo";
+import { demoReply, isDemo, readCookie, SCORES_COOKIE, STUDY_COOKIE } from "@/lib/demo";
 
 const API_URL = process.env.API_URL ?? "http://localhost:8000";
 const ALLOWED = [
   /^(health|courses|chat|notions|feynman|quiz|quiz\/result|mastery|plan|review|book\.pdf|uploads)$/,
   /^courses\/[a-z0-9-]+(\/(status|retry))?$/, // status, retry and delete of a course
   /^(auth\/(register|login|logout)|me)$/, // accounts
+  /^(study\/(sessions|goal|summary)|study\/sessions\/\d+|trophies)$/, // presence mode
 ];
 
 type Context = { params: Promise<{ path: string[] }> };
@@ -24,7 +25,7 @@ async function forward(request: Request, context: Context): Promise<Response> {
   const token = readCookie(request.headers.get("cookie"), SESSION_COOKIE);
   const search = new URL(request.url).search;
   const init: RequestInit = { method: request.method, cache: "no-store", headers: bearer(token) };
-  if (request.method === "POST") {
+  if (["POST", "PUT", "PATCH"].includes(request.method)) {
     // JSON for most calls, the raw PDF bytes for /uploads.
     init.body = await request.arrayBuffer();
     init.headers = { ...bearer(token), "content-type": request.headers.get("content-type") ?? "application/json" };
@@ -50,13 +51,17 @@ function signIn(request: Request, body: { token: string }): Response {
 }
 
 async function demo(request: Request, target: string): Promise<Response> {
-  const body = request.method === "POST" ? await request.json().catch(() => null) : null;
-  const cookie = readCookie(request.headers.get("cookie"), SCORES_COOKIE);
-  const reply = demoReply(request.method, target, new URL(request.url).searchParams, body, cookie);
-  const headers = reply.cookie ? { "set-cookie": reply.cookie } : undefined;
+  const body = request.method === "GET" ? null : await request.json().catch(() => null);
+  const header = request.headers.get("cookie");
+  const cookies = { scores: readCookie(header, SCORES_COOKIE), study: readCookie(header, STUDY_COOKIE) };
+  const reply = demoReply(request.method, target, new URL(request.url).searchParams, body, cookies);
+  const headers = new Headers();
+  reply.cookies.forEach((cookie) => headers.append("set-cookie", cookie));
   return Response.json(reply.body, { status: reply.status, headers });
 }
 
 export const GET = forward;
 export const POST = forward;
 export const DELETE = forward;
+export const PUT = forward;
+export const PATCH = forward;

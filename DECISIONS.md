@@ -376,3 +376,20 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S17-4 Anciennes lignes sans utilisateur
 - Vécu : Hibernate (`ddl-auto=update`) ne peut pas ajouter une colonne `user_id NOT NULL` à une table qui contient déjà des lignes ; la colonne manquait et l'enregistrement du quiz renvoyait 500. Choix : `user_id` nullable dans `scores` et `quiz_answer` ; les lignes d'avant les comptes restent en base mais ne sont visibles par personne.
+
+## Étape 18 — Présence, objectif et trophées (plan v2, S7)
+
+### S18-1 Machine à états pure, temps par horodatages
+- ACTIF, PAUSE_ABSENT (5 s sans visage ; 1 s de visage pour reprendre), PAUSE_ONGLET (Page Visibility API), PAUSE_MANUELLE. Le temps est la somme des écarts d'horodatages en ACTIF, jamais un compteur de ticks (les minuteries sont ralenties en arrière-plan). Les 5 s sans visage avant la pause sont retirées. Envoi du total toutes les 60 s et à chaque pause ; jamais d'image.
+
+### S18-2 Spring refuse le temps impossible
+- `PATCH /api/study/sessions/{id}` reçoit le total : refus (400) s'il baisse ou si l'ajout dépasse le temps réel écoulé depuis la dernière mise à jour (+2 s de marge réseau) ; 403 sur la session d'un autre. Le navigateur ne peut donc pas gonfler son temps. Objectif 5 à 480 min (400 sinon), fuseau IANA vérifié.
+
+### S18-3 Trophées calculés par Spring, règles pures
+- 6 trophées (`TrophyRules`, fonctions pures testées à dates fixes), attribués après chaque session et chaque quiz, une fois par utilisateur (contrainte unique). Un jour = jour local du début de la session, dans le fuseau de l'objectif. « Sans faute » : un quiz d'au moins 5 questions, toutes justes, aucune passée ; le quiz propose donc 3 ou 5 questions.
+
+### S18-4 Caméra : présence seulement, et en 640×480
+- Face Detector (modèle courte portée) ne répond qu'« un visage ou non » : ni reconnaissance, ni émotion (AI Act, art. 5(1)(f) interdit la reconnaissance d'émotions dans l'éducation). Vécu : en 320×240, le visage de l'image test (≈ 55 px) n'était pas détecté, la session passait en absent ; en 640×480, oui. Testé avec une fausse caméra (visage, écran noir, visage).
+
+### S18-5 Démo : présence dans le navigateur
+- Le plan exige que S6 et S7 marchent dans la démo : sessions, objectif et trophées dans le cookie HttpOnly `demo_study` (60 derniers jours au plus), mêmes contrôles et mêmes règles (portées en TypeScript, testées).

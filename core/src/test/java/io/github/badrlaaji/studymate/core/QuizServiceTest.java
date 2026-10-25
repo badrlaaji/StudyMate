@@ -18,7 +18,7 @@ class QuizServiceTest {
     void aSkippedQuestionIsKeptAsSkippedAndCreatesNoScore() {
         QuizAnswerRepository answers = mock(QuizAnswerRepository.class);
         ScoreRepository scores = mock(ScoreRepository.class);
-        QuizService service = new QuizService(answers);
+        QuizService service = new QuizService(answers, mock(TrophyService.class));
         QuizResultRequest request = new QuizResultRequest("data-science", QUIZ, List.of(
                 new QuizResultRequest.Item("k_means", AnswerStatus.CORRECT),
                 new QuizResultRequest.Item("cnn", AnswerStatus.SKIPPED)));

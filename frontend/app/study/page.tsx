@@ -1,15 +1,17 @@
+import PresencePanel from "@/components/PresencePanel";
 import StudyDesk from "@/components/StudyDesk";
 import { getNotions } from "@/lib/api";
 import { demoPrompts, isDemo } from "@/lib/demo";
 import { getSession } from "@/lib/lang";
 
 export default async function StudyPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
-  const { lang, t, course } = await getSession();
+  const { lang, t, course, account } = await getSession();
   if (!course) return <p className="callout callout-warn">{t.study.error}</p>;
   const page = Number((await searchParams).page);
   const notions = await getNotions(lang, course.id);
   return (
     <div className="page page-wide">
+      <PresencePanel t={t} course={course.id} canSave={account !== null || isDemo()} />
       <StudyDesk
         // A new course starts a new conversation.
         key={course.id}

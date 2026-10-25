@@ -32,6 +32,7 @@ CATALOG = Catalog.model_construct(
 )
 SCORES: list[dict] = []
 QUIZ_LOGS: list[dict] = []
+STUDY_CALLS: list[tuple] = []
 
 
 def make_course(course_id: str) -> Course:
@@ -71,6 +72,11 @@ def spring_handler(request: httpx.Request) -> httpx.Response:
         return httpx.Response(401)  # Spring refuses every data route without a token
     if path == "/api/me":
         return httpx.Response(200, json={"id": 7, "email": "ada@example.org"})
+    if path.startswith("/api/study") or path == "/api/trophies":
+        STUDY_CALLS.append((request.method, path, request.content))
+        return httpx.Response(
+            201 if request.method == "POST" else 200, json={"ok": True}
+        )
     if request.url.path == "/api/scores" and request.method == "POST":
         SCORES.append(request.content)
         return httpx.Response(201)
@@ -109,6 +115,7 @@ def client():
     """TestClient without lifespan: the app state is filled with fakes."""
     SCORES.clear()
     QUIZ_LOGS.clear()
+    STUDY_CALLS.clear()
 
     async def ainvoke(state):
         return {

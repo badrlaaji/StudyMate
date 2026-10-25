@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 
 import { bearer, SESSION_COOKIE } from "@/lib/account";
-import { demoReply, isDemo, SCORES_COOKIE } from "@/lib/demo";
+import { demoReply, isDemo, SCORES_COOKIE, STUDY_COOKIE } from "@/lib/demo";
 
 const API_URL = process.env.API_URL ?? "http://localhost:8000";
 
@@ -54,8 +54,9 @@ async function getJson<T>(path: string, fallback: T): Promise<T> {
 
 async function getDemo<T>(path: string, fallback: T): Promise<T> {
   const url = new URL(path, "http://demo");
-  const cookie = (await cookies()).get(SCORES_COOKIE)?.value;
-  const reply = demoReply("GET", url.pathname.slice(1), url.searchParams, null, cookie);
+  const store = await cookies();
+  const demoCookies = { scores: store.get(SCORES_COOKIE)?.value, study: store.get(STUDY_COOKIE)?.value };
+  const reply = demoReply("GET", url.pathname.slice(1), url.searchParams, null, demoCookies);
   return reply.status === 200 ? (reply.body as T) : fallback;
 }
 
@@ -77,4 +78,25 @@ export function getPlan(lang: string, course: string): Promise<{ plan: PlanRow[]
 
 export function getReviews(lang: string, course: string): Promise<{ reviews: Review[]; status: string }> {
   return getJson(`/review?lang=${lang}&course=${course}`, { reviews: [], status: "degraded" });
+}
+
+// Presence mode (account or demo): estimated study time, goal, streak, trophies.
+export type StudyDay = { date: string; seconds: number; reached: boolean };
+export type StudySummary = {
+  goalMinutes: number;
+  timezone: string;
+  todaySeconds: number;
+  goalReachedToday: boolean;
+  streakDays: number;
+  totalSeconds: number;
+  week: StudyDay[];
+};
+export type TrophyRow = { code: string; obtainedAt: string | null };
+
+export function getStudySummary(): Promise<StudySummary | null> {
+  return getJson("/study/summary", null);
+}
+
+export function getTrophies(): Promise<TrophyRow[]> {
+  return getJson("/trophies", []);
 }

@@ -17,7 +17,7 @@ type Question = {
 };
 type Answer = { notion_id: string; answer_index: number; chosen_index: number | null }; // null = skipped
 type Result = { scores: Record<string, number>; recorded: boolean };
-const QUIZ_SIZE = 3;
+const QUIZ_SIZES = [3, 5]; // 5 or more can earn the Flawless trophy
 
 // signedIn: scores can be saved (an account, or the demo's browser cookie).
 type Props = { lang: Lang; t: Dict; course: string; names: Record<string, string>; signedIn: boolean };
@@ -31,6 +31,7 @@ export default function QuizRunner({ lang, t, course, names, signedIn }: Props) 
   const [result, setResult] = useState<Result | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [size, setSize] = useState(QUIZ_SIZES[0]);
 
   async function start() {
     setBusy(true);
@@ -44,7 +45,7 @@ export default function QuizRunner({ lang, t, course, names, signedIn }: Props) 
       const response = await fetch("/api/quiz", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ n: QUIZ_SIZE, lang, course }),
+        body: JSON.stringify({ n: size, lang, course }),
       });
       if (!response.ok) throw new Error(String(response.status));
       const body = await response.json();
@@ -126,6 +127,17 @@ export default function QuizRunner({ lang, t, course, names, signedIn }: Props) 
           <kbd>P</kbd>
           <kbd>↵</kbd>
         </div>
+        <fieldset className="segmented-field">
+          <legend className="field-label">{t.quizSize.label}</legend>
+          <div className="segmented" role="group">
+            {QUIZ_SIZES.map((n) => (
+              <button key={n} type="button" aria-pressed={size === n} onClick={() => setSize(n)}>
+                {n}
+              </button>
+            ))}
+          </div>
+          <span className="hint">{t.quizSize.hint}</span>
+        </fieldset>
         <button type="button" className="btn btn-primary btn-lg" onClick={start} disabled={busy}>
           <Icon name="quiz" />
           {busy ? t.quiz.loading : t.quiz.start}

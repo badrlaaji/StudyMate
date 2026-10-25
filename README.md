@@ -40,6 +40,14 @@ honest feedback on what they have actually understood.
   in the browser; 1 to 4 raised fingers answer 1 to 4, a fist held 1.5 s skips, an open hand
   goes on. A gesture must stay the same for 1 s (progress ring, spoken by screen readers);
   removing the hand or Escape cancels. No image is sent or stored.
+- **Study sessions, goal and trophies**: an *estimated study time* counted while you study
+  and paused when the tab is hidden, when you press Pause, or (optional camera, off by
+  default) when no face has been in front of the screen for 5 s. MediaPipe Face Detector
+  checks once a second whether a face is there: no face recognition, no emotion, no image
+  sent or stored; the browser only sends `{session, active seconds}`, and Spring refuses more
+  time than really passed. Daily goal (5-480 minutes, in your time zone), streak, last 7 days,
+  and 6 trophies computed by Spring (first steps, goal reached, regular, perfect week,
+  marathon, flawless quiz).
 - **Accounts** (`/login`): sign up and sign in; scores, review dates and quiz logs belong to
   each user. Spring Boot hashes passwords (BCrypt) and signs a JWT (HS256, 7 days); the token
   stays in an HttpOnly cookie, Next.js relays it to FastAPI, which relays it to Spring. No
@@ -230,6 +238,9 @@ contrast. The progress chart uses one hue with threshold lines at 3 (review) and
 - **Free tier**: rate limits and occasional 503 errors from Gemini; the code waits and retries
   once. The full app is not deployed publicly (the free tier does not allow it for EU/UK users):
   only the demo mode, which never calls Gemini, is meant to be public.
+- **Study time is an estimate**: a face in front of the screen is not attention, and the
+  manual timer trusts the student. A session counts on the day it started. The camera was
+  tested with a fake camera (sample image, then a black screen), not with real people.
 - **Accounts are minimal**: no email check, no password reset, no rate limit on login; a
   token stays valid until it expires (7 days) even after signing out on another device.
 - **The public demo is frozen**: it only answers its example questions and grades its example

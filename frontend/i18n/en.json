@@ -276,5 +276,67 @@
     "notSaved": "Not saved: sign in to keep your progress.",
     "progress": "Sign in to save your scores and see your progress, review dates and plan.",
     "working": "Please wait…"
+  },
+  "presence": {
+    "title": "Study session",
+    "lede": "Estimated study time: counted while you study, paused when you leave the screen or the tab.",
+    "start": "Start a session",
+    "stop": "Stop",
+    "pause": "Pause",
+    "resume": "Resume",
+    "camera": "Pause automatically when I leave (camera)",
+    "cameraOn": "Camera on",
+    "privacy": "Camera off by default. When on, the browser checks once a second whether a face is in front of the screen: no face recognition, no emotion, no image sent or stored. Without the camera, the timer works the same.",
+    "estimated": "Estimated study time",
+    "states": {
+      "ACTIVE": "Studying",
+      "PAUSE_ABSENT": "Paused: away",
+      "PAUSE_TAB": "Paused: other tab",
+      "PAUSE_MANUAL": "Paused"
+    },
+    "trophy": "Trophy unlocked: {name}",
+    "cameraError": "Camera unavailable: the timer still works without it.",
+    "signIn": "Sign in to record your study time.",
+    "stopped": "Session saved: {time}.",
+    "notSaved": "Not saved: the service is unavailable."
+  },
+  "goal": {
+    "title": "Daily goal",
+    "minutes": "Minutes a day",
+    "save": "Save",
+    "saved": "Goal saved.",
+    "invalid": "Choose 5 to 480 minutes.",
+    "today": "Today: {time} of {goal} min",
+    "reached": "Goal reached today",
+    "streak": "{count} days in a row",
+    "streakOne": "1 day in a row",
+    "total": "Total: {time}",
+    "week": "Last 7 days",
+    "zone": "Days follow your time zone ({zone})."
+  },
+  "trophies": {
+    "title": "Trophies",
+    "locked": "Locked",
+    "won": "Won on {date}",
+    "names": {
+      "FIRST_STEPS": "First steps",
+      "GOAL_REACHED": "Goal reached",
+      "REGULAR": "Regular",
+      "PERFECT_WEEK": "Perfect week",
+      "MARATHON": "Marathon",
+      "FLAWLESS": "Flawless"
+    },
+    "rules": {
+      "FIRST_STEPS": "10 minutes of study",
+      "GOAL_REACHED": "Reach your daily goal once",
+      "REGULAR": "Reach your goal 3 days in a row",
+      "PERFECT_WEEK": "Reach your goal 7 days in a row",
+      "MARATHON": "10 hours of study in total",
+      "FLAWLESS": "A quiz of 5 questions or more, all correct, none skipped"
+    }
+  },
+  "quizSize": {
+    "label": "Questions",
+    "hint": "With 5 questions, a perfect quiz earns the Flawless trophy."
   }
 }

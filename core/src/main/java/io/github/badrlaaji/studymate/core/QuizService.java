@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 public class QuizService {
 
     private final QuizAnswerRepository repository;
+    private final TrophyService trophies;
 
-    public QuizService(QuizAnswerRepository repository) {
+    public QuizService(QuizAnswerRepository repository, TrophyService trophies) {
         this.repository = repository;
+        this.trophies = trophies;
     }
 
     /** Save every question of a user's quiz, skipped ones included, and count them. */
@@ -22,6 +24,7 @@ public class QuizService {
                         userId, request.quizId(), request.courseId(), item.notionId(), item.status(), now))
                 .toList();
         repository.saveAll(answers);
+        trophies.award(userId, now); // a flawless quiz unlocks a trophy
         return summarize(answers);
     }
 

@@ -276,5 +276,67 @@
     "notSaved": "Non enregistré : connecte-toi pour garder ta progression.",
     "progress": "Connecte-toi pour enregistrer tes notes et voir ta progression, tes révisions et ton plan.",
     "working": "Un instant…"
+  },
+  "presence": {
+    "title": "Session d'étude",
+    "lede": "Temps d'étude estimé : compté pendant que tu travailles, en pause quand tu quittes l'écran ou l'onglet.",
+    "start": "Démarrer une session",
+    "stop": "Arrêter",
+    "pause": "Pause",
+    "resume": "Reprendre",
+    "camera": "Mettre en pause quand je pars (caméra)",
+    "cameraOn": "Caméra active",
+    "privacy": "Caméra désactivée par défaut. Activée, le navigateur vérifie une fois par seconde si un visage est devant l'écran : aucune reconnaissance faciale, aucune émotion, aucune image envoyée ni enregistrée. Sans caméra, le chronomètre fonctionne pareil.",
+    "estimated": "Temps d'étude estimé",
+    "states": {
+      "ACTIVE": "En étude",
+      "PAUSE_ABSENT": "En pause : absent",
+      "PAUSE_TAB": "En pause : autre onglet",
+      "PAUSE_MANUAL": "En pause"
+    },
+    "trophy": "Trophée débloqué : {name}",
+    "cameraError": "Caméra indisponible : le chronomètre marche sans elle.",
+    "signIn": "Connecte-toi pour enregistrer ton temps d'étude.",
+    "stopped": "Session enregistrée : {time}.",
+    "notSaved": "Non enregistré : le service est indisponible."
+  },
+  "goal": {
+    "title": "Objectif quotidien",
+    "minutes": "Minutes par jour",
+    "save": "Enregistrer",
+    "saved": "Objectif enregistré.",
+    "invalid": "Choisis entre 5 et 480 minutes.",
+    "today": "Aujourd'hui : {time} sur {goal} min",
+    "reached": "Objectif atteint aujourd'hui",
+    "streak": "{count} jours d'affilée",
+    "streakOne": "1 jour d'affilée",
+    "total": "Total : {time}",
+    "week": "7 derniers jours",
+    "zone": "Les jours suivent ton fuseau horaire ({zone})."
+  },
+  "trophies": {
+    "title": "Trophées",
+    "locked": "Verrouillé",
+    "won": "Obtenu le {date}",
+    "names": {
+      "FIRST_STEPS": "Premier pas",
+      "GOAL_REACHED": "Objectif atteint",
+      "REGULAR": "Régulier",
+      "PERFECT_WEEK": "Semaine parfaite",
+      "MARATHON": "Marathon",
+      "FLAWLESS": "Sans faute"
+    },
+    "rules": {
+      "FIRST_STEPS": "10 minutes d'étude",
+      "GOAL_REACHED": "Atteindre ton objectif une fois",
+      "REGULAR": "Atteindre ton objectif 3 jours d'affilée",
+      "PERFECT_WEEK": "Atteindre ton objectif 7 jours d'affilée",
+      "MARATHON": "10 heures d'étude au total",
+      "FLAWLESS": "Un quiz de 5 questions ou plus, tout juste, sans question passée"
+    }
+  },
+  "quizSize": {
+    "label": "Questions",
+    "hint": "Avec 5 questions, un quiz parfait donne le trophée Sans faute."
   }
 }
