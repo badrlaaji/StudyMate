@@ -19,6 +19,7 @@ from rag.embeddings import BASE_MODEL
 THRESHOLDS = ROOT / "eval" / "thresholds.json"
 REPLAY_DIR = ROOT / "eval" / "replay"
 REPORT = ROOT / "eval" / "results" / "regression.json"
+CI = os.environ.get("GITHUB_ACTIONS") == "true"
 RECORD_HINT = (
     "Prompts changed: re-record with `uv run python -m eval.regression record`."
 )
@@ -52,6 +53,11 @@ def markdown(metrics: dict[str, float], thresholds: dict[str, float]) -> str:
         mark = " ❌" if below else ""
         lines.append(f"| {key} | {value}{mark} | {thresholds.get(key, '-')} |")
     return "\n".join(lines) + "\n"
+
+
+def one_line(metrics: dict[str, float]) -> str:
+    """Metrics as "key=value" pairs on one line."""
+    return " ".join(f"{key}={value}" for key, value in metrics.items())
 
 
 def use_settings(record: bool) -> None:
@@ -89,8 +95,12 @@ def check() -> int:
         with open(summary, "a", encoding="utf-8") as file:
             file.write("## Regression evaluation\n\n" + table)
     failed = failures(metrics, thresholds)
+    # GitHub annotations: shown on the run page, readable through the API.
+    prefix = "::error title=Regression::" if CI else "REGRESSION "
     for line in failed:
-        print(f"REGRESSION {line}")
+        print(f"{prefix}{line}")
+    if CI:
+        print(f"::notice title=Regression gate::{one_line(metrics)}")
     if any(metrics[f"answers.{lang}.replay_misses"] for lang in eval_retrieval.LANGS):
         print(RECORD_HINT)
     return 1 if failed else 0

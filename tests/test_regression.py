@@ -9,7 +9,7 @@ from agent.cache import cache_key, cache_put
 from agent.llm import OFFLINE_MESSAGE, cache_folder, invoke_structured
 from config import ROOT
 from eval import eval_answers
-from eval.regression import failures, flatten, markdown
+from eval.regression import failures, flatten, markdown, one_line
 from tests.test_llm import Answer, fake_llm
 
 
@@ -94,3 +94,7 @@ def test_a_missing_metric_fails():
 def test_markdown_marks_a_regression():
     table = markdown({"retrieval.en.hit@4": 0.5}, {"retrieval.en.hit@4": 0.8})
     assert "| retrieval.en.hit@4 | 0.5 ❌ | 0.8 |" in table
+
+
+def test_one_line_keeps_every_metric():
+    assert one_line({"a": 1, "b": 0.5}) == "a=1 b=0.5"
