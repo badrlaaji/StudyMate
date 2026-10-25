@@ -23,7 +23,7 @@ class QuizServiceTest {
                 new QuizResultRequest.Item("k_means", AnswerStatus.CORRECT),
                 new QuizResultRequest.Item("cnn", AnswerStatus.SKIPPED)));
 
-        QuizSummary summary = service.record(request);
+        QuizSummary summary = service.record(7L, request);
 
         assertThat(summary).isEqualTo(new QuizSummary(2, 1, 0, 1));
         ArgumentCaptor<List<QuizAnswer>> saved = ArgumentCaptor.forClass(List.class);
@@ -31,15 +31,16 @@ class QuizServiceTest {
         assertThat(saved.getValue()).extracting(QuizAnswer::getStatus)
                 .containsExactly(AnswerStatus.CORRECT, AnswerStatus.SKIPPED);
         assertThat(saved.getValue()).extracting(QuizAnswer::getQuizId).containsOnly(QUIZ);
+        assertThat(saved.getValue()).extracting(QuizAnswer::getUserId).containsOnly(7L);
         verifyNoInteractions(scores); // the quiz log never writes a score: mastery and FSRS do not move
     }
 
     @Test
     void summaryCountsEachStatus() {
         List<QuizAnswer> answers = List.of(
-                new QuizAnswer(QUIZ, "c", "a", AnswerStatus.INCORRECT, null),
-                new QuizAnswer(QUIZ, "c", "b", AnswerStatus.SKIPPED, null),
-                new QuizAnswer(QUIZ, "c", "c", AnswerStatus.SKIPPED, null));
+                new QuizAnswer(7L, QUIZ, "c", "a", AnswerStatus.INCORRECT, null),
+                new QuizAnswer(7L, QUIZ, "c", "b", AnswerStatus.SKIPPED, null),
+                new QuizAnswer(7L, QUIZ, "c", "c", AnswerStatus.SKIPPED, null));
         assertThat(QuizService.summarize(answers)).isEqualTo(new QuizSummary(3, 0, 1, 2));
     }
 }

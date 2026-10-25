@@ -14,11 +14,12 @@ public class QuizService {
         this.repository = repository;
     }
 
-    /** Save every question of a quiz, skipped ones included, and count them. */
-    public QuizSummary record(QuizResultRequest request) {
+    /** Save every question of a user's quiz, skipped ones included, and count them. */
+    public QuizSummary record(Long userId, QuizResultRequest request) {
         Instant now = Instant.now();
         List<QuizAnswer> answers = request.answers().stream()
-                .map(item -> new QuizAnswer(request.quizId(), request.courseId(), item.notionId(), item.status(), now))
+                .map(item -> new QuizAnswer(
+                        userId, request.quizId(), request.courseId(), item.notionId(), item.status(), now))
                 .toList();
         repository.saveAll(answers);
         return summarize(answers);

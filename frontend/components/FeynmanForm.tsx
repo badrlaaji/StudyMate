@@ -28,9 +28,10 @@ type Props = {
   course: string;
   initialNotion?: string;
   examples?: Example[]; // demo: explanations judged in advance
+  signedIn: boolean; // scores can be saved
 };
 
-export default function FeynmanForm({ notions, lang, t, course, initialNotion, examples }: Props) {
+export default function FeynmanForm({ notions, lang, t, course, initialNotion, examples, signedIn }: Props) {
   const known = notions.some((n) => n.id === initialNotion);
   const [notionId, setNotionId] = useState(known ? initialNotion! : (notions[0]?.id ?? ""));
   const [explanation, setExplanation] = useState("");
@@ -150,13 +151,13 @@ export default function FeynmanForm({ notions, lang, t, course, initialNotion, e
           </p>
         )}
         {!result && !error && <p className="muted">{busy ? t.feynman.checking : t.feynman.resultEmpty}</p>}
-        {result && <Feedback result={result} t={t} />}
+        {result && <Feedback result={result} t={t} signedIn={signedIn} />}
       </section>
     </div>
   );
 }
 
-function Feedback({ result, t }: { result: Result; t: Dict }) {
+function Feedback({ result, t, signedIn }: { result: Result; t: Dict; signedIn: boolean }) {
   return (
     <>
       <div className="gauge">
@@ -170,7 +171,7 @@ function Feedback({ result, t }: { result: Result; t: Dict }) {
             <span key={i} data-on={i < result.score} />
           ))}
         </div>
-        <span className="hint">{result.recorded ? t.feynman.recorded : t.feynman.notRecorded}</span>
+        <span className="hint">{result.recorded ? t.feynman.recorded : signedIn ? t.feynman.notRecorded : t.account.notSaved}</span>
       </div>
 
       <Ideas title={t.feynman.covered} items={result.covered} ok />

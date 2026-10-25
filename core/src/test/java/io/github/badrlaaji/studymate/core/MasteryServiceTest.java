@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 class MasteryServiceTest {
 
     private static Score score(String notionId, int value) {
-        return new Score("data-science", notionId, Source.QUIZ, value, Instant.EPOCH);
+        return new Score(7L, "data-science", notionId, Source.QUIZ, value, Instant.EPOCH);
     }
 
     @Test
@@ -47,22 +47,23 @@ class MasteryServiceTest {
     @Test
     void weakKeepsOnlyWeakNotionsOfTheCourseWithinTheLimit() {
         ScoreRepository repository = mock(ScoreRepository.class);
-        when(repository.findAllByCourseIdOrderByCreatedAtDescIdDesc("data-science"))
+        when(repository.findAllByUserIdAndCourseIdOrderByCreatedAtDescIdDesc(7L, "data-science"))
                 .thenReturn(List.of(score("a", 1), score("b", 2), score("c", 5)));
         MasteryService service = new MasteryService(repository);
-        assertThat(service.weak("data-science", 5)).extracting(NotionMastery::notionId).containsExactly("a", "b");
-        assertThat(service.weak("data-science", 1)).extracting(NotionMastery::notionId).containsExactly("a");
-        assertThat(service.weak("statistics", 5)).isEmpty(); // another course: no scores
+        assertThat(service.weak(7L, "data-science", 5)).extracting(NotionMastery::notionId).containsExactly("a", "b");
+        assertThat(service.weak(7L, "data-science", 1)).extracting(NotionMastery::notionId).containsExactly("a");
+        assertThat(service.weak(7L, "statistics", 5)).isEmpty(); // another course: no scores
+        assertThat(service.weak(8L, "data-science", 5)).isEmpty(); // another user: no scores
     }
 
     @Test
     void historyKeepsTheTimeAndTheSourceOfEachScore() {
         ScoreRepository repository = mock(ScoreRepository.class);
         Instant time = Instant.parse("2026-01-01T09:00:00Z");
-        when(repository.findAllByCourseIdOrderByCreatedAtAscIdAsc("data-science"))
-                .thenReturn(List.of(new Score("data-science", "a", Source.FEYNMAN, 4, time)));
+        when(repository.findAllByUserIdAndCourseIdOrderByCreatedAtAscIdAsc(7L, "data-science"))
+                .thenReturn(List.of(new Score(7L, "data-science", "a", Source.FEYNMAN, 4, time)));
         MasteryService service = new MasteryService(repository);
-        assertThat(service.history("data-science"))
+        assertThat(service.history(7L, "data-science"))
                 .containsExactly(new ScoreHistory("a", Source.FEYNMAN, 4, time));
     }
 }

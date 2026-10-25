@@ -19,9 +19,10 @@ type Answer = { notion_id: string; answer_index: number; chosen_index: number | 
 type Result = { scores: Record<string, number>; recorded: boolean };
 const QUIZ_SIZE = 3;
 
-type Props = { lang: Lang; t: Dict; course: string; names: Record<string, string> };
+// signedIn: scores can be saved (an account, or the demo's browser cookie).
+type Props = { lang: Lang; t: Dict; course: string; names: Record<string, string>; signedIn: boolean };
 
-export default function QuizRunner({ lang, t, course, names }: Props) {
+export default function QuizRunner({ lang, t, course, names, signedIn }: Props) {
   const [questions, setQuestions] = useState<Question[] | null>(null);
   const [degraded, setDegraded] = useState(false);
   const [index, setIndex] = useState(0);
@@ -184,7 +185,7 @@ export default function QuizRunner({ lang, t, course, names }: Props) {
           </div>
         )}
         {Object.keys(result.scores).length > 0 && (
-          <p className="hint">{result.recorded ? t.quiz.recorded : t.quiz.notRecorded}</p>
+          <p className="hint">{result.recorded ? t.quiz.recorded : signedIn ? t.quiz.notRecorded : t.account.notSaved}</p>
         )}
         <div className="row">
           <button type="button" className="btn btn-primary" onClick={start}>

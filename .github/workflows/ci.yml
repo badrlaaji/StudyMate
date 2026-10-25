@@ -116,6 +116,8 @@ jobs:
     needs: [python, eval, java, web]
     steps:
       - uses: actions/checkout@v4
+      - name: A throwaway signing key for this run
+        run: echo "JWT_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
       - name: Build the images and start the stack
         run: docker compose -f infra/docker-compose.yml up -d --build
       - name: The API sees the database and Spring
@@ -130,6 +132,14 @@ jobs:
           done
           docker compose -f infra/docker-compose.yml logs
           exit 1
+      - name: Accounts end to end (sign up, log in, token relayed to Spring)
+        run: |
+          user='{"email":"ci@example.org","password":"correct horse"}'
+          curl -sf -X POST localhost:8000/auth/register -H 'content-type: application/json' -d "$user"
+          token=$(curl -sf -X POST localhost:8000/auth/login -H 'content-type: application/json' -d "$user" | python3 -c 'import json,sys; print(json.load(sys.stdin)["token"])')
+          curl -s localhost:8000/mastery | grep -q '"signed_out"'
+          curl -s localhost:8000/mastery -H "Authorization: Bearer $token" | grep -q '"status":"ok"'
+          test "$(curl -s -o /dev/null -w '%{http_code}' localhost:8080/api/mastery?course=data-science)" = 401
       - name: The web app answers
         run: curl -sf localhost:3000/ > /dev/null
       - name: Stop

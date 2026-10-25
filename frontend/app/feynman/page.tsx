@@ -5,7 +5,7 @@ import { demoExplanations, isDemo } from "@/lib/demo";
 import { getSession } from "@/lib/lang";
 
 export default async function FeynmanPage({ searchParams }: { searchParams: Promise<{ notion?: string }> }) {
-  const { lang, t, course } = await getSession();
+  const { lang, t, course, account } = await getSession();
   const { notion } = await searchParams;
   const notions = course ? await getNotions(lang, course.id) : [];
   return (
@@ -24,6 +24,7 @@ export default async function FeynmanPage({ searchParams }: { searchParams: Prom
           course={course.id}
           initialNotion={notion}
           examples={isDemo() ? demoExplanations(course.id) : undefined}
+          signedIn={account !== null || isDemo()}
         />
       ) : (
         <p className="callout">

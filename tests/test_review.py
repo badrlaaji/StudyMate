@@ -93,8 +93,8 @@ def test_fetch_history_returns_json_or_none_when_down():
         assert request.method == "GET"
         return httpx.Response(200, json=[row("k_means", 1, 4)])
 
-    assert asyncio.run(fetch_history(spring(ok), "data-science"))[0]["score"] == 4
-    assert asyncio.run(fetch_history(spring(spring_down), "data-science")) is None
+    assert asyncio.run(fetch_history(spring(ok), "data-science", "t"))[0]["score"] == 4
+    assert asyncio.run(fetch_history(spring(spring_down), "data-science", "t")) is None
 
 
 def test_review_endpoint_gives_a_date_per_notion(client):  # noqa: F811
@@ -141,7 +141,16 @@ def test_build_quiz_asks_due_notions_before_weak_ones(monkeypatch):
     monkeypatch.setattr("agent.quiz.make_quiz", fake_make_quiz)
     http = spring(fake_spring)
     questions, degraded = asyncio.run(
-        build_quiz(None, http, "data-science", CATALOG, 3, "en", rng=random.Random(0))
+        build_quiz(
+            None,
+            http,
+            "data-science",
+            CATALOG,
+            3,
+            "en",
+            rng=random.Random(0),
+            token="t",
+        )
     )
     assert asked[:2] == ["k_means", "overfitting"] and len(asked) == 3
     assert questions == [] and degraded is False

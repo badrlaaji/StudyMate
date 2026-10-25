@@ -43,6 +43,7 @@ class ChatState(BaseModel):
     status: str = ""
     quiz: list[dict] | None = None
     plan: list[dict] | None = None
+    token: str | None = None  # the user's JWT, relayed to Spring (never returned)
 
 
 def after_generate(state: ChatState) -> str:
@@ -99,7 +100,15 @@ def build_graph(
         if catalog is None:  # notions not drafted yet for this course
             return {"quiz": [], "status": "no_notions"}
         questions, degraded = await build_quiz(
-            engine, http, state.course, catalog, QUIZ_SIZE, state.lang, llm, rng
+            engine,
+            http,
+            state.course,
+            catalog,
+            QUIZ_SIZE,
+            state.lang,
+            llm,
+            rng,
+            state.token,
         )
         status = "degraded" if degraded else "ok"
         return {"quiz": [q.model_dump() for q in questions], "status": status}
@@ -108,7 +117,9 @@ def build_graph(
         catalog = catalogs.get(state.course)
         if catalog is None:
             return {"plan": [], "status": "no_notions"}
-        weak = await fetch_weak_notions(http, state.course, PLAN_SIZE)
+        if not state.token:
+            return {"plan": [], "status": "signed_out"}
+        weak = await fetch_weak_notions(http, state.course, PLAN_SIZE, state.token)
         if weak is None:
             return {"plan": [], "status": "degraded"}
         return {"plan": build_plan(weak, catalog, state.lang), "status": "ok"}

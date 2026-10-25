@@ -19,6 +19,10 @@ public class QuizAnswer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Nullable in the database: rows saved before accounts have no user (and stay hidden).
+    // A NOT NULL column cannot be added to a table that already has rows.
+    private Long userId;
+
     @Column(nullable = false)
     private String quizId;
 
@@ -39,12 +43,18 @@ public class QuizAnswer {
         // required by JPA
     }
 
-    public QuizAnswer(String quizId, String courseId, String notionId, AnswerStatus status, Instant answeredAt) {
+    public QuizAnswer(
+            Long userId, String quizId, String courseId, String notionId, AnswerStatus status, Instant answeredAt) {
+        this.userId = userId;
         this.quizId = quizId;
         this.courseId = courseId;
         this.notionId = notionId;
         this.status = status;
         this.answeredAt = answeredAt;
+    }
+
+    public Long getUserId() {
+        return userId;
     }
 
     public String getQuizId() {

@@ -15,7 +15,7 @@ const MAX_QUIZ = 5;
 const QUIZ_RULE = /\b(quiz+|qcm|test me|teste-moi|interroge-moi)\b/i;
 const PLAN_RULE =
   /\b(plan de révision|study plan|revision plan|what should i (review|study)|quoi réviser|que dois-je réviser|weak topics|notions faibles)\b/i;
-const READ_ONLY = "The public demo is read-only: install StudyMate locally to add a course.";
+const READ_ONLY = "The public demo is read-only: install StudyMate locally to add a course or an account.";
 
 type Lang = "en" | "fr";
 type DemoCourse = (typeof data)["courses"][number];
@@ -192,7 +192,9 @@ export function demoReply(method: string, path: string, query: URLSearchParams, 
   const lang = toLang(query.get("lang") ?? body?.lang);
   if (path === "health") return json({ status: "ok", database: false, spring: false, demo: true });
   if (path === "courses" && method === "GET") return json(data.courses.map((c) => courseRow(c, lang)));
-  if (path === "uploads" || path.startsWith("courses")) return json({ detail: READ_ONLY }, 403);
+  if (path === "uploads" || path.startsWith("courses") || path.startsWith("auth") || path === "me") {
+    return json({ detail: READ_ONLY }, 403); // no uploads and no accounts in the public demo
+  }
   if (path === "book.pdf") return json({ detail: "No local PDF in the demo." }, 404);
 
   const course = findCourse(query.get("course") ?? body?.course);

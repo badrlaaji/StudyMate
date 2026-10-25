@@ -56,7 +56,21 @@ REGISTRY = Registry(
 
 
 def spring_handler(request: httpx.Request) -> httpx.Response:
-    """Fake Spring: weak notions, mastery, history and score recording."""
+    """Fake Spring: accounts, then data routes that need the user's token."""
+    path = request.url.path
+    if path == "/api/health":
+        return httpx.Response(200, json={"status": "ok"})
+    if path == "/api/auth/register":
+        return httpx.Response(201, json={"id": 7, "email": "ada@example.org"})
+    if path == "/api/auth/login":
+        body = json.loads(request.content)
+        if body["password"] != "correct horse":
+            return httpx.Response(401, json={"detail": "Wrong email or password."})
+        return httpx.Response(200, json={"token": "a.b.c", "userId": 7})
+    if request.headers.get("authorization") != "Bearer user-token":
+        return httpx.Response(401)  # Spring refuses every data route without a token
+    if path == "/api/me":
+        return httpx.Response(200, json={"id": 7, "email": "ada@example.org"})
     if request.url.path == "/api/scores" and request.method == "POST":
         SCORES.append(request.content)
         return httpx.Response(201)
@@ -116,7 +130,7 @@ def client():
     main.app.state.jobs = {}
     main.app.state.job_lock = asyncio.Lock()
     main.app.state.tasks = set()
-    return TestClient(main.app)
+    return TestClient(main.app, headers={"Authorization": "Bearer user-token"})
 
 
 # --- Feynman formula (D2) -------------------------------------------------------
@@ -252,7 +266,8 @@ def test_feynman_unknown_notion_is_404(client):
 
 
 def test_quiz_returns_questions(client, monkeypatch):
-    async def fake_build_quiz(engine, http, course, catalog, n, lang):
+    async def fake_build_quiz(engine, http, course, catalog, n, lang, token):
+        assert token == "user-token"
         question = QuizQuestion(
             notion_id="k_means",
             question="What is a centroid?",

@@ -29,8 +29,11 @@ from agent.spring import (
     make_client,
     post_quiz_answers,
     post_score,
+    relay,
+    spring_alive,
 )
 from api.schemas import (
+    AuthRequest,
     ChatRequest,
     ChatResponse,
     CourseOut,
@@ -109,6 +112,13 @@ async def index_missing(request: Request, error: ProgrammingError) -> JSONRespon
     return JSONResponse(status_code=503, content={"detail": INDEX_HINT})
 
 
+def bearer(request: Request) -> str | None:
+    """The user's JWT from "Authorization: Bearer <token>", relayed to Spring as is."""
+    header = request.headers.get("authorization", "")
+    token = header.removeprefix("Bearer ").strip()
+    return token if header.startswith("Bearer ") and token else None
+
+
 def find_course(request: Request, course_id: str | None) -> Course:
     """Return a course of the registry or a 404."""
     try:
@@ -152,8 +162,7 @@ async def health(request: Request) -> dict:
         database = True
     except Exception:  # any connection problem means "down"
         database = False
-    default = request.app.state.registry.default
-    spring = await fetch_mastery(request.app.state.http, default) is not None
+    spring = await spring_alive(request.app.state.http)
     return {
         "status": "ok" if database else "degraded",
         "database": database,
@@ -196,7 +205,7 @@ async def chat(body: ChatRequest, request: Request) -> dict:
     """Route the message, then answer with verified citations, a quiz or a plan."""
     course = find_course(request, body.course)
     state = await request.app.state.graph.ainvoke(
-        {"message": body.message, "course": course.id}
+        {"message": body.message, "course": course.id, "token": bearer(request)}
     )
     return to_response(state)
 
@@ -228,8 +237,9 @@ async def feynman(body: FeynmanRequest, request: Request) -> dict:
     result = await asyncio.to_thread(
         evaluate_explanation, notion, body.explanation, body.lang
     )
-    recorded = await post_score(
-        request.app.state.http, course.id, notion.id, "FEYNMAN", result["score"]
+    token = bearer(request)
+    recorded = token is not None and await post_score(
+        request.app.state.http, course.id, notion.id, "FEYNMAN", result["score"], token
     )
     return {**result, "recorded": recorded}
 
@@ -240,13 +250,12 @@ async def quiz(body: QuizRequest, request: Request) -> dict:
     course = find_course(request, body.course)
     catalog = find_catalog(request, course)
     state = request.app.state
+    token = bearer(request)
     questions, degraded = await build_quiz(
-        state.engine, state.http, course.id, catalog, body.n, body.lang
+        state.engine, state.http, course.id, catalog, body.n, body.lang, token=token
     )
-    return {
-        "questions": [q.model_dump() for q in questions],
-        "status": "degraded" if degraded else "ok",
-    }
+    status = "signed_out" if token is None else "degraded" if degraded else "ok"
+    return {"questions": [q.model_dump() for q in questions], "status": status}
 
 
 @app.post("/quiz/result", response_model=QuizResultResponse)
@@ -254,16 +263,19 @@ async def quiz_result(body: QuizResultRequest, request: Request) -> dict:
     """Grade by code (no LLM); record the scores per notion and the quiz log."""
     course = find_course(request, body.course)
     http = request.app.state.http
+    token = bearer(request)
     results = [
         (a.notion_id, a.chosen_index == a.answer_index)
         for a in body.answers
         if a.chosen_index is not None  # a skipped question is not graded
     ]
     scores = notion_scores(results)
-    recorded = [
-        await post_score(http, course.id, notion_id, "QUIZ", score)
-        for notion_id, score in scores.items()
-    ]
+    recorded = [token is not None]  # signed out: graded, not saved
+    if token:
+        recorded += [
+            await post_score(http, course.id, notion_id, "QUIZ", score, token)
+            for notion_id, score in scores.items()
+        ]
     log = [
         {
             "notionId": a.notion_id,
@@ -271,8 +283,9 @@ async def quiz_result(body: QuizResultRequest, request: Request) -> dict:
         }
         for a in body.answers
     ]
-    quiz_id = str(uuid.uuid4())
-    recorded.append(await post_quiz_answers(http, course.id, quiz_id, log))
+    if token:
+        quiz_id = str(uuid.uuid4())
+        recorded.append(await post_quiz_answers(http, course.id, quiz_id, log, token))
     skipped = sum(row["status"] == "SKIPPED" for row in log)
     return {"scores": scores, "recorded": all(recorded), "skipped": skipped}
 
@@ -281,7 +294,10 @@ async def quiz_result(body: QuizResultRequest, request: Request) -> dict:
 async def mastery(request: Request, course: CourseQuery = None) -> dict:
     """Relay the mastery of every scored notion of a course from Spring."""
     course_id = find_course(request, course).id
-    data = await fetch_mastery(request.app.state.http, course_id)
+    token = bearer(request)
+    if token is None:
+        return {"notions": [], "status": "signed_out"}
+    data = await fetch_mastery(request.app.state.http, course_id, token)
     return {"notions": data or [], "status": "degraded" if data is None else "ok"}
 
 
@@ -290,7 +306,10 @@ async def plan(request: Request, lang: Lang = "en", course: CourseQuery = None) 
     """Revision plan without LLM: weakest notions first, with pages to re-read."""
     found = find_course(request, course)
     catalog = find_catalog(request, found)
-    weak = await fetch_weak_notions(request.app.state.http, found.id, PLAN_SIZE)
+    token = bearer(request)
+    if token is None:
+        return {"plan": [], "status": "signed_out"}
+    weak = await fetch_weak_notions(request.app.state.http, found.id, PLAN_SIZE, token)
     if weak is None:
         return {"plan": [], "status": "degraded"}
     return {"plan": build_plan(weak, catalog, lang), "status": "ok"}
@@ -303,11 +322,42 @@ async def review(
     """Next review date (FSRS) of every scored notion, the most urgent first."""
     found = find_course(request, course)
     catalog = find_catalog(request, found)
-    history = await fetch_history(request.app.state.http, found.id)
+    token = bearer(request)
+    if token is None:
+        return {"reviews": [], "status": "signed_out"}
+    history = await fetch_history(request.app.state.http, found.id, token)
     if history is None:
         return {"reviews": [], "status": "degraded"}
     now = datetime.now(UTC)
     return {"reviews": review_schedule(history, catalog, lang, now), "status": "ok"}
+
+
+@app.post("/auth/register")
+async def register(body: AuthRequest, request: Request) -> JSONResponse:
+    """Create an account (Spring hashes the password; FastAPI never stores it)."""
+    status, data = await relay(
+        request.app.state.http, "POST", "/api/auth/register", body.model_dump()
+    )
+    return JSONResponse(status_code=status, content=data)
+
+
+@app.post("/auth/login")
+async def login(body: AuthRequest, request: Request) -> JSONResponse:
+    """Check the password in Spring and return its signed token (JWT)."""
+    status, data = await relay(
+        request.app.state.http, "POST", "/api/auth/login", body.model_dump()
+    )
+    return JSONResponse(status_code=status, content=data)
+
+
+@app.get("/me")
+async def me(request: Request) -> JSONResponse:
+    """The signed-in account, as Spring sees the token (401 without one)."""
+    token = bearer(request)
+    if token is None:
+        return JSONResponse(status_code=401, content={"detail": "Sign in first."})
+    status, data = await relay(request.app.state.http, "GET", "/api/me", token=token)
+    return JSONResponse(status_code=status, content=data)
 
 
 @app.get("/book.pdf")

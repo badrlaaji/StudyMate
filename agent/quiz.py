@@ -122,10 +122,16 @@ async def build_quiz(
     lang: str,
     llm=None,
     rng: random.Random | None = None,
+    token: str | None = None,
 ) -> tuple[list[QuizQuestion], bool]:
-    """Due (FSRS), then weak notions, then the quiz; and whether Spring was down."""
-    weak = await fetch_weak_notions(http, course, n)
-    history = await fetch_history(http, course)
+    """Due (FSRS), then weak notions, then the quiz; and whether Spring was down.
+
+    Signed out (no token): no progress to read, random notions, not "degraded".
+    """
+    weak, history = [], []
+    if token:
+        weak = await fetch_weak_notions(http, course, n, token)
+        history = await fetch_history(http, course, token)
     schedule = review_schedule(history or [], catalog, lang, datetime.now(UTC))
     weak_ids = [item["notionId"] for item in weak or []]
     first = quiz_order(due_ids(schedule), weak_ids)

@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import java.util.List;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Mastery API; its only client is the FastAPI service.
- * Parameter constraints are checked by Spring MVC itself (400 on violation). */
+/** Mastery API; its only client is the FastAPI service. Every route reads the caller's own
+ * data (user id = subject of the verified JWT). Parameter constraints: 400 on violation. */
 @RestController
 @RequestMapping("/api")
 public class ScoreController {
@@ -29,9 +31,10 @@ public class ScoreController {
     /** Record one 0-5 score (FEYNMAN or QUIZ). */
     @PostMapping("/scores")
     @ResponseStatus(HttpStatus.CREATED)
-    public NotionMastery addScore(@Valid @RequestBody ScoreRequest request) {
-        service.record(request);
-        return service.mastery(request.courseId()).stream()
+    public NotionMastery addScore(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody ScoreRequest request) {
+        Long userId = CurrentUser.id(jwt);
+        service.record(userId, request);
+        return service.mastery(userId, request.courseId()).stream()
                 .filter(m -> m.notionId().equals(request.notionId()))
                 .findFirst()
                 .orElseThrow();
@@ -39,21 +42,24 @@ public class ScoreController {
 
     /** Score history of a course, oldest first (FastAPI computes the FSRS review dates). */
     @GetMapping("/scores")
-    public List<ScoreHistory> history(@RequestParam @Pattern(regexp = ScoreRequest.COURSE_ID) String course) {
-        return service.history(course);
+    public List<ScoreHistory> history(
+            @AuthenticationPrincipal Jwt jwt, @RequestParam @Pattern(regexp = ScoreRequest.COURSE_ID) String course) {
+        return service.history(CurrentUser.id(jwt), course);
     }
 
     /** Weak notions of a course (average of the last 3 scores below 3), weakest first. */
     @GetMapping("/notions/weak")
     public List<NotionMastery> weak(
+            @AuthenticationPrincipal Jwt jwt,
             @RequestParam @Pattern(regexp = ScoreRequest.COURSE_ID) String course,
             @RequestParam(defaultValue = "5") @Min(1) @Max(25) int limit) {
-        return service.weak(course, limit);
+        return service.weak(CurrentUser.id(jwt), course, limit);
     }
 
     /** Mastery of every scored notion of a course. */
     @GetMapping("/mastery")
-    public List<NotionMastery> mastery(@RequestParam @Pattern(regexp = ScoreRequest.COURSE_ID) String course) {
-        return service.mastery(course);
+    public List<NotionMastery> mastery(
+            @AuthenticationPrincipal Jwt jwt, @RequestParam @Pattern(regexp = ScoreRequest.COURSE_ID) String course) {
+        return service.mastery(CurrentUser.id(jwt), course);
     }
 }

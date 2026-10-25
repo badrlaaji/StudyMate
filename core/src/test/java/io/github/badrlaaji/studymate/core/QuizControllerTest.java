@@ -1,6 +1,7 @@
 package io.github.badrlaaji.studymate.core;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -9,13 +10,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 /** POST /api/quiz-answers: validation and the skipped status; the service is a mock. */
-@WebMvcTest(QuizController.class)
+@WebMvcTest(controllers = QuizController.class, properties = TestTokens.SECRET_PROPERTY)
+@Import(SecurityConfig.class)
 class QuizControllerTest {
 
     @Autowired
@@ -28,13 +31,14 @@ class QuizControllerTest {
 
     private ResultActions send(String answers) throws Exception {
         return mvc.perform(post("/api/quiz-answers")
+                .with(TestTokens.as(7))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"courseId\":\"data-science\"," + QUIZ + ",\"answers\":" + answers + "}"));
     }
 
     @Test
     void skippedQuestionIsAccepted() throws Exception {
-        when(service.record(any(QuizResultRequest.class))).thenReturn(new QuizSummary(2, 1, 0, 1));
+        when(service.record(eq(7L), any(QuizResultRequest.class))).thenReturn(new QuizSummary(2, 1, 0, 1));
         send("[{\"notionId\":\"k_means\",\"status\":\"CORRECT\"},{\"notionId\":\"cnn\",\"status\":\"SKIPPED\"}]")
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.skipped").value(1));

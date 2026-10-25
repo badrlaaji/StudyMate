@@ -2,6 +2,7 @@
 // Public demo (DEMO_MODE=1): the same answers come from the demo data, without network.
 import { cookies } from "next/headers";
 
+import { bearer, SESSION_COOKIE } from "@/lib/account";
 import { demoReply, isDemo, SCORES_COOKIE } from "@/lib/demo";
 
 const API_URL = process.env.API_URL ?? "http://localhost:8000";
@@ -43,7 +44,8 @@ export type Review = { notion_id: string; name: string; due: string; days_left: 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   if (isDemo()) return getDemo(path, fallback);
   try {
-    const response = await fetch(`${API_URL}${path}`, { cache: "no-store" });
+    const token = (await cookies()).get(SESSION_COOKIE)?.value; // the user's JWT, relayed as is
+    const response = await fetch(`${API_URL}${path}`, { cache: "no-store", headers: bearer(token) });
     return response.ok ? await response.json() : fallback;
   } catch {
     return fallback;

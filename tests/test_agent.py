@@ -277,18 +277,18 @@ def test_fetch_weak_notions_returns_json_or_none_when_down():
         assert request.url.params["course"] == "statistics"
         return httpx.Response(200, json=[{"notionId": "k_means", "average": 2.0}])
 
-    assert asyncio.run(fetch_weak_notions(spring(ok), "statistics", 5)) == [
+    assert asyncio.run(fetch_weak_notions(spring(ok), "statistics", 5, "t")) == [
         {"notionId": "k_means", "average": 2.0}
     ]
     down = spring(spring_down)
-    assert asyncio.run(fetch_weak_notions(down, "statistics", 5)) is None
+    assert asyncio.run(fetch_weak_notions(down, "statistics", 5, "t")) is None
 
 
 def test_post_score_false_on_server_error():
     def error(request):
         return httpx.Response(500)
 
-    assert asyncio.run(post_score(spring(error), "ds", "k_means", "QUIZ", 4)) is False
+    assert not asyncio.run(post_score(spring(error), "ds", "k_means", "QUIZ", 4, "t"))
 
 
 def test_post_score_sends_the_course_id():
@@ -296,7 +296,7 @@ def test_post_score_sends_the_course_id():
         assert b'"courseId":"statistics"' in request.content.replace(b" ", b"")
         return httpx.Response(201)
 
-    assert asyncio.run(post_score(spring(created), "statistics", "r", "QUIZ", 4))
+    assert asyncio.run(post_score(spring(created), "statistics", "r", "QUIZ", 4, "t"))
 
 
 # --- whole graph ----------------------------------------------------------------
@@ -306,7 +306,12 @@ SEARCHED: list[str] = []
 
 
 def run_graph(
-    message: str, answers: dict, http=None, monkeypatch=None, course_id: str = ""
+    message: str,
+    answers: dict,
+    http=None,
+    monkeypatch=None,
+    course_id: str = "",
+    token: str | None = "user-token",
 ) -> dict:
     """Run the compiled graph with fakes and return the /chat response."""
 
@@ -330,7 +335,7 @@ def run_graph(
         llm=fake_llm(answers),
         rng=random.Random(0),
     )
-    state = {"message": message, "course": course_id}
+    state = {"message": message, "course": course_id, "token": token}
     return to_response(asyncio.run(app.ainvoke(state)))
 
 
@@ -425,3 +430,11 @@ def test_graph_plan_from_spring(monkeypatch):
     response = run_graph("What should I review?", answers, spring(weak), monkeypatch)
     assert response["status"] == "ok"
     assert [row["notion_id"] for row in response["plan"]] == ["k_means"]
+
+
+def test_graph_plan_needs_an_account(monkeypatch):
+    answers = {Route: [Route(route="plan", lang="en", search_query="q")]}
+    response = run_graph(
+        "What should I review?", answers, spring(spring_down), monkeypatch, token=None
+    )
+    assert response["status"] == "signed_out" and response["plan"] == []

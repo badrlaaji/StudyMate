@@ -87,6 +87,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : pas de vraie main devant une vraie caméra ici : test avec une fausse caméra (vidéo d'une image d'exemple) ; à refaire devant une webcam sous Windows.
 - **Chiffres** : fausse caméra « victoire » → réponse 2 en 0,9 s ; poing → question passée en 1,4-1,6 s ; axe-core 0 violation (/quiz caméra active) ; question passée en vrai : 12 → 13 notes (seule la notion répondue), statut SKIPPED en base ; WASM 13 Mo (+ 12 Mo de secours sans SIMD) servis par le site, modèle 7,8 Mo ; tests : 193 Python (+ 1 base), 22 Spring, 34 Vitest.
 
+## Étape 17 — Comptes : Spring Security et JWT (2026-10-25)
+- **Fait** : comptes Spring (BCrypt, JWT HS256 7 jours, `JWT_SECRET`) ; toutes les données par utilisateur ; 401 sans jeton, 403 sur les données d'un autre ; relais du jeton Next.js → FastAPI → Spring ; page `/login`, menu de compte, état « déconnecté » ; vérification de bout en bout ajoutée au job CI compose.
+- **Bloqué** : rien. À faire de ton côté : ajouter `JWT_SECRET` (32 caractères ou plus) dans ton `.env` avant de lancer Spring.
+- **Chiffres** : en vrai : inscription 201, doublon 409, mauvais mot de passe 401, Spring sans jeton 401, jeton modifié 401, Ada lit Ada 200, Bob lit Ada 403 ; données isolées (Bob ne voit pas les notes d'Ada) ; hash `$2a$10$` en base ; cookie HttpOnly non lisible par la page ; axe-core 0 violation (/login) ; 1 défaut trouvé en vrai (colonne NOT NULL sur table non vide) ; tests : 204 Python (+ 1 base), 37 Spring, 41 Vitest.
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |

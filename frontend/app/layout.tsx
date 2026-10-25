@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Link from "next/link";
 
+import AccountMenu from "@/components/AccountMenu";
 import BrandMark from "@/components/BrandMark";
 import CourseSwitcher from "@/components/CourseSwitcher";
 import Icon from "@/components/Icon";
@@ -32,7 +33,8 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const { lang, t, courses, course } = await getSession();
+  const { lang, t, courses, course, account } = await getSession();
+  const accounts = !isDemo(); // the public demo has no accounts
   return (
     <html lang={lang} className={`${sans.variable} ${serif.variable}`}>
       <body>
@@ -51,6 +53,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <CourseSwitcher courses={courses} current={course} t={t} id="course-desktop" />
             <NavLinks t={t} variant="nav" />
             <div className="sidebar-foot">
+              {accounts && <AccountMenu email={account?.email ?? null} t={t} />}
               <LangToggle lang={lang} label={t.lang.label} />
               {course && (
                 <p>
@@ -68,6 +71,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <BrandMark />
             </Link>
             <CourseSwitcher courses={courses} current={course} t={t} id="course-mobile" />
+            {accounts && !account && <AccountMenu email={null} t={t} />}
             <LangToggle lang={lang} label={t.lang.label} />
           </header>
 

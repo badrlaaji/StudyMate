@@ -662,3 +662,8 @@ details > summary { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .gesture-ring .ring-value { transition: none; }
 }
+
+/* Accounts */
+.auth-form { max-width: 460px; }
+.account { display: grid; gap: var(--space-1); justify-items: start; }
+.account-email { overflow-wrap: anywhere; }

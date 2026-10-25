@@ -253,5 +253,28 @@
     "cancelled": "Annulé",
     "noHand": "Pas de main",
     "preview": "Aperçu de la caméra (miroir)"
+  },
+  "account": {
+    "signIn": "Se connecter",
+    "signOut": "Se déconnecter",
+    "signedInAs": "Connecté : {email}",
+    "title": "Ton compte",
+    "lede": "Un compte garde tes notes, tes dates de révision et tes objectifs. Le mot de passe n'est stocké que sous forme d'empreinte.",
+    "login": "Connexion",
+    "register": "Créer un compte",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "passwordHint": "De 8 à 72 caractères.",
+    "submitLogin": "Se connecter",
+    "submitRegister": "Créer mon compte",
+    "switchToRegister": "Pas encore de compte ? En créer un",
+    "switchToLogin": "Déjà un compte ? Se connecter",
+    "wrong": "E-mail ou mot de passe incorrect.",
+    "taken": "Cet e-mail a déjà un compte : connecte-toi.",
+    "invalid": "Vérifie l'e-mail et choisis un mot de passe de 8 à 72 caractères.",
+    "down": "Le service des comptes est indisponible. Réessaie dans un instant.",
+    "notSaved": "Non enregistré : connecte-toi pour garder ta progression.",
+    "progress": "Connecte-toi pour enregistrer tes notes et voir ta progression, tes révisions et ton plan.",
+    "working": "Un instant…"
   }
 }

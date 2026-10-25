@@ -2,6 +2,8 @@ package io.github.badrlaaji.studymate.core;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +24,7 @@ public class QuizController {
     /** Record every question of one quiz. */
     @PostMapping("/quiz-answers")
     @ResponseStatus(HttpStatus.CREATED)
-    public QuizSummary record(@Valid @RequestBody QuizResultRequest request) {
-        return service.record(request);
+    public QuizSummary record(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody QuizResultRequest request) {
+        return service.record(CurrentUser.id(jwt), request);
     }
 }

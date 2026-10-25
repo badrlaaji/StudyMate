@@ -362,3 +362,17 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S16-4 Question passée : statut dans Spring, aucune note
 - Table `quiz_answer` (statut CORRECT / INCORRECT / SKIPPED) alimentée par FastAPI à chaque quiz ; les notes restent dans `scores`. Une question passée n'est pas notée : ni maîtrise ni FSRS ne bougent ; le résumé la liste avec la page à relire. Ce journal servira au trophée « Sans faute » (étape 18).
+
+## Étape 17 — Comptes : Spring Security et JWT (plan v2, S2)
+
+### S17-1 Spring signe et vérifie, les autres relaient
+- Spring est le service métier : il stocke les comptes (BCrypt) et signe le JWT (HS256, `NimbusJwtEncoder` du starter `spring-boot-starter-security-oauth2-resource-server`, API vérifiée dans la version 7.1.1). Next.js range le jeton dans un cookie HttpOnly et l'envoie en `Authorization` à FastAPI, qui le relaie tel quel ; FastAPI ne vérifie rien lui-même. Une seule clé (`JWT_SECRET`), dans Spring seulement ; démarrage refusé si elle fait moins de 32 caractères.
+
+### S17-2 Identité tirée du jeton, jamais de la requête
+- L'identifiant utilisateur est le `sub` du jeton vérifié : aucune route ne prend un `userId` en paramètre, sauf `GET /api/users/{id}`, qui renvoie 403 si l'id n'est pas celui du jeton. Sans jeton : 401 (filtre du serveur de ressources). Même 401 pour un e-mail inconnu ou un mauvais mot de passe.
+
+### S17-3 Cookie HttpOnly plutôt que localStorage
+- Un script injecté ne peut pas lire un cookie HttpOnly ; `SameSite=Lax` limite les envois depuis d'autres sites, `Secure` en HTTPS. Le proxy renvoie seulement l'e-mail à la page, jamais le jeton. Le nom affiché vient du jeton décodé côté serveur, pour l'affichage seulement.
+
+### S17-4 Anciennes lignes sans utilisateur
+- Vécu : Hibernate (`ddl-auto=update`) ne peut pas ajouter une colonne `user_id NOT NULL` à une table qui contient déjà des lignes ; la colonne manquait et l'enregistrement du quiz renvoyait 500. Choix : `user_id` nullable dans `scores` et `quiz_answer` ; les lignes d'avant les comptes restent en base mais ne sont visibles par personne.

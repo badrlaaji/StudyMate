@@ -253,5 +253,28 @@
     "cancelled": "Cancelled",
     "noHand": "No hand",
     "preview": "Camera preview (mirror)"
+  },
+  "account": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "signedInAs": "Signed in as {email}",
+    "title": "Your account",
+    "lede": "An account keeps your scores, review dates and goals. The password is stored as a hash only.",
+    "login": "Sign in",
+    "register": "Create an account",
+    "email": "Email",
+    "password": "Password",
+    "passwordHint": "8 to 72 characters.",
+    "submitLogin": "Sign in",
+    "submitRegister": "Create my account",
+    "switchToRegister": "No account yet? Create one",
+    "switchToLogin": "Already have an account? Sign in",
+    "wrong": "Wrong email or password.",
+    "taken": "This email already has an account: sign in instead.",
+    "invalid": "Check the email and use 8 to 72 characters for the password.",
+    "down": "The account service is unavailable. Try again in a moment.",
+    "notSaved": "Not saved: sign in to keep your progress.",
+    "progress": "Sign in to save your scores and see your progress, review dates and plan.",
+    "working": "Please wait…"
   }
 }

@@ -19,6 +19,9 @@ public class Score {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Nullable in the database: rows saved before accounts have no user (and stay hidden).
+    private Long userId;
+
     // Nullable in the database: rows saved before multi-course support have none.
     private String courseId;
 
@@ -39,7 +42,8 @@ public class Score {
         // required by JPA
     }
 
-    public Score(String courseId, String notionId, Source source, int score, Instant createdAt) {
+    public Score(Long userId, String courseId, String notionId, Source source, int score, Instant createdAt) {
+        this.userId = userId;
         this.courseId = courseId;
         this.notionId = notionId;
         this.source = source;
@@ -49,6 +53,10 @@ public class Score {
 
     public Long getId() {
         return id;
+    }
+
+    public Long getUserId() {
+        return userId;
     }
 
     public String getCourseId() {

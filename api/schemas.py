@@ -135,3 +135,10 @@ class QuizResultResponse(BaseModel):
     scores: dict[str, int]
     recorded: bool
     skipped: int = 0  # questions passed without an answer (not graded)
+
+
+class AuthRequest(BaseModel):
+    """Sign-up or login body, checked again by Spring (which hashes the password)."""
+
+    email: str = Field(min_length=3, max_length=254, pattern=r"^[^@\s]+@[^@\s]+$")
+    password: str = Field(min_length=8, max_length=72)  # BCrypt reads 72 bytes at most

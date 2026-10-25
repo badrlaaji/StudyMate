@@ -22,28 +22,28 @@ public class MasteryService {
         this.repository = repository;
     }
 
-    /** Save one validated score with the current time. */
-    public Score record(ScoreRequest request) {
+    /** Save one validated score of a user with the current time. */
+    public Score record(Long userId, ScoreRequest request) {
         Score score = new Score(
-                request.courseId(), request.notionId(), request.source(), request.score(), Instant.now());
+                userId, request.courseId(), request.notionId(), request.source(), request.score(), Instant.now());
         return repository.save(score);
     }
 
-    /** Mastery of every scored notion of a course, weakest first. */
-    public List<NotionMastery> mastery(String courseId) {
-        return summarizeAll(repository.findAllByCourseIdOrderByCreatedAtDescIdDesc(courseId));
+    /** Mastery of every notion a user scored in a course, weakest first. */
+    public List<NotionMastery> mastery(Long userId, String courseId) {
+        return summarizeAll(repository.findAllByUserIdAndCourseIdOrderByCreatedAtDescIdDesc(userId, courseId));
     }
 
-    /** Every score of a course with its time, oldest first. */
-    public List<ScoreHistory> history(String courseId) {
-        return repository.findAllByCourseIdOrderByCreatedAtAscIdAsc(courseId).stream()
+    /** Every score of a user in a course with its time, oldest first. */
+    public List<ScoreHistory> history(Long userId, String courseId) {
+        return repository.findAllByUserIdAndCourseIdOrderByCreatedAtAscIdAsc(userId, courseId).stream()
                 .map(ScoreHistory::of)
                 .toList();
     }
 
-    /** Weak notions of a course only, weakest first, at most {@code limit}. */
-    public List<NotionMastery> weak(String courseId, int limit) {
-        return mastery(courseId).stream().filter(m -> m.level().equals("WEAK")).limit(limit).toList();
+    /** A user's weak notions of a course only, weakest first, at most {@code limit}. */
+    public List<NotionMastery> weak(Long userId, String courseId, int limit) {
+        return mastery(userId, courseId).stream().filter(m -> m.level().equals("WEAK")).limit(limit).toList();
     }
 
     /** Group scores (newest first) by notion and summarize each group. */

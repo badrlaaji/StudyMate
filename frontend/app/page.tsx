@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import Icon from "@/components/Icon";
 import MasteryMap from "@/components/MasteryMap";
 import { getMastery, getNotions, getPlan, getReviews } from "@/lib/api";
@@ -21,6 +23,14 @@ export default async function ProgressPage() {
           {course.scope}. {t.map.intro}
         </p>
       </header>
+      {mastery.status === "signed_out" && (
+        <p className="callout" role="status">
+          <Icon name="info" />
+          <span>
+            {t.account.progress} <Link href="/login">{t.account.signIn}</Link>
+          </span>
+        </p>
+      )}
       {mastery.status === "degraded" && (
         <p className="callout callout-warn" role="status">
           <Icon name="alert" />

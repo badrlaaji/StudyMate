@@ -40,6 +40,11 @@ honest feedback on what they have actually understood.
   in the browser; 1 to 4 raised fingers answer 1 to 4, a fist held 1.5 s skips, an open hand
   goes on. A gesture must stay the same for 1 s (progress ring, spoken by screen readers);
   removing the hand or Escape cancels. No image is sent or stored.
+- **Accounts** (`/login`): sign up and sign in; scores, review dates and quiz logs belong to
+  each user. Spring Boot hashes passwords (BCrypt) and signs a JWT (HS256, 7 days); the token
+  stays in an HttpOnly cookie, Next.js relays it to FastAPI, which relays it to Spring. No
+  token: 401; another user's data: 403. Without an account, answers still work, nothing is
+  saved.
 - **Library** (`/library`): one card per course (PDF, indexed passages, notions); **upload
   a textbook PDF** and choose its chapters; switch course from the sidebar. Each course has
   its own index, notions and scores.
@@ -225,6 +230,8 @@ contrast. The progress chart uses one hue with threshold lines at 3 (review) and
 - **Free tier**: rate limits and occasional 503 errors from Gemini; the code waits and retries
   once. The full app is not deployed publicly (the free tier does not allow it for EU/UK users):
   only the demo mode, which never calls Gemini, is meant to be public.
+- **Accounts are minimal**: no email check, no password reset, no rate limit on login; a
+  token stays valid until it expires (7 days) even after signing out on another device.
 - **The public demo is frozen**: it only answers its example questions and grades its example
   explanations; scores live in one browser and are lost with its cookies.
 
@@ -236,7 +243,7 @@ Windows, PowerShell, Python 3.13 with [uv](https://docs.astral.sh/uv/), Node 22,
 uv venv --python 3.13
 uv pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
 uv pip install -r requirements.txt -r requirements-dev.txt
-Copy-Item .env.example .env              # Gemini key, Neon connection strings
+Copy-Item .env.example .env              # Gemini key, Neon connection strings, JWT_SECRET
 uv run python -m scripts.check_env all
 uv run python -m course.add data-science # download + index (its notions are in the repo)
 uv run python -m course.add statistics
