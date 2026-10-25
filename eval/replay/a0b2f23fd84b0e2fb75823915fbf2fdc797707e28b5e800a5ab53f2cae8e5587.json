@@ -1,0 +1,1 @@
+{"found": true, "answer": "Logistic regression uses a sigmoid function, which is the same sigmoid function mentioned in the context of classification using machine learning. The output values of this function tend to be close to 0 when the input is negative and close to 1 when the input is positive, featuring a smooth transition in between.", "cited_pages": [345]}

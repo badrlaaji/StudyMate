@@ -1,0 +1,1 @@
+{"found": true, "answer": "La régression logistique utilise une fonction sigmoïde. Les valeurs de sortie de cette fonction tendent à être proches de 0 lorsque l'entrée est négative et proches de 1 lorsque l'entrée est positive, avec une transition douce entre les deux.", "cited_pages": [285, 345]}

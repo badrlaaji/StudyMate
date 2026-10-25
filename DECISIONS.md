@@ -317,3 +317,20 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S13-5 Lecteur de la démo : lien vers openstax.org
 - Pas de PDF local dans la démo, et le PDF d'OpenStax n'autorise pas la lecture depuis un autre site (pas d'en-tête CORS, vérifié à l'étape 11) : react-pdf ne peut pas l'afficher. Plan B prévu à l’étape 8 : le passage cité est recopié, et un lien ouvre `pdf_url#page=N` dans un nouvel onglet.
+
+## Étape 14 — Évaluation de régression en CI (plan v2, S4)
+
+### S14-1 Réponses du LLM rejouées, pas appelées
+- Options : appeler Gemini en CI (clé dans les secrets GitHub, quota consommé à chaque push, réponses qui varient), juge LLM, ou rejouer des réponses enregistrées. Choix : `LLM_OFFLINE=1` + `LLM_CACHE_DIR=eval/replay` (112 réponses versionnées, 24 Ko). La clé du cache reste sha256(modèle + prompt) : un prompt qui change n'a pas d'enregistrement et compte comme une réponse fausse. Toute modification de ce que voit le LLM doit donc être réenregistrée (`eval.regression record`) et repasser les seuils.
+
+### S14-2 Modèle de base dans la porte
+- Le modèle fine-tuné n'est pas sur le Hub (jeton HF absent) : la CI ne peut pas le charger. La porte utilise le modèle par défaut du code (`rag.embeddings.BASE_MODEL`, e5 de base public). Mesuré avec lui : EN 16/20, FR 18/20 réponses justes (fine-tuné : 18 et 19).
+
+### S14-3 Seuils : la mesure moins une question
+- hit@4 et MRR −0,05, réponses justes −1, pièges 5/5 sans marge (un piège accepté = une réponse inventée). La marge absorbe un rang inversé par le bruit des calculs flottants sur un autre processeur ; une vraie régression fait perdre plusieurs questions.
+
+### S14-4 Régression volontaire choisie pour ce que les tests unitaires ne voient pas
+- Morceaux de 100 tokens au lieu de 300, ou mauvais préfixe e5 : déjà attrapés par un test unitaire. Modèle anglais `all-MiniLM-L6-v2` par défaut : 173 tests unitaires verts, porte rouge (FR hit@4 0,75 → 0,60, MRR 0,604 → 0,514 ; EN MRR monte à 0,793). Seule l'éval bilingue le voit.
+
+### S14-5 Observation non adoptée : chevauchement 0
+- En cherchant une régression, `OVERLAP = 0` a donné EN 0,95 et FR 0,80 sur le jeu **test**. Non adopté : D3 réserve le jeu test à la mesure finale, un réglage se décide sur le jeu dev. À évaluer sur dev plus tard.

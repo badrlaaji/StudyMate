@@ -1,0 +1,1 @@
+{"found": true, "answer": "Naïve Bayes classification assumes that all features of the data are independent. Although this condition may not always hold true in real-world datasets, the algorithm can still perform fairly well. Furthermore, it is a very simple and efficient algorithm often used as a first method in classification problems.", "cited_pages": [332]}

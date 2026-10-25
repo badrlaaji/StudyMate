@@ -8,14 +8,15 @@ The **files derived from the textbooks** are under the
 
 - `course/notions/*.json` (catalogue of course notions, key ideas in English and French)
 - `eval/*.json` (evaluation questions and expected pages, *Principles of Data Science* only)
+- `eval/replay/*.json` (Gemini answers recorded for the regression evaluation, same book)
 - `frontend/demo/data.json` (public demo: notions, answers with quoted passages, quiz questions
   and Feynman feedback, from both books)
 
 ## Attribution
 
-- `course/notions/data-science.json` and `eval/*.json` are derived from *Principles of Data
-  Science* by Shaun V. Ault, Soohyun Nam Liao and Larry Musolino (senior contributing
-  authors), OpenStax, Rice University, 2025. Access for free at
+- `course/notions/data-science.json`, `eval/*.json` and `eval/replay/*.json` are derived
+  from *Principles of Data Science* by Shaun V. Ault, Soohyun Nam Liao and Larry Musolino
+  (senior contributing authors), OpenStax, Rice University, 2025. Access for free at
   [openstax.org/details/books/principles-data-science](https://openstax.org/details/books/principles-data-science).
 - `course/notions/statistics.json` is derived from *Introductory Statistics 2e* by Barbara
   Illowsky and Susan Dean (senior contributing authors), OpenStax, Rice University, 2023.

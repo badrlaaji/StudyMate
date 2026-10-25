@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch: # run on any branch: gh workflow run CI --ref <branch>
 
 jobs:
   python:
@@ -37,6 +38,49 @@ jobs:
       - name: Tests (no network, plus the database test)
         run: uv run pytest -q
 
+  eval:
+    # Regression gate: retrieval and replayed LLM answers on the 20 test questions + 5 traps.
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: pgvector/pgvector:0.8.2-pg17
+        env:
+          POSTGRES_USER: studymate
+          POSTGRES_PASSWORD: studymate
+          POSTGRES_DB: studymate
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U studymate" --health-interval 5s --health-retries 20
+    env:
+      DATABASE_URL: postgresql+asyncpg://studymate:studymate@localhost:5432/studymate
+      LLM_PROVIDER: gemini
+      LLM_MODEL: gemini-3.5-flash-lite
+      LLM_OFFLINE: "1" # no key here: a missing recorded answer fails, it never calls Gemini
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.11.32"
+      - name: Install (torch from the CPU index first)
+        run: |
+          uv venv --python 3.13
+          uv pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+          uv pip install -r requirements.txt -r requirements-dev.txt
+      - name: Cache the book PDF and the e5 model
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/raw
+            ~/.cache/huggingface
+          key: eval-${{ hashFiles('course/courses.json') }}
+      - name: Index the reference course (base e5, CPU)
+        run: |
+          uv run python -m scripts.download_book data-science
+          sha256sum data/raw/data-science.pdf  # a new edition of the book changes the prompts
+          uv run python -m rag.ingest data-science
+      - name: Regression gate (thresholds in eval/thresholds.json)
+        run: uv run python -m eval.regression check
+
   java:
     runs-on: ubuntu-latest
     steps:
@@ -69,7 +113,7 @@ jobs:
 
   compose:
     runs-on: ubuntu-latest
-    needs: [python, java, web]
+    needs: [python, eval, java, web]
     steps:
       - uses: actions/checkout@v4
       - name: Build the images and start the stack

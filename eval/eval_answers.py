@@ -11,6 +11,7 @@ import os
 import time
 
 from agent.graph import build_graph
+from agent.llm import is_offline
 from agent.spring import make_client
 from course.courses import load_registry, notions_path
 from course.notions import load_catalog
@@ -20,6 +21,8 @@ from rag.embeddings import model_name
 from rag.store import get_engine
 
 PAUSE_S = float(os.environ.get("LLM_PAUSE_S", "6"))
+# Offline replay (CI) without a recorded answer for the prompt.
+REPLAY_MISS = {"route": "", "status": "replay_miss", "citations": [], "hits": []}
 
 
 def is_correct(state: dict, expected: list[int]) -> bool:
@@ -49,12 +52,19 @@ def row(item_id: str, state: dict, seconds: float, expected: list[int] | None) -
     return result
 
 
-async def run_one(app, item_id: str, text: str, expected: list[int] | None) -> dict:
+async def run_one(
+    app, item_id: str, text: str, expected: list[int] | None, pause_s: float
+) -> dict:
     """Run the agent on one message, then pause to respect the quota."""
     start = time.perf_counter()
-    state = await app.ainvoke({"message": text, "course": EVAL_COURSE})
+    try:
+        state = await app.ainvoke({"message": text, "course": EVAL_COURSE})
+    except RuntimeError:
+        if not is_offline():
+            raise  # quota: stop the run, cached answers are kept
+        state = REPLAY_MISS  # offline and the prompt changed: counts as wrong
     result = row(item_id, state, time.perf_counter() - start, expected)
-    await asyncio.sleep(PAUSE_S)
+    await asyncio.sleep(pause_s)
     return result
 
 
@@ -66,11 +76,12 @@ def summary(rows: list[dict], traps: list[dict]) -> dict:
         "questions": len(rows),
         "refused": sum(t["status"] == "not_found" for t in traps),
         "traps": len(traps),
+        "replay_misses": sum(r["status"] == "replay_miss" for r in rows + traps),
         "median_s": sorted(r["seconds"] for r in rows)[len(rows) // 2],
     }
 
 
-async def evaluate() -> dict:
+async def evaluate(pause_s: float = PAUSE_S) -> dict:
     """Run the 20 test questions and 5 traps in both languages."""
     questions = load_questions()
     engine, http = get_engine(), make_client()
@@ -80,11 +91,11 @@ async def evaluate() -> dict:
     try:
         for lang in LANGS:
             rows = [
-                await run_one(app, q.id, getattr(q, lang), q.pages)
+                await run_one(app, q.id, getattr(q, lang), q.pages, pause_s)
                 for q in questions.test
             ]
             traps = [
-                await run_one(app, t.id, getattr(t, lang), None)
+                await run_one(app, t.id, getattr(t, lang), None, pause_s)
                 for t in questions.traps
             ]
             report[lang] = {"summary": summary(rows, traps), "rows": rows + traps}

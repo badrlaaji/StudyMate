@@ -1,0 +1,1 @@
+{"found": true, "answer": "Une fonction d'activation est une fonction non décroissante qui détermine si un neurone s'active et avec quelle intensité. Elle traite le résultat obtenu après l'application du poids et du biais au signal d'entrée. Cela permet au neurone de décider s'il doit envoyer un signal de sortie.", "cited_pages": [344, 380]}

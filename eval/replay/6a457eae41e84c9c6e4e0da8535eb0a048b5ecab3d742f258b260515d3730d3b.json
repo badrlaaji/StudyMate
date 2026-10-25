@@ -1,0 +1,1 @@
+{"found": true, "answer": "A testing set is kept aside to determine whether the trained machine learning model is accurate enough. As a general rule of thumb, about 20% to 40% of the available data is used for testing, leaving 60% to 80% for training. Alternatively, datasets are sometimes split with 75% allocated to training and 25% to testing.", "cited_pages": [276, 328]}

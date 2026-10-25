@@ -1,0 +1,10 @@
+{
+  "retrieval.en.hit@4": 0.8,
+  "retrieval.en.mrr@10": 0.65,
+  "retrieval.fr.hit@4": 0.7,
+  "retrieval.fr.mrr@10": 0.55,
+  "answers.en.correct": 15,
+  "answers.en.refused": 5,
+  "answers.fr.correct": 17,
+  "answers.fr.refused": 5
+}

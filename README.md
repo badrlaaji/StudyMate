@@ -144,6 +144,24 @@ on that question; a full re-run is pending because the free-tier quota was exhau
 **Answer quality** (RAGAS 0.4.3, 20 English test questions, before the multi-course prompts):
 faithfulness **0.934**, answer relevancy **0.931**.
 
+**Regression gate (CI)** — on every push, the `eval` job indexes the book with the base e5
+model, measures retrieval for real, and replays the agent on the 20 test questions and 5 traps
+in both languages **without calling Gemini**: the LLM answers come from `eval/replay/` (112
+answers recorded by `uv run python -m eval.regression record`). A prompt that changed has no
+recording and counts as a wrong answer, so any change to what the LLM sees must be re-recorded
+and pass again. Minimums in `eval/thresholds.json`: one question of margin, none on the traps.
+
+| Base e5 | English | French | Minimum (EN / FR) |
+| --- | --- | --- | --- |
+| hit@4 | 0.85 | 0.75 | 0.80 / 0.70 |
+| MRR@10 | 0.703 | 0.604 | 0.65 / 0.55 |
+| Correct answers | 16/20 | 18/20 | 15 / 17 |
+| Traps refused | 5/5 | 5/5 | 5 / 5 |
+
+Deliberate regression: making the English-only `all-MiniLM-L6-v2` the default embedding model
+passes every unit test but fails the gate: French hit@4 drops from 0.75 to 0.60, while
+English MRR even rises (0.703 → 0.793). Only the bilingual evaluation sees it.
+
 **Speed** — median `/chat` latency **2.73 s** (p90 3.17 s) on 20 questions never asked before (dev set, English and French), Gemini free tier, CPU only, measured before the multi-course change (same pipeline). When the free-tier quota is saturated, the code waits 60 s and retries: one call then took 2 min 30 s.
 
 **Front end** — Lighthouse 13.5 on the production build, and axe-core (WCAG 2.2 AA rules):
@@ -185,6 +203,8 @@ contrast. The progress chart uses one hue with threshold lines at 3 (review) and
   catalogue still is a draft; its lab sections gave weak notions).
 - **Formulas are lost**: they are drawn as vector graphics in the PDF, so they are absent from
   the extracted text; the PDF panel still shows them.
+- **The regression gate replays recorded answers**: it guards the code around the LLM, not
+  the model itself (a new Gemini version would need a new recording, about 112 calls).
 - **A verified citation is not always the best page**: the check proves the page was retrieved
   and cited, not that it is the most relevant one.
 - **Free tier**: rate limits and occasional 503 errors from Gemini; the code waits and retries
@@ -217,7 +237,9 @@ user). Until a course is indexed, `/chat` answers 503 with that command. The ima
 base e5 model; pass `--build-arg EMBEDDING_MODEL=<Hub id>` to use the fine-tuned one.
 
 Tests: `uv run pytest -q` (no network), `cd core; .\mvnw.cmd test`,
-`cd frontend; npm test; npm run build`.
+`cd frontend; npm test; npm run build`. Regression gate (base e5 index, no LLM call):
+`$env:EMBEDDING_MODEL="intfloat/multilingual-e5-small"; uv run python -m rag.ingest data-science`,
+then `uv run python -m eval.regression`.
 
 ## Stack
 

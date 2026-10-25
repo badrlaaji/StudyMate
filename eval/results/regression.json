@@ -1,0 +1,12 @@
+{
+  "retrieval.en.hit@4": 0.85,
+  "retrieval.en.mrr@10": 0.703,
+  "answers.en.correct": 16,
+  "answers.en.refused": 5,
+  "answers.en.replay_misses": 0,
+  "retrieval.fr.hit@4": 0.75,
+  "retrieval.fr.mrr@10": 0.604,
+  "answers.fr.correct": 18,
+  "answers.fr.refused": 5,
+  "answers.fr.replay_misses": 0
+}

@@ -1,0 +1,1 @@
+{"found": true, "answer": "A random forest is a classification algorithm that utilizes multiple decision trees, known as weak learners, created through bootstrap aggregating and random feature selection. When classifying new data, the final prediction of the random forest is determined by a majority vote among these individual decision trees.", "cited_pages": [327]}

@@ -1,0 +1,1 @@
+{"found": true, "answer": "In the DBScan algorithm, a data point is classified as a core point if it is part of a dense region in the dataset. Specifically, a point must have a minimum number of neighbors within a defined distance from itself. When evaluating this requirement, the point itself is counted among its neighbors.", "cited_pages": [297, 298]}

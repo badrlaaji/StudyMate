@@ -1,0 +1,1 @@
+{"found": true, "answer": "Dans une matrice de confusion, de grands nombres situés en dehors de la diagonale principale indiquent des taux plus élevés de mauvaise identification ou de confusion de la part du modèle. Cela montre que le modèle a commis davantage d'erreurs en classant ces données.", "cited_pages": [301, 302]}

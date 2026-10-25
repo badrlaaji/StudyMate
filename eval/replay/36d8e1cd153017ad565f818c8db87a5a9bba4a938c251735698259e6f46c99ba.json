@@ -1,0 +1,1 @@
+{"found": true, "answer": "In a logistic regression model, the logit function represents the logarithm of the odds of an event with a given probability. This is why the logit function is frequently referred to as log-odds. While standard probabilities are restricted to a range between 0 and 1, log-odds can take any value from minus infinity to infinity.", "cited_pages": [286]}
