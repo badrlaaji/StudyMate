@@ -102,6 +102,11 @@ Format : 3 lignes par étape (fait, bloqué, chiffres mesurés).
 - **Bloqué** : rien.
 - **Chiffres** : 20 requêtes, 40 appels réels par série ; pause 6 s : 0 % de 429, appel LLM médiane 1,22 s / p90 1,42 s, `/chat` médiane 2,74 s / p90 3,43 s, 19/20 corrects ; rafale : 4 erreurs 429, 7,5 % des appels, 15 % des requêtes, 1 appel en échec (routeur de secours), `/chat` max 60,91 s ; 25 226 jetons d'entrée et 2 850 de sortie (≈ 1 310 par requête) ; tests : 216 Python (+ 1 base), 51 Spring, 56 Vitest.
 
+## Étape 20 — Aperçu de la caméra et erreurs claires (2026-11-01)
+- **Fait** : le quiz aux gestes dessine le squelette de la main (21 points, bouts des doigts levés en couleur) sur l'aperçu de la caméra (320 px) et affiche le nombre de doigts lus ; message précis quand la caméra ne démarre pas (refusée, occupée, absente, adresse non sécurisée, modèle) sur le quiz et le panneau de présence ; plus de caméra laissée allumée si on la coupe pendant la demande d'autorisation ; une erreur de détection arrête la caméra avec un message au lieu de figer l'aperçu.
+- **Bloqué** : un test réel sous Windows reste à faire. Avec une fausse caméra, `npm run dev` marchait déjà : la panne vue sur le PC venait sans doute de l'environnement (caméra occupée, autorisation, adresse), que l'ancien message ne disait pas.
+- **Chiffres** : fausse caméra (signe V) → « 2 doigts levés », squelette 640×480 dessiné, réponse 2 choisie en 0,8 s ; erreurs `NotAllowedError`, `NotReadableError`, `NotFoundError` → 3 messages distincts ; tests : 216 Python (+ 1 base), 51 Spring, 59 Vitest.
+
 ### Quota Gemini (AI Studio → Rate limit, offre gratuite)
 | Modèle | Requêtes/min | Requêtes/jour | Tokens/min | Relevé le |
 | --- | --- | --- | --- | --- |

@@ -235,6 +235,13 @@
     "countOne": "1 révision",
     "start": "Réviser maintenant"
   },
+  "camera": {
+    "insecure": "La caméra ne marche que sur localhost ou en HTTPS : ouvre http://localhost:3000.",
+    "denied": "Accès à la caméra refusé : autorise-la pour ce site (icône à gauche de la barre d'adresse), puis réactive-la.",
+    "busy": "La caméra est occupée ou bloquée : ferme les autres applis qui l'utilisent (Teams, Zoom, Caméra, un autre onglet), puis réessaie.",
+    "missing": "Aucune caméra trouvée sur cet ordinateur.",
+    "model": "La détection de la main n'a pas pu démarrer (téléchargement du modèle ou navigateur) : vérifie la connexion, recharge la page, puis réessaie."
+  },
   "gesture": {
     "title": "Répondre avec la main",
     "enable": "Activer la caméra",
@@ -252,7 +259,10 @@
     "skipped": "Question passée",
     "cancelled": "Annulé",
     "noHand": "Pas de main",
-    "preview": "Aperçu de la caméra (miroir)"
+    "preview": "Aperçu de la caméra (miroir)",
+    "fingers": "{n} doigt(s) levé(s)",
+    "fist": "Poing",
+    "fingerNames": "index · majeur · annulaire · auriculaire"
   },
   "account": {
     "signIn": "Se connecter",

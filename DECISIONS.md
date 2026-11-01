@@ -404,3 +404,11 @@ Format : contexte, options, choix, pourquoi (5 lignes max par décision).
 
 ### S19-3 Mesurer avec un cache vide, à deux cadences
 - Les questions dev étaient déjà dans le cache : la mesure utilise un dossier de cache vide pour que chaque appel parte vraiment. Deux séries de 20 requêtes : pause de 6 s (0 % de 429) et rafale sans pause (7,5 % des appels, 15 % des requêtes). La rafale montre que le traçage voit les 429 et que la pause des scripts les évite.
+
+## Étape 20 — Aperçu de la caméra et erreurs claires
+
+### S20-1 Dessiner les points de la main nous-mêmes
+- Un `<canvas>` posé sur la vidéo, à la taille en pixels de la vidéo, avec le même `object-fit` et le même miroir en CSS : le squelette tombe exactement sur la main. Les liaisons viennent de `HandLandmarker.HAND_CONNECTIONS` (bibliothèque déjà installée), la couleur des doigts de `raisedFingers`, la règle qui compte aussi les doigts : ce qu'on voit est ce qui est compté. Écarté : `DrawingUtils` de MediaPipe, qui ne sait pas colorer selon notre règle.
+
+### S20-2 Dire pourquoi la caméra ne marche pas
+- `lib/camera.ts` traduit l'erreur du navigateur (nom `DOMException` de la spec getUserMedia) en 5 cas : adresse non sécurisée (la caméra exige localhost ou HTTPS), refusée, occupée (une autre appli la tient, fréquent sous Windows), absente, modèle. Fonction pure, testée sans caméra. Écarté : un message unique, qui ne permettait pas de diagnostiquer la panne vue sur le PC.

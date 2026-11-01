@@ -235,6 +235,13 @@
     "countOne": "1 review",
     "start": "Review now"
   },
+  "camera": {
+    "insecure": "The camera only works on localhost or HTTPS: open http://localhost:3000.",
+    "denied": "Camera access refused: allow it for this site (icon on the left of the address bar), then turn it on again.",
+    "busy": "The camera is busy or blocked: close the other apps that use it (Teams, Zoom, Camera, another tab), then try again.",
+    "missing": "No camera found on this computer.",
+    "model": "The hand detection could not start (model download or browser): check the connection, reload the page, then try again."
+  },
   "gesture": {
     "title": "Answer with your hand",
     "enable": "Turn on the camera",
@@ -252,7 +259,10 @@
     "skipped": "Question skipped",
     "cancelled": "Cancelled",
     "noHand": "No hand",
-    "preview": "Camera preview (mirror)"
+    "preview": "Camera preview (mirror)",
+    "fingers": "{n} raised finger(s)",
+    "fist": "Fist",
+    "fingerNames": "index · middle · ring · pinky"
   },
   "account": {
     "signIn": "Sign in",

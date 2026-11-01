@@ -2,7 +2,8 @@
 import { describe, expect, it } from "vitest";
 
 import hands from "./fixtures/hands.json";
-import { cancel, countFingers, FIST_HOLD_MS, HOLD_MS, START, stabilize, toGesture, type Gesture, type Hold } from "@/lib/gestures";
+import { cameraProblem } from "@/lib/camera";
+import { cancel, countFingers, FIST_HOLD_MS, HOLD_MS, raisedFingers, START, stabilize, toGesture, type Gesture, type Hold } from "@/lib/gestures";
 
 describe("countFingers", () => {
   it.each(hands.map((h) => [h.name, h.expected, h.landmarks] as const))("%s: %i raised", (_, expected, landmarks) => {
@@ -14,6 +15,26 @@ describe("countFingers", () => {
     expect(toGesture(fist)).toBe("fist"); // the thumb is ignored
     expect(toGesture(null)).toBeNull();
     expect(toGesture([])).toBeNull();
+  });
+
+  it("says which fingers are raised (drawn on the preview)", () => {
+    const victory = hands.find((h) => h.name === "victory")!.landmarks;
+    expect(raisedFingers(victory)).toEqual([true, true, false, false]); // index + middle
+  });
+});
+
+describe("cameraProblem", () => {
+  const named = (name: string) => Object.assign(new Error(name), { name });
+
+  it("names the usual getUserMedia failures", () => {
+    expect(cameraProblem(named("NotAllowedError"), "camera", true)).toBe("denied");
+    expect(cameraProblem(named("NotReadableError"), "camera", true)).toBe("busy"); // Teams, Zoom…
+    expect(cameraProblem(named("NotFoundError"), "camera", true)).toBe("missing");
+  });
+
+  it("blames the page address before anything else, then the model", () => {
+    expect(cameraProblem(new TypeError("no mediaDevices"), "camera", false)).toBe("insecure");
+    expect(cameraProblem(new Error("fetch failed"), "model", true)).toBe("model");
   });
 });
 

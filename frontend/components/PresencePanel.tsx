@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import Icon from "@/components/Icon";
+import { cameraProblem, type CameraProblem } from "@/lib/camera";
 import { fmt, type Dict } from "@/lib/i18n";
 import {
   activeSeconds,
@@ -30,6 +31,7 @@ type Props = { t: Dict; course: string; canSave: boolean };
 export default function PresencePanel({ t, course, canSave }: Props) {
   const [useCamera, setUseCamera] = useState(false); // off by default
   const [cameraStatus, setCameraStatus] = useState<"off" | "loading" | "on" | "error">("off");
+  const [problem, setProblem] = useState<CameraProblem | null>(null);
   const [presence, setPresence] = useState<Presence | null>(null);
   const [message, setMessage] = useState("");
   const current = useRef<Presence | null>(null);
@@ -118,11 +120,25 @@ export default function PresencePanel({ t, course, canSave }: Props) {
     if (!running || !presence?.camera) return;
     let stopped = false;
     let stream: MediaStream | null = null;
+    function fail(error: unknown, phase: "camera" | "model") {
+      stream?.getTracks().forEach((track) => track.stop());
+      if (stopped) return;
+      setProblem(cameraProblem(error, phase, window.isSecureContext && Boolean(navigator.mediaDevices)));
+      setCameraStatus("error"); // the manual timer goes on
+      if (current.current) update({ ...current.current, camera: false });
+    }
     async function open() {
       setCameraStatus("loading");
+      setProblem(null);
       try {
         // 640x480: at 320x240 a face at desk distance is too small for the short-range model (tested).
         stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio: false });
+      } catch (error) {
+        return fail(error, "camera");
+      }
+      // stopped while the browser was asking: the cleanup already ran, release here
+      if (stopped) return stream.getTracks().forEach((track) => track.stop());
+      try {
         const { FilesetResolver, FaceDetector } = await import("@mediapipe/tasks-vision");
         const vision = await FilesetResolver.forVisionTasks(WASM_PATH);
         const face = await FaceDetector.createFromOptions(vision, { baseOptions: { modelAssetPath: FACE_MODEL }, runningMode: "VIDEO" });
@@ -131,10 +147,8 @@ export default function PresencePanel({ t, course, canSave }: Props) {
         await video.current.play();
         detector.current = face;
         setCameraStatus("on");
-      } catch {
-        if (stopped) return;
-        setCameraStatus("error"); // the manual timer goes on
-        if (current.current) update({ ...current.current, camera: false });
+      } catch (error) {
+        fail(error, "model");
       }
     }
     open();
@@ -215,7 +229,9 @@ export default function PresencePanel({ t, course, canSave }: Props) {
       {cameraStatus === "error" && (
         <p className="callout callout-warn" role="alert">
           <Icon name="alert" />
-          {t.presence.cameraError}
+          <span>
+            {problem && t.camera[problem]} {t.presence.cameraError}
+          </span>
         </p>
       )}
       <p className="gesture-message" aria-live="polite">

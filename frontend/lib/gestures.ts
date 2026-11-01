@@ -20,9 +20,14 @@ function distance(a: Point, b: Point): number {
 }
 
 // A raised finger: its tip is farther from the wrist than its middle joint.
-export function countFingers(hand: Point[]): number {
+// One boolean per finger: index, middle, ring, pinky (also drawn on the camera preview).
+export function raisedFingers(hand: Point[]): boolean[] {
   const wrist = hand[WRIST];
-  return FINGERS.filter(({ tip, pip }) => distance(hand[tip], wrist) > distance(hand[pip], wrist)).length;
+  return FINGERS.map(({ tip, pip }) => distance(hand[tip], wrist) > distance(hand[pip], wrist));
+}
+
+export function countFingers(hand: Point[]): number {
+  return raisedFingers(hand).filter(Boolean).length;
 }
 
 export function toGesture(hand: Point[] | null): Gesture {
